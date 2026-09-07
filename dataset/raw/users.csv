@@ -1,0 +1,16 @@
+user_id,name,role,organization_id,email_placeholder,district,verification_status,reputation_score,data_status
+USER001,Rajesh Munda,Citizen,,rajesh.munda.demo@sihplatform.in,Palamu,verified,140,synthetic_demo
+USER002,Ananya Mukherjee,Student,INST001,ananya.m.demo@iitism.ac.in,Dhanbad,verified,320,synthetic_demo
+USER003,Rohan Tirkey,Student,INST005,rohan.t.demo@bauranchi.org,Ranchi,verified,280,synthetic_demo
+USER004,Prof. Alok Sinha,Faculty,INST001,alok.sinha.demo@iitism.ac.in,Dhanbad,verified,850,synthetic_demo
+USER005,Dr. Savita Ekka,Faculty,INST005,savita.ekka.demo@bauranchi.org,Ranchi,verified,790,synthetic_demo
+USER006,Prof. A. K. Choudhary,Faculty,INST003,akchoudhary.demo@nitjsr.ac.in,East Singhbhum,verified,820,synthetic_demo
+USER007,Dr. Vivek Kashyap,Faculty,INST006,vkashyap.demo@rimsranchi.ac.in,Ranchi,verified,760,synthetic_demo
+USER008,Dr. Ramesh Soren,UniversityAdmin,INST001,admin.ciie.demo@iitism.ac.in,Dhanbad,verified,500,synthetic_demo
+USER009,Sunil Agrawal,Industry,IND001,sunil.agrawal.demo@dhanbadcleantech.in,Dhanbad,verified,410,synthetic_demo
+USER010,Deepak Mehta,MSME,IND005,dmehta.demo@pragatirural.in,Ranchi,verified,380,synthetic_demo
+USER011,Dr. Vikram Hansda,Government,GOV001,director.dwsd.demo@jharkhand.gov.in,Ranchi,verified,620,synthetic_demo
+USER012,Pooja Verma,Evaluator,INST008,pooja.eval.demo@iimranchi.ac.in,Ranchi,verified,690,synthetic_demo
+USER013,Amit Kumar Singh,Mentor,IND004,amit.tata.demo@tatasteel.com,East Singhbhum,verified,710,synthetic_demo
+USER014,Sunita Marandi,Citizen,,sunita.marandi.demo@sihplatform.in,Khunti,verified,110,synthetic_demo
+USER015,Platform SuperAdmin,Admin,,superadmin.demo@sihjharkhand.gov.in,Ranchi,verified,999,synthetic_demo
