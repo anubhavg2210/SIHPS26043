@@ -1,0 +1,32 @@
+mapping_id,institution_id,expertise_id,strength_score,evidence,source_url,verification_status,data_status
+IEXP001,INST001,EXP001,0.95,Centre of Excellence in Water Resources and Department of Applied Geology; extensive aquifer mapping and groundwater simulation across hard-rock regions.,https://www.iitism.ac.in,verified,verified_real
+IEXP002,INST001,EXP002,0.95,"NABL-accredited environmental engineering testing laboratory analyzing trace metals, fluoride, and mine runoff potability parameters.",https://www.iitism.ac.in,verified,verified_real
+IEXP003,INST001,EXP003,0.9,Patented advanced oxidation and membrane filtration systems deployed for municipal and industrial potable water supply.,https://www.iitism.ac.in,verified,verified_real
+IEXP004,INST001,EXP018,0.98,"National Centre of Mining Environment; pioneer research in fly ash utilization, acid mine drainage neutralization, and tailing pond reclamation.",https://www.iitism.ac.in,verified,verified_real
+IEXP005,INST001,EXP031,0.88,Centre of Excellence in IoT; specialized wireless sensor node deployments for underground mine and environmental telemetry.,https://www.iitism.ac.in,verified,verified_real
+IEXP006,INST002,EXP021,0.98,Dedicated Department of Remote Sensing established in 1997; major projects funded by ISRO/NRSC for forest canopy phenology and land use mapping.,https://www.bitmesra.ac.in,verified,verified_real
+IEXP007,INST002,EXP022,0.96,"State-of-the-art geoinformatics labs offering spatial modeling of micro-catchments, thematic hazard maps, and drought indexing.",https://www.bitmesra.ac.in,verified,verified_real
+IEXP008,INST002,EXP017,0.88,Department of Civil & Environmental Engineering waste characterization and pilot biomethanation experimental facilities.,https://www.bitmesra.ac.in,verified,verified_real
+IEXP009,INST002,EXP030,0.85,Active machine learning research group in CSE with DST-funded projects in predictive diagnostics and pattern recognition.,https://www.bitmesra.ac.in,verified,verified_real
+IEXP010,INST003,EXP027,0.92,Civil Engineering Highway Testing facility; specialized in industrial slag utilization and low-cost soil-stabilized rural pavements.,https://www.nitjsr.ac.in,verified,verified_real
+IEXP011,INST003,EXP026,0.88,Hydraulic engineering laboratory conducting urban storm runoff modeling and flood routing for local industrial townships.,https://www.nitjsr.ac.in,verified,verified_real
+IEXP012,INST003,EXP023,0.85,Mechanical and Electrical Engineering solar thermal and PV testing installations.,https://www.nitjsr.ac.in,verified,verified_real
+IEXP013,INST004,EXP003,0.82,Chemical Engineering Department research on low-cost bio-adsorbents for industrial wastewater and heavy metal filtration.,https://www.bitsindri.ac.in,verified,verified_real
+IEXP014,INST004,EXP018,0.8,Interdisciplinary metallurgical and chemical projects on blast-furnace slag recycling and coal washery slurry recovery.,https://www.bitsindri.ac.in,verified,verified_real
+IEXP015,INST005,EXP006,0.98,"ICAR-mandated Regional Plant Pathology Center; diagnostic clinics for tribal pulse diseases, paddy blast, and horticulture blight.",https://www.bauranchi.org,verified,verified_real
+IEXP016,INST005,EXP008,0.96,State soil testing reference facility; extensive GIS-linked soil health card mapping for acidic red-laterite plateau soils.,https://www.bauranchi.org,verified,verified_real
+IEXP017,INST005,EXP011,0.95,"Faculty of Forestry and Agronomy; recognized national center for lac host tree cultivation, minor forest products, and dryland millets.",https://www.bauranchi.org,verified,verified_real
+IEXP018,INST005,EXP009,0.88,Department of Agricultural Engineering field plots demonstrating gravity-fed drip kits and solar micro-irrigation systems.,https://www.bauranchi.org,verified,verified_real
+IEXP019,INST006,EXP012,0.98,Apex state tertiary referral hospital; oversees rural community health centers and field vaccination and preventative programs.,https://www.rimsranchi.ac.in,verified,verified_real
+IEXP020,INST006,EXP014,0.95,Regional referral center for maternal-fetal critical care and tribal child malnutrition rehabilitation.,https://www.rimsranchi.ac.in,verified,verified_real
+IEXP021,INST007,EXP013,0.92,Department of Community and Family Medicine epidemiological surveillance unit in Santhal Pargana division.,https://www.aiimsdeoghar.edu.in,verified,verified_real
+IEXP022,INST007,EXP015,0.88,Central PMSSY teleconsultation node connecting peripheral sub-centers to super-specialty outpatient clinics.,https://www.aiimsdeoghar.edu.in,verified,verified_real
+IEXP023,INST008,EXP043,0.94,"Operations management research on agrarian supply chains, rural aggregation hubs, and public distribution efficiency.",https://www.iimranchi.ac.in,verified,verified_real
+IEXP024,INST008,EXP042,0.9,Atal Bihari Vajpayee Centre for Public Policy; field research on tribal artisanal clusters and minor forest produce pricing.,https://www.iimranchi.ac.in,verified,verified_real
+IEXP025,INST008,EXP044,0.92,Empirical econometrics and policy monitoring studies conducted for state government and development agencies.,https://www.iimranchi.ac.in,verified,verified_real
+IEXP026,INST009,EXP028,0.92,High-performance GPU cluster dedicated to convolutional neural networks and automated image segmentation.,https://www.iiitranchi.ac.in,verified,verified_real
+IEXP027,INST009,EXP031,0.9,"Hardware testbeds for low-power LoRa sensor nodes, microcontrollers, and edge environmental telemetry.",https://www.iiitranchi.ac.in,verified,verified_real
+IEXP028,INST009,EXP032,0.88,ECE embedded design labs specializing in ultra-low-power duty cycling and sensor integration.,https://www.iiitranchi.ac.in,verified,verified_real
+IEXP029,INST010,EXP039,0.92,Greenhouse and experimental field plots dedicated to phytoremediation of heavy-metal mine tailings.,https://www.cuj.ac.in,verified,verified_real
+IEXP030,INST010,EXP020,0.9,Department of Environmental Sciences consultancy on ecological rehabilitation and afforestation of degraded plateau ecosystems.,https://www.cuj.ac.in,verified,verified_real
+IEXP031,INST010,EXP025,0.86,Department of Energy Engineering experimental setups for biomass gasification and rural agricultural waste pelletization.,https://www.cuj.ac.in,verified,verified_real

@@ -1,0 +1,632 @@
+[
+  {
+    "test_id": "AITC001",
+    "input_text": "Our village borewell water smells terrible and people are developing yellow teeth and severe joint pains.",
+    "expected_domain": "Water",
+    "expected_subdomain": "Water Quality",
+    "expected_problem_type": "Public Health Hazard",
+    "expected_summary": "Borewell groundwater contamination causing fluorosis symptoms and foul odor.",
+    "expected_expertise": [
+      "EXP001",
+      "EXP002",
+      "EXP003"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_urgency": "HIGH"
+  },
+  {
+    "test_id": "AITC002",
+    "input_text": "Paddy crop stems are turning black and rotting across several acres after heavy rains.",
+    "expected_domain": "Agriculture",
+    "expected_subdomain": "Crop Disease",
+    "expected_problem_type": "Agronomic Threat",
+    "expected_summary": "Fungal sheath blight or stem rot outbreak across paddy acreage.",
+    "expected_expertise": [
+      "EXP006",
+      "EXP028",
+      "EXP038"
+    ],
+    "expected_severity": "HIGH",
+    "expected_urgency": "HIGH"
+  },
+  {
+    "test_id": "AITC003",
+    "input_text": "Abandoned coal mine runoff with acidic red water is destroying our crop fields and killing fish in the stream.",
+    "expected_domain": "Environment",
+    "expected_subdomain": "Industrial Waste",
+    "expected_problem_type": "Environmental Degradation",
+    "expected_summary": "Acid mine drainage entering riparian farmlands and waterways.",
+    "expected_expertise": [
+      "EXP002",
+      "EXP004",
+      "EXP018",
+      "EXP039"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_urgency": "HIGH"
+  },
+  {
+    "test_id": "AITC004",
+    "input_text": "Expectant mothers in remote forest hamlets have severe low blood levels and no clinic is nearby.",
+    "expected_domain": "Healthcare",
+    "expected_subdomain": "Maternal Health",
+    "expected_problem_type": "Healthcare Access",
+    "expected_summary": "Severe maternal anemia and lack of antenatal diagnostics in remote forest tracts.",
+    "expected_expertise": [
+      "EXP012",
+      "EXP014",
+      "EXP016"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_urgency": "HIGH"
+  },
+  {
+    "test_id": "AITC005",
+    "input_text": "Heavy monsoon rains submerge main roads and homes under three feet of stagnant water for three days.",
+    "expected_domain": "Urban Infrastructure",
+    "expected_subdomain": "Drainage",
+    "expected_problem_type": "Municipal Failure",
+    "expected_summary": "Severe urban waterlogging and storm drain clogging.",
+    "expected_expertise": [
+      "EXP026",
+      "EXP022"
+    ],
+    "expected_severity": "MEDIUM",
+    "expected_urgency": "HIGH"
+  },
+  {
+    "test_id": "AITC006",
+    "input_text": "Unregulated dumper trucks transporting coal create thick dust clouds causing asthma in children.",
+    "expected_domain": "Environment",
+    "expected_subdomain": "Air Quality",
+    "expected_problem_type": "Industrial Pollution",
+    "expected_summary": "High particulate matter dust pollution along mineral haulage corridors.",
+    "expected_expertise": [
+      "EXP019",
+      "EXP031",
+      "EXP020"
+    ],
+    "expected_severity": "HIGH",
+    "expected_urgency": "HIGH"
+  },
+  {
+    "test_id": "AITC007",
+    "input_text": "Village unpaved dirt road has washed away completely in the rains, preventing ambulances and food supply.",
+    "expected_domain": "Urban Infrastructure",
+    "expected_subdomain": "Rural Roads",
+    "expected_problem_type": "Transportation Bottleneck",
+    "expected_summary": "Rural earthen road collapse due to monsoon erosion.",
+    "expected_expertise": [
+      "EXP027",
+      "EXP018",
+      "EXP036"
+    ],
+    "expected_severity": "MEDIUM",
+    "expected_urgency": "MEDIUM"
+  },
+  {
+    "test_id": "AITC008",
+    "input_text": "Lac farmers are forced to sell produce at throwaway rates to middlemen because of no local processing or weighing units.",
+    "expected_domain": "Rural Livelihood",
+    "expected_subdomain": "Minor Forest Produce",
+    "expected_problem_type": "Livelihood Disruption",
+    "expected_summary": "Middlemen exploitation and absence of value addition for minor forest produce.",
+    "expected_expertise": [
+      "EXP042",
+      "EXP043",
+      "EXP044"
+    ],
+    "expected_severity": "HIGH",
+    "expected_urgency": "MEDIUM"
+  },
+  {
+    "test_id": "AITC009",
+    "input_text": "Solar mini-grid batteries in our off-grid village failed after one year and we have no electricity at night.",
+    "expected_domain": "Energy",
+    "expected_subdomain": "Solar Energy",
+    "expected_problem_type": "Infrastructure Failure",
+    "expected_summary": "Premature battery storage degradation in decentralized solar mini-grid.",
+    "expected_expertise": [
+      "EXP023",
+      "EXP024",
+      "EXP031"
+    ],
+    "expected_severity": "MEDIUM",
+    "expected_urgency": "HIGH"
+  },
+  {
+    "test_id": "AITC010",
+    "input_text": "Tribal children in primary school do not understand textbook Hindi and fail basic reading exams.",
+    "expected_domain": "Education",
+    "expected_subdomain": "Vernacular EdTech",
+    "expected_problem_type": "Educational Inequality",
+    "expected_summary": "Linguistic barriers in primary education for indigenous tribal students.",
+    "expected_expertise": [
+      "EXP040",
+      "EXP029",
+      "EXP035"
+    ],
+    "expected_severity": "HIGH",
+    "expected_urgency": "MEDIUM"
+  },
+  {
+    "test_id": "AITC011",
+    "input_text": "Our tomato crop is rotting in fields because cold storage is sixty kilometers away and wholesale price crashed to two rupees.",
+    "expected_domain": "Agriculture",
+    "expected_subdomain": "Post-Harvest",
+    "expected_problem_type": "Economic Loss",
+    "expected_summary": "Post-harvest vegetable spoilage and lack of decentralized cold storage.",
+    "expected_expertise": [
+      "EXP010",
+      "EXP023",
+      "EXP043"
+    ],
+    "expected_severity": "HIGH",
+    "expected_urgency": "MEDIUM"
+  },
+  {
+    "test_id": "AITC012",
+    "input_text": "Municipal dump garbage is dumped near river without liner, dirty black liquid is entering our well.",
+    "expected_domain": "Environment",
+    "expected_subdomain": "Solid Waste",
+    "expected_problem_type": "Pollution Hazard",
+    "expected_summary": "Municipal waste dumping causing toxic leachate migration into groundwater.",
+    "expected_expertise": [
+      "EXP017",
+      "EXP002",
+      "EXP004"
+    ],
+    "expected_severity": "HIGH",
+    "expected_urgency": "HIGH"
+  },
+  {
+    "test_id": "AITC013",
+    "input_text": "Wild elephant herds enter our village at midnight, trampling crops and breaking grain storehouses.",
+    "expected_domain": "Environment",
+    "expected_subdomain": "Human-Wildlife Conflict",
+    "expected_problem_type": "Public Safety & Crop Loss",
+    "expected_summary": "Nocturnal human-elephant conflict and crop depredation in forest corridor.",
+    "expected_expertise": [
+      "EXP028",
+      "EXP031",
+      "EXP033"
+    ],
+    "expected_severity": "HIGH",
+    "expected_urgency": "CRITICAL"
+  },
+  {
+    "test_id": "AITC014",
+    "input_text": "Community biogas plant completely stops producing gas during cold winter nights.",
+    "expected_domain": "Energy",
+    "expected_subdomain": "Bio-Energy",
+    "expected_problem_type": "Clean Energy Disruption",
+    "expected_summary": "Biogas digester methanogenesis drop due to low ambient winter temperatures.",
+    "expected_expertise": [
+      "EXP025",
+      "EXP017",
+      "EXP036"
+    ],
+    "expected_severity": "LOW",
+    "expected_urgency": "MEDIUM"
+  },
+  {
+    "test_id": "AITC015",
+    "input_text": "गांव के बोरवेल का पानी पीने से दांत पीले हो रहे हैं और लोगों को जोड़ों में भयंकर दर्द हो रहा है।",
+    "expected_domain": "Water",
+    "expected_subdomain": "Water Quality",
+    "expected_problem_type": "Public Health Hazard",
+    "expected_summary": "पीने के पानी में फ्लोराइड की अधिकता से फ्लोरोसिस की समस्या।",
+    "expected_expertise": [
+      "EXP001",
+      "EXP002",
+      "EXP003"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_urgency": "HIGH"
+  },
+  {
+    "test_id": "AITC016",
+    "input_text": "धान की फसल में तना सड़ रहा है और पत्तों पर भूरे धब्बे फैल रहे हैं, पूरी मेहनत बर्बाद हो रही है।",
+    "expected_domain": "Agriculture",
+    "expected_subdomain": "Crop Disease",
+    "expected_problem_type": "Agronomic Threat",
+    "expected_summary": "धान की फसल में शीथ ब्लाइट एवं फंगल रोग का प्रकोप।",
+    "expected_expertise": [
+      "EXP006",
+      "EXP028",
+      "EXP038"
+    ],
+    "expected_severity": "HIGH",
+    "expected_urgency": "HIGH"
+  },
+  {
+    "test_id": "AITC017",
+    "input_text": "कोयला खदान से निकलने वाला लाल जहरीला तेजाबी पानी नदी में मिल रहा है, खेत बंजर हो गए।",
+    "expected_domain": "Environment",
+    "expected_subdomain": "Industrial Waste",
+    "expected_problem_type": "Environmental Degradation",
+    "expected_summary": "अम्लीय खदान अपवाह (Acid Mine Drainage) से नदी और भूमि प्रदूषण।",
+    "expected_expertise": [
+      "EXP002",
+      "EXP004",
+      "EXP018",
+      "EXP039"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_urgency": "HIGH"
+  },
+  {
+    "test_id": "AITC018",
+    "input_text": "गर्भवती महिलाओं में खून की भारी कमी है और प्रसव जांच के लिए कोई अस्पताल पास में नहीं है।",
+    "expected_domain": "Healthcare",
+    "expected_subdomain": "Maternal Health",
+    "expected_problem_type": "Healthcare Access",
+    "expected_summary": "ग्रामीण गर्भवती महिलाओं में गंभीर एनीमिया एवं स्वास्थ्य सेवाओं का अभाव।",
+    "expected_expertise": [
+      "EXP012",
+      "EXP014",
+      "EXP016"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_urgency": "HIGH"
+  },
+  {
+    "test_id": "AITC019",
+    "input_text": "बारिश होते ही शहर की मुख्य सड़कें और नालियां जाम हो जाती हैं और घुटनों तक पानी भर जाता है।",
+    "expected_domain": "Urban Infrastructure",
+    "expected_subdomain": "Drainage",
+    "expected_problem_type": "Municipal Failure",
+    "expected_summary": "शहरी जलनिकासी अवरुद्ध होने से भीषण जलभराव।",
+    "expected_expertise": [
+      "EXP026",
+      "EXP022"
+    ],
+    "expected_severity": "MEDIUM",
+    "expected_urgency": "HIGH"
+  },
+  {
+    "test_id": "AITC020",
+    "input_text": "गांव की कच्ची सड़क बरसात में दलदल बन गई है, कोई गाड़ी या एम्बुलेंस नहीं आ पा रही है।",
+    "expected_domain": "Urban Infrastructure",
+    "expected_subdomain": "Rural Roads",
+    "expected_problem_type": "Transportation Bottleneck",
+    "expected_summary": "बरसात के कारण ग्रामीण सड़क का ध्वस्त होना।",
+    "expected_expertise": [
+      "EXP027",
+      "EXP018",
+      "EXP036"
+    ],
+    "expected_severity": "MEDIUM",
+    "expected_urgency": "MEDIUM"
+  },
+  {
+    "test_id": "AITC021",
+    "input_text": "कच्चे लाह का सही दाम नहीं मिलता, बिचौलिए बहुत कम पैसे देते हैं और कोई मंडी पास में नहीं है।",
+    "expected_domain": "Rural Livelihood",
+    "expected_subdomain": "Minor Forest Produce",
+    "expected_problem_type": "Livelihood Disruption",
+    "expected_summary": "लाह उत्पादक आदिवासी किसानों का बिचौलियों द्वारा शोषण।",
+    "expected_expertise": [
+      "EXP042",
+      "EXP043",
+      "EXP044"
+    ],
+    "expected_severity": "HIGH",
+    "expected_urgency": "MEDIUM"
+  },
+  {
+    "test_id": "AITC022",
+    "input_text": "प्राथमिक विद्यालय में संथाली बच्चों को हिंदी में पढ़ाई समझ नहीं आती जिससे बच्चे स्कूल छोड़ रहे हैं।",
+    "expected_domain": "Education",
+    "expected_subdomain": "Vernacular EdTech",
+    "expected_problem_type": "Educational Inequality",
+    "expected_summary": "स्थानीय भाषा में शिक्षण सामग्री न होने से ड्रॉपआउट।",
+    "expected_expertise": [
+      "EXP040",
+      "EXP029",
+      "EXP035"
+    ],
+    "expected_severity": "HIGH",
+    "expected_urgency": "MEDIUM"
+  },
+  {
+    "test_id": "AITC023",
+    "input_text": "कोयले की धूल से सांस लेना मुश्किल हो गया है, बच्चों और बुजुर्गों को दमा हो रहा है।",
+    "expected_domain": "Environment",
+    "expected_subdomain": "Air Quality",
+    "expected_problem_type": "Industrial Pollution",
+    "expected_summary": "कोयला परिवहन से अत्यधिक वायु प्रदूषण और सांस की बीमारियां।",
+    "expected_expertise": [
+      "EXP019",
+      "EXP031",
+      "EXP020"
+    ],
+    "expected_severity": "HIGH",
+    "expected_urgency": "HIGH"
+  },
+  {
+    "test_id": "AITC024",
+    "input_text": "जंगली हाथियों का झुंड रात में आकर फसलें रौंद देता है और मकान तोड़ देता है।",
+    "expected_domain": "Environment",
+    "expected_subdomain": "Human-Wildlife Conflict",
+    "expected_problem_type": "Public Safety & Crop Loss",
+    "expected_summary": "हाथियों द्वारा फसलों और घरों का विनाश।",
+    "expected_expertise": [
+      "EXP028",
+      "EXP031",
+      "EXP033"
+    ],
+    "expected_severity": "HIGH",
+    "expected_urgency": "CRITICAL"
+  },
+  {
+    "test_id": "AITC025",
+    "input_text": "कोल्ड स्टोरेज न होने से गोभी और टमाटर दो रुपये किलो बेचने पड़ रहे हैं या फेंकने पड़ रहे हैं।",
+    "expected_domain": "Agriculture",
+    "expected_subdomain": "Post-Harvest",
+    "expected_problem_type": "Economic Loss",
+    "expected_summary": "शीत भंडारण के अभाव में सब्जियों की बर्बादी।",
+    "expected_expertise": [
+      "EXP010",
+      "EXP023",
+      "EXP043"
+    ],
+    "expected_severity": "HIGH",
+    "expected_urgency": "MEDIUM"
+  },
+  {
+    "test_id": "AITC026",
+    "input_text": "गांव का सोलर मिनी ग्रिड की बैटरी खराब हो गई है, शाम होते ही पूरा गांव अंधेरे में डूब जाता है।",
+    "expected_domain": "Energy",
+    "expected_subdomain": "Solar Energy",
+    "expected_problem_type": "Infrastructure Failure",
+    "expected_summary": "सोलर ऊर्जा बैटरी बैकअप की खराबी।",
+    "expected_expertise": [
+      "EXP023",
+      "EXP024",
+      "EXP031"
+    ],
+    "expected_severity": "MEDIUM",
+    "expected_urgency": "HIGH"
+  },
+  {
+    "test_id": "AITC027",
+    "input_text": "कूड़े के ढेर से निकलने वाला काला बदबूदार पानी रिसकर हमारे कुएं में जा रहा है।",
+    "expected_domain": "Environment",
+    "expected_subdomain": "Solid Waste",
+    "expected_problem_type": "Pollution Hazard",
+    "expected_summary": "कचरा डंप से लीचेट रिसाव द्वारा भूजल संदूषण।",
+    "expected_expertise": [
+      "EXP017",
+      "EXP002",
+      "EXP004"
+    ],
+    "expected_severity": "HIGH",
+    "expected_urgency": "HIGH"
+  },
+  {
+    "test_id": "AITC028",
+    "input_text": "मक्के की फसल में कीड़ा लग गया है जो अंदर से तना खा रहा है, दवाइयों का कोई असर नहीं हो रहा।",
+    "expected_domain": "Agriculture",
+    "expected_subdomain": "Crop Disease",
+    "expected_problem_type": "Pest Epidemic",
+    "expected_summary": "मक्के में फॉल आर्मीवर्म कीट का गंभीर प्रकोप।",
+    "expected_expertise": [
+      "EXP006",
+      "EXP007",
+      "EXP038"
+    ],
+    "expected_severity": "HIGH",
+    "expected_urgency": "HIGH"
+  },
+  {
+    "test_id": "AITC029",
+    "input_text": "Gaon ke borewell ka paani badbu karta hai aur peene se daant peele ho rahe hain.",
+    "expected_domain": "Water",
+    "expected_subdomain": "Water Quality",
+    "expected_problem_type": "Public Health Hazard",
+    "expected_summary": "Borewell groundwater fluoride contamination causing dental fluorosis.",
+    "expected_expertise": [
+      "EXP001",
+      "EXP002",
+      "EXP003"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_urgency": "HIGH"
+  },
+  {
+    "test_id": "AITC030",
+    "input_text": "Fasal mein disease fail rahi hai, paddy ki baaliyan kali padke sukh rahi hain.",
+    "expected_domain": "Agriculture",
+    "expected_subdomain": "Crop Disease",
+    "expected_problem_type": "Agronomic Threat",
+    "expected_summary": "Paddy crop fungal blight causing premature drying.",
+    "expected_expertise": [
+      "EXP006",
+      "EXP028",
+      "EXP038"
+    ],
+    "expected_severity": "HIGH",
+    "expected_urgency": "HIGH"
+  },
+  {
+    "test_id": "AITC031",
+    "input_text": "Village mein doctor available nahi hota aur pregnant auraton ko checkup ke liye 40 km dur jana padta hai.",
+    "expected_domain": "Healthcare",
+    "expected_subdomain": "Maternal Health",
+    "expected_problem_type": "Healthcare Access",
+    "expected_summary": "Lack of doctors and primary antenatal care facilities in remote villages.",
+    "expected_expertise": [
+      "EXP012",
+      "EXP014",
+      "EXP016"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_urgency": "HIGH"
+  },
+  {
+    "test_id": "AITC032",
+    "input_text": "School students ko local language mein learning material nahi milta isliye bacche dropout kar rahe hain.",
+    "expected_domain": "Education",
+    "expected_subdomain": "Vernacular EdTech",
+    "expected_problem_type": "Educational Inequality",
+    "expected_summary": "Lack of regional tribal language digital education content.",
+    "expected_expertise": [
+      "EXP040",
+      "EXP029",
+      "EXP035"
+    ],
+    "expected_severity": "HIGH",
+    "expected_urgency": "MEDIUM"
+  },
+  {
+    "test_id": "AITC033",
+    "input_text": "Heavy rain hote hi colony mein 3 feet waterlogging ho jati hai aur drains chok ho gaye hain.",
+    "expected_domain": "Urban Infrastructure",
+    "expected_subdomain": "Drainage",
+    "expected_problem_type": "Municipal Failure",
+    "expected_summary": "Severe colony waterlogging due to blocked municipal stormwater drains.",
+    "expected_expertise": [
+      "EXP026",
+      "EXP022"
+    ],
+    "expected_severity": "MEDIUM",
+    "expected_urgency": "HIGH"
+  },
+  {
+    "test_id": "AITC034",
+    "input_text": "Coal mines se red acid water river mein beh raha hai jisse animals bimar pad rahe hain.",
+    "expected_domain": "Environment",
+    "expected_subdomain": "Industrial Waste",
+    "expected_problem_type": "Environmental Degradation",
+    "expected_summary": "Red acid mine drainage discharging into surface streams.",
+    "expected_expertise": [
+      "EXP002",
+      "EXP004",
+      "EXP018",
+      "EXP039"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_urgency": "HIGH"
+  },
+  {
+    "test_id": "AITC035",
+    "input_text": "Kachhi road barish mein puddle ban gayi hai, delivery truck aur bike ka aana impossible hai.",
+    "expected_domain": "Urban Infrastructure",
+    "expected_subdomain": "Rural Roads",
+    "expected_problem_type": "Transportation Bottleneck",
+    "expected_summary": "Earthen rural transport road rendered impassable during rains.",
+    "expected_expertise": [
+      "EXP027",
+      "EXP018",
+      "EXP036"
+    ],
+    "expected_severity": "MEDIUM",
+    "expected_urgency": "MEDIUM"
+  },
+  {
+    "test_id": "AITC036",
+    "input_text": "Market mein middlemen bahut kam daam de rahe hain aur raw lac ka fair price nahi mil raha.",
+    "expected_domain": "Rural Livelihood",
+    "expected_subdomain": "Minor Forest Produce",
+    "expected_problem_type": "Livelihood Disruption",
+    "expected_summary": "Unfair lac pricing due to intermediary dominance in rural markets.",
+    "expected_expertise": [
+      "EXP042",
+      "EXP043",
+      "EXP044"
+    ],
+    "expected_severity": "HIGH",
+    "expected_urgency": "MEDIUM"
+  },
+  {
+    "test_id": "AITC037",
+    "input_text": "Solar mini-grid ka battery bank discharge ho jata hai 1 ghante mein, gaon mein andhera rehta hai.",
+    "expected_domain": "Energy",
+    "expected_subdomain": "Solar Energy",
+    "expected_problem_type": "Infrastructure Failure",
+    "expected_summary": "Solar mini-grid battery degradation causing total nocturnal blackout.",
+    "expected_expertise": [
+      "EXP023",
+      "EXP024",
+      "EXP031"
+    ],
+    "expected_severity": "MEDIUM",
+    "expected_urgency": "HIGH"
+  },
+  {
+    "test_id": "AITC038",
+    "input_text": "Tomato ka bumper harvest hua par local cold storage na hone se sari sabji kharab ho rahi hai.",
+    "expected_domain": "Agriculture",
+    "expected_subdomain": "Post-Harvest",
+    "expected_problem_type": "Economic Loss",
+    "expected_summary": "Excess vegetable spoilage due to missing localized cold chain.",
+    "expected_expertise": [
+      "EXP010",
+      "EXP023",
+      "EXP043"
+    ],
+    "expected_severity": "HIGH",
+    "expected_urgency": "MEDIUM"
+  },
+  {
+    "test_id": "AITC039",
+    "input_text": "Trucks se coal dust udti hai road par jisse gaon ke logon ko saans lene mein problem ho rahi hai.",
+    "expected_domain": "Environment",
+    "expected_subdomain": "Air Quality",
+    "expected_problem_type": "Industrial Pollution",
+    "expected_summary": "Coal transport fugitive dust causing acute respiratory illness.",
+    "expected_expertise": [
+      "EXP019",
+      "EXP031",
+      "EXP020"
+    ],
+    "expected_severity": "HIGH",
+    "expected_urgency": "HIGH"
+  },
+  {
+    "test_id": "AITC040",
+    "input_text": "Forest area se haathi aake raat ko khet barbad kar dete hain aur boundary wall tod rahe hain.",
+    "expected_domain": "Environment",
+    "expected_subdomain": "Human-Wildlife Conflict",
+    "expected_problem_type": "Public Safety & Crop Loss",
+    "expected_summary": "Wild elephant crop raids and property demolition in fringe settlements.",
+    "expected_expertise": [
+      "EXP028",
+      "EXP031",
+      "EXP033"
+    ],
+    "expected_severity": "HIGH",
+    "expected_urgency": "CRITICAL"
+  },
+  {
+    "test_id": "AITC041",
+    "input_text": "Garbage dump ka foul smell aur ganda water pass ke drinking well mein chala gaya hai.",
+    "expected_domain": "Environment",
+    "expected_subdomain": "Solid Waste",
+    "expected_problem_type": "Pollution Hazard",
+    "expected_summary": "Landfill leachate seepage contaminating nearby potable well water.",
+    "expected_expertise": [
+      "EXP017",
+      "EXP002",
+      "EXP004"
+    ],
+    "expected_severity": "HIGH",
+    "expected_urgency": "HIGH"
+  },
+  {
+    "test_id": "AITC042",
+    "input_text": "Maize ki crop mein worm attack ho gaya hai, leaves aur stem pura khokla kar diya hai.",
+    "expected_domain": "Agriculture",
+    "expected_subdomain": "Crop Disease",
+    "expected_problem_type": "Pest Epidemic",
+    "expected_summary": "Severe armyworm infestation destroying maize stems and leaves.",
+    "expected_expertise": [
+      "EXP006",
+      "EXP007",
+      "EXP038"
+    ],
+    "expected_severity": "HIGH",
+    "expected_urgency": "HIGH"
+  }
+]

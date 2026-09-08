@@ -1,0 +1,11 @@
+impact_id,project_id,metric_name,metric_category,baseline,target,actual,unit,measurement_method,measurement_period,evidence_id,verification_status,impact_score
+IMPACT001,PROJ001,Fluoride Concentration in Treated Drinking Water,Water Quality,3.8,1.0,0.75,mg/L,Ion Selective Electrode Spectrophotometry,Monthly (June-August 2026),EVID001,verified,0.96
+IMPACT002,PROJ001,Rural Citizens Provided Fluoride-Safe Drinking Water,People Benefited,0.0,2500.0,2840.0,Persons,Panchayat Household Water Dispenser Registry,August 2026,EVID002,verified,0.94
+IMPACT003,PROJ002,Acid Mine Drainage Stream Water Acidity (pH),Water Quality,3.6,6.5,6.8,pH value,Calibrated Digital pH Electrode Array,Weekly (May-August 2026),EVID003,verified,0.92
+IMPACT004,PROJ003,Kharif Paddy Crop Yield Loss Reduction,Farmers Benefited,45.0,15.0,12.0,% loss,Sample Crop Cutting Experiment (CCE),Kharif Harvest 2026,EVID004,verified,0.93
+IMPACT005,PROJ004,Severe Anemia Detection & Timely Antenatal Referral Rate,Healthcare Access,18.0,80.0,88.0,% screened mothers,ASHA Digital MCTS Telemetry Log,April-August 2026,EVID005,verified,0.97
+IMPACT006,PROJ005,All-Weather Monsoon Pavement Connectivity Maintained,Villages Covered,0.0,100.0,100.0,% monsoon days open,District Transport PWD Logbook,Monsoon 2026,EVID006,verified,0.98
+IMPACT007,PROJ005,Cost Saved per Kilometer by Utilizing Blast Furnace Slag,Cost Saved,0.0,25.0,32.0,% cost reduction,PWD Comparative Bill of Quantities (BOQ),Project Completion July 2026,EVID007,verified,0.95
+IMPACT008,PROJ006,Ambient Particulate Dust (PM10) along Haulage Corridor,Environment,380.0,100.0,115.0,ug/m3,Continuous Ambient Air Quality Monitoring (CAAQM),July-August 2026,EVID008,verified,0.89
+IMPACT009,PROJ007,Tribal Farmer Net Income Realization from Raw Lac,Farmers Benefited,30.0,70.0,78.0,% terminal market price,Cooperative Transaction Receipt Audits,Baisakhi Crop 2026,EVID009,verified,0.96
+IMPACT010,PROJ007,Processing Time Saved per 100 kg Raw Sticklac,Time Saved,28.0,6.0,4.5,Hours,Time-Motion Field Assay,June 2026,EVID010,verified,0.94

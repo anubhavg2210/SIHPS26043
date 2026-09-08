@@ -1,0 +1,25 @@
+pair_id,challenge_a,challenge_b,similarity_score_expected,is_duplicate,cluster_id,reason
+DUP001,CH001,CH001_DUP1,0.94,True,CLUS_WATER_01,Both report severe borewell fluoride contamination and yellow teeth in Daltonganj area.
+DUP002,CH002,CH002_DUP1,0.92,True,CLUS_MINE_01,Both describe acidic red water runoff from coal mines polluting nearby agricultural streams.
+DUP003,CH003,CH003_DUP1,0.91,True,CLUS_AGRI_01,Both report kharif rice crop fungal sheath blight and rotting stems in Ranchi district.
+DUP004,CH006,CH006_DUP1,0.93,True,CLUS_URBAN_01,Both address monsoon stormwater drain blockage causing 3-foot waterlogging in Mango township.
+DUP005,CH011,CH011_DUP1,0.9,True,CLUS_AIR_01,Both complain of heavy unsuppressed coal dumper dust causing asthma and PM10 violations.
+DUP006,CH016,CH016_DUP1,0.92,True,CLUS_ENERGY_01,Both highlight premature failure of lead-acid battery banks in village solar mini-grids.
+DUP007,CH001,CH005,0.72,False,CLUS_WATER_QUAL,"Both concern severe groundwater chemical contamination, but one is fluoride in Palamu and the other is arsenic in Sahibganj."
+DUP008,CH002,CH023,0.68,False,CLUS_IND_WASTE,"Both relate to heavy industrial waste damaging farmland, but one is acid mine drainage and the other is fly ash slurry pipeline rupture."
+DUP009,CH003,CH018,0.65,False,CLUS_CROP_THREAT,"Both are agricultural crop infestations, but one is fungal sheath blight in paddy while the other is invasive armyworm in maize."
+DUP010,CH007,CH022,0.62,False,CLUS_RURAL_HEALTH,"Both address rural maternal and infant health delivery in tribal tracts, but one is chronic anemia screening and the other is vaccine cold chain transit."
+DUP011,CH008,CH026,0.58,False,CLUS_EPIDEMIOLOGY,"Both are severe regional epidemiological health clusters, but one is visceral leishmaniasis (Kala-azar) and the other is chronic kidney disease (CKDu)."
+DUP012,CH012,CH021,0.66,False,CLUS_LIVELIHOOD,"Both concern tribal non-timber forest produce livelihood exploitation, but one is lac processing/middlemen and the other is Tussar silk cocoon rearing."
+DUP013,CH014,CH020,0.7,False,CLUS_WATER_SCARCITY,"Both deal with water shortage, but one is granitic aquifer depletion from deep borewells and the other is surface runoff water loss on steep plateau slopes."
+DUP014,CH015,CH027,0.35,False,NONE,"Both environmental, but one is open municipal dump leachate while the other is illegal timber logging in reserve forests."
+DUP015,CH004,CH010,0.38,False,NONE,"Both in Agriculture, but CH004 is acidic soil micronutrient depletion while CH010 is post-harvest vegetable cold storage deficit."
+DUP016,CH006,CH009,0.42,False,NONE,"Both infrastructure, but CH006 is urban municipal stormwater drain overflow while CH009 is rural dirt road collapse in rainy season."
+DUP017,CH013,CH019,0.45,False,NONE,"Both educational, but CH013 is Santhali vernacular primary language comprehension while CH019 is assistive devices for visually impaired students."
+DUP018,CH016,CH030,0.4,False,NONE,"Both clean energy, but CH016 is solar mini-grid battery failure while CH030 is cold-weather biogas bacterial digestion drop."
+DUP019,CH001,CH013,0.08,False,NONE,Borewell groundwater fluoride contamination vs Santhali language learning in schools.
+DUP020,CH002,CH028,0.05,False,NONE,Acid mine drainage in rivers vs DBT biometric authentication failures at banks.
+DUP021,CH007,CH024,0.06,False,NONE,Maternal anemia in forest hamlets vs underground Jharia coal mine seam fires.
+DUP022,CH010,CH029,0.12,False,NONE,Tomato post-harvest cold storage vs wild elephant nocturnal raids.
+DUP023,CH011,CH019,0.07,False,NONE,Coal dumper dust pollution vs STEM screen-readers for visually impaired youth.
+DUP024,CH014,CH021,0.09,False,NONE,Granitic aquifer depletion vs Tussar silk cocoon rearing humidity control.

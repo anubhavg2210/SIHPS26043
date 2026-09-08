@@ -1,0 +1,13 @@
+reputation_id,user_id,action,points,reason,related_challenge_id,related_project_id,created_at
+REP001,USER001,Submit_Verified_Challenge,50,"Submitted authentic, high-impact societal challenge CH001 with field evidence.",CH001,,2026-08-11 10:05:00
+REP002,USER004,Faculty_Mentorship_Acceptance,100,Accepted primary academic mentorship for Jal Shuddhi Innovators (PROJ001).,CH001,PROJ001,2026-08-12 11:30:00
+REP003,USER002,Submit_Prototype_Solution,120,Authored and submitted validated solution architecture SOL001.,CH001,PROJ001,2026-08-13 16:00:00
+REP004,USER005,Field_Pathology_Validation,80,Conducted laboratory diagnostic confirmation of rice sheath blight for CH003.,CH003,PROJ003,2026-08-15 14:20:00
+REP005,USER003,Complete_Field_Trial,90,Successfully executed edge-AI smartphone trials across 250 Mandar farms.,CH003,PROJ003,2026-08-25 18:00:00
+REP006,USER006,Infrastructure_Project_Delivery,200,Successfully certified 4.2 km slag-stabilized rural road completion (PROJ005).,CH009,PROJ005,2026-08-06 17:30:00
+REP007,USER010,Industry_Execution_Excellence,150,Delivered high-grade slag aggregate pavement ahead of monsoon deadline.,CH009,PROJ005,2026-08-06 17:45:00
+REP008,USER007,Clinical_Protocol_Supervision,110,Supervised rural ASHA non-invasive anemia screening telemetry program (PROJ004).,CH007,PROJ004,2026-08-28 10:15:00
+REP009,USER009,Prototype_Hardware_Donation,80,Supplied calibrated activated alumina filtration columns for community pilot.,CH001,PROJ001,2026-08-15 12:00:00
+REP010,USER014,Grassroots_Community_Mobilization,60,Organized 120 tribal women lac collectors into Torpa processing cooperative.,CH012,PROJ007,2026-08-19 14:00:00
+REP011,USER012,Peer_Solution_Review,40,Completed detailed techno-economic feasibility review for agricultural proposal.,CH004,,2026-08-23 11:30:00
+REP012,USER013,Industry_Mentorship_Support,70,Provided engineering guidelines on industrial byproduct valorization standards.,CH009,PROJ005,2026-08-02 16:00:00

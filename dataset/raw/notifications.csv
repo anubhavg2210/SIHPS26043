@@ -1,0 +1,13 @@
+notification_id,user_id,type,title,message,related_challenge_id,related_project_id,read_status,created_at
+NOTIF001,USER001,Challenge_Validated,Challenge Validated,Your submission 'Groundwater Contamination and High Fluoride Levels' has been approved by the expert panel.,CH001,,True,2026-08-11 10:00:00
+NOTIF002,USER004,Match_Recommendation,New High-Priority Challenge Matched,IIT (ISM) Dhanbad has been matched to Challenge CH001 based on your verified water treatment expertise.,CH001,,True,2026-08-11 10:30:00
+NOTIF003,USER002,Team_Formed,Team Formation Finalized,You have joined team 'Jal Shuddhi Innovators' under mentor Prof. Alok Sinha.,CH001,PROJ001,True,2026-08-14 14:20:00
+NOTIF004,USER009,Industry_Invitation,Co-Development Invitation,You have been tagged as implementation partner for prototype SOL001 (Fluoride Removal Unit).,CH001,PROJ001,True,2026-08-15 09:10:00
+NOTIF005,USER005,Match_Recommendation,Agri-Challenge Match,BAU Ranchi has been matched to Challenge CH003 (Paddy Sheath Blight in Mandar).,CH003,,True,2026-08-13 11:00:00
+NOTIF006,USER003,Milestone_Achieved,Project Milestone Approved,Kisan AI Rakshak has completed field validation across 250 paddy farms in Mandar.,CH003,PROJ003,False,2026-08-26 16:40:00
+NOTIF007,USER006,Project_Completed,Implementation Validated,4.2 km blast furnace slag rural road in Koderma (PROJ005) successfully withstood monsoon testing.,CH009,PROJ005,True,2026-08-06 17:00:00
+NOTIF008,USER011,Government_Alert,Pilot Verification Required,Please review NABL lab testing report EVID001 for Daltonganj defluoridation pilot.,CH001,PROJ001,False,2026-08-16 11:15:00
+NOTIF009,USER007,Evidence_Uploaded,Clinical Audit Complete,ASHA digital telemetry evidence (EVID005) uploaded for Saranda maternal health pilot.,CH007,PROJ004,False,2026-08-29 10:00:00
+NOTIF010,USER014,Project_Progress,Lac Scraping Centre Operational,Torpa lac scraping pilot centre has started operations; fair pricing receipts logged.,CH012,PROJ007,True,2026-08-20 15:30:00
+NOTIF011,USER012,Evaluation_Requested,Solution Evaluation Assigned,You have been assigned to evaluate Solution SOL004 (Basic Slag Soil Conditioner).,CH004,,False,2026-08-22 13:45:00
+NOTIF012,USER013,CSR_Match,Corporate CSR Linkage Opportunity,Challenge CH009 matched with Tata Steel slag valorization initiative.,CH009,PROJ005,True,2026-08-01 09:30:00
