@@ -1,0 +1,400 @@
+[
+  {
+    "test_id": "MTC001",
+    "challenge_id": "CH001",
+    "challenge_title": "Groundwater Contamination and High Fluoride Levels in Borewells",
+    "required_expertise": [
+      "EXP001",
+      "EXP002",
+      "EXP003"
+    ],
+    "expected_top_institutions": [
+      {
+        "institution_id": "INST001",
+        "institution_name": "IIT (ISM) Dhanbad",
+        "match_score_expected": 0.94,
+        "evidence_references": [
+          "IEXP001",
+          "IEXP002",
+          "IEXP003"
+        ],
+        "candidate_faculty": [
+          "FAC001",
+          "FAC003"
+        ],
+        "reason": "Direct verified capabilities in Groundwater Hydrology (EXP001), Water Quality Testing (EXP002), and Water Treatment Technologies (EXP003); supported by NABL analytical lab (FACILITY001) and hydrogeology simulation lab (FACILITY002)."
+      },
+      {
+        "institution_id": "INST004",
+        "institution_name": "BIT Sindri",
+        "match_score_expected": 0.65,
+        "evidence_references": [
+          "IEXP013"
+        ],
+        "candidate_faculty": [
+          "FAC013"
+        ],
+        "reason": "Verified water treatment and filtration capability (EXP003) via bio-adsorbent research in Chemical Engineering, though lacking dedicated regional hydrogeological simulation infrastructure."
+      }
+    ]
+  },
+  {
+    "test_id": "MTC002",
+    "challenge_id": "CH002",
+    "challenge_title": "Acid Mine Drainage Contamination of Subarnarekha Tributaries",
+    "required_expertise": [
+      "EXP002",
+      "EXP004",
+      "EXP018",
+      "EXP039"
+    ],
+    "expected_top_institutions": [
+      {
+        "institution_id": "INST001",
+        "institution_name": "IIT (ISM) Dhanbad",
+        "match_score_expected": 0.96,
+        "evidence_references": [
+          "IEXP002",
+          "IEXP004"
+        ],
+        "candidate_faculty": [
+          "FAC001",
+          "FAC002"
+        ],
+        "reason": "Apex Centre of Mining Environment; nationally recognized expertise in mine waste remediation (EXP018) and water quality monitoring (EXP002); Prof. Gurdeep Singh has decades of acid mine drainage neutralization trials."
+      },
+      {
+        "institution_id": "INST010",
+        "institution_name": "Central University of Jharkhand",
+        "match_score_expected": 0.75,
+        "evidence_references": [
+          "IEXP029"
+        ],
+        "candidate_faculty": [
+          "FAC022"
+        ],
+        "reason": "Strong expertise in environmental bioremediation and phytoremediation of heavy metals (EXP039) supported by dedicated open-air experimental plots (FACILITY012)."
+      }
+    ]
+  },
+  {
+    "test_id": "MTC003",
+    "challenge_id": "CH003",
+    "challenge_title": "Widespread Sheath Blight and Leaf Blast Infestation in Kharif Paddy",
+    "required_expertise": [
+      "EXP006",
+      "EXP028",
+      "EXP038"
+    ],
+    "expected_top_institutions": [
+      {
+        "institution_id": "INST005",
+        "institution_name": "Birsa Agricultural University",
+        "match_score_expected": 0.92,
+        "evidence_references": [
+          "IEXP015"
+        ],
+        "candidate_faculty": [
+          "FAC014"
+        ],
+        "reason": "ICAR-mandated Regional Plant Pathology Center with Dr. Savita Ekka; diagnostic laboratory (FACILITY008) holding regional pathogen banks for paddy blast and biocontrol formulations."
+      },
+      {
+        "institution_id": "INST009",
+        "institution_name": "IIIT Ranchi",
+        "match_score_expected": 0.7,
+        "evidence_references": [
+          "IEXP026"
+        ],
+        "candidate_faculty": [
+          "FAC020"
+        ],
+        "reason": "Technical collaborator for AI-driven visual leaf lesion detection via deep convolutional neural networks (EXP028) using GPU computing clusters (FACILITY011)."
+      }
+    ]
+  },
+  {
+    "test_id": "MTC004",
+    "challenge_id": "CH004",
+    "challenge_title": "Severe Acidic Soil Degradation and Micronutrient Depletion",
+    "required_expertise": [
+      "EXP008",
+      "EXP011"
+    ],
+    "expected_top_institutions": [
+      {
+        "institution_id": "INST005",
+        "institution_name": "Birsa Agricultural University",
+        "match_score_expected": 0.98,
+        "evidence_references": [
+          "IEXP016",
+          "IEXP017"
+        ],
+        "candidate_faculty": [
+          "FAC015"
+        ],
+        "reason": "Apex plateau soil testing authority; Department of Soil Science and Agricultural Chemistry led by Dr. D. K. Shahi specializing in acid red-laterite soil amelioration and plateau crop systems."
+      }
+    ]
+  },
+  {
+    "test_id": "MTC005",
+    "challenge_id": "CH006",
+    "challenge_title": "Recurring Urban Waterlogging and Storm Drain Congestion",
+    "required_expertise": [
+      "EXP026",
+      "EXP022"
+    ],
+    "expected_top_institutions": [
+      {
+        "institution_id": "INST003",
+        "institution_name": "NIT Jamshedpur",
+        "match_score_expected": 0.9,
+        "evidence_references": [
+          "IEXP011"
+        ],
+        "candidate_faculty": [
+          "FAC011"
+        ],
+        "reason": "Geographically immediate institution in East Singhbhum with verified hydraulic engineering lab and urban flood routing expertise (EXP026) under Prof. S. B. Prasad."
+      },
+      {
+        "institution_id": "INST002",
+        "institution_name": "BIT Mesra",
+        "match_score_expected": 0.85,
+        "evidence_references": [
+          "IEXP007"
+        ],
+        "candidate_faculty": [
+          "FAC006",
+          "FAC007"
+        ],
+        "reason": "Premier GIS and spatial analysis capability (EXP022) with satellite digital image processing center (FACILITY004) to map catchment terrain contours and micro-drainage networks."
+      }
+    ]
+  },
+  {
+    "test_id": "MTC006",
+    "challenge_id": "CH007",
+    "challenge_title": "High Neonatal and Maternal Anemia in Remote Forest Hamlets",
+    "required_expertise": [
+      "EXP012",
+      "EXP014",
+      "EXP016"
+    ],
+    "expected_top_institutions": [
+      {
+        "institution_id": "INST006",
+        "institution_name": "RIMS Ranchi",
+        "match_score_expected": 0.95,
+        "evidence_references": [
+          "IEXP019",
+          "IEXP020"
+        ],
+        "candidate_faculty": [
+          "FAC016"
+        ],
+        "reason": "Apex tertiary clinical referral hospital with Department of Preventive & Social Medicine (DEPT014) and active epidemiological field units (FACILITY010) directing state maternal and infant nutrition programs."
+      }
+    ]
+  },
+  {
+    "test_id": "MTC007",
+    "challenge_id": "CH008",
+    "challenge_title": "Endemic Kala-azar (Visceral Leishmaniasis) Transmission Hotspot",
+    "required_expertise": [
+      "EXP012",
+      "EXP013",
+      "EXP015"
+    ],
+    "expected_top_institutions": [
+      {
+        "institution_id": "INST007",
+        "institution_name": "AIIMS Deoghar",
+        "match_score_expected": 0.94,
+        "evidence_references": [
+          "IEXP021",
+          "IEXP022"
+        ],
+        "candidate_faculty": [
+          "FAC017"
+        ],
+        "reason": "Geographically stationed in Santhal Pargana division with dedicated Department of Community & Family Medicine (DEPT015) handling visceral leishmaniasis surveillance and rural telemedicine outposts."
+      },
+      {
+        "institution_id": "INST006",
+        "institution_name": "RIMS Ranchi",
+        "match_score_expected": 0.82,
+        "evidence_references": [
+          "IEXP019"
+        ],
+        "candidate_faculty": [
+          "FAC016"
+        ],
+        "reason": "State epidemiological referral authority capable of secondary clinical diagnostics and community health protocol deployment."
+      }
+    ]
+  },
+  {
+    "test_id": "MTC008",
+    "challenge_id": "CH009",
+    "challenge_title": "Collapse of Rural Earth Roads in Heavy Monsoon Months",
+    "required_expertise": [
+      "EXP027",
+      "EXP018",
+      "EXP036"
+    ],
+    "expected_top_institutions": [
+      {
+        "institution_id": "INST003",
+        "institution_name": "NIT Jamshedpur",
+        "match_score_expected": 0.95,
+        "evidence_references": [
+          "IEXP010"
+        ],
+        "candidate_faculty": [
+          "FAC010"
+        ],
+        "reason": "Prof. A. K. Choudhary is a published authority in soil stabilization using industrial slag and geosynthetics for all-weather rural roads; backed by highway materials testing facility (FACILITY006)."
+      }
+    ]
+  },
+  {
+    "test_id": "MTC009",
+    "challenge_id": "CH011",
+    "challenge_title": "Uncontrolled Coal Dust and Particulate Emissions along Haulage Corridors",
+    "required_expertise": [
+      "EXP019",
+      "EXP031",
+      "EXP020"
+    ],
+    "expected_top_institutions": [
+      {
+        "institution_id": "INST001",
+        "institution_name": "IIT (ISM) Dhanbad",
+        "match_score_expected": 0.93,
+        "evidence_references": [
+          "IEXP004",
+          "IEXP005"
+        ],
+        "candidate_faculty": [
+          "FAC002",
+          "FAC004"
+        ],
+        "reason": "Centre of Mining Environment expertise in airborne dust suppression and particulate monitoring, paired with IoT wireless sensor networks (EXP031) for real-time corridor telemetry."
+      }
+    ]
+  },
+  {
+    "test_id": "MTC010",
+    "challenge_id": "CH012",
+    "challenge_title": "Exploitative Middlemen Cartels and Price Distress in Lac Harvesting",
+    "required_expertise": [
+      "EXP042",
+      "EXP043",
+      "EXP044"
+    ],
+    "expected_top_institutions": [
+      {
+        "institution_id": "INST008",
+        "institution_name": "IIM Ranchi",
+        "match_score_expected": 0.95,
+        "evidence_references": [
+          "IEXP023",
+          "IEXP024",
+          "IEXP025"
+        ],
+        "candidate_faculty": [
+          "FAC018",
+          "FAC019"
+        ],
+        "reason": "Atal Bihari Vajpayee Centre for Public Policy & Innovation; research faculty specializing in rural supply chain optimization (Prof. P. K. Bala) and tribal minor forest produce livelihood pricing (Prof. G. M. Marathe)."
+      },
+      {
+        "institution_id": "INST005",
+        "institution_name": "Birsa Agricultural University",
+        "match_score_expected": 0.8,
+        "evidence_references": [
+          "IEXP017"
+        ],
+        "candidate_faculty": [
+          "FAC015"
+        ],
+        "reason": "Faculty of Forestry research on lac host tree propagation, cultivation economics, and primary processing standards."
+      }
+    ]
+  },
+  {
+    "test_id": "MTC011",
+    "challenge_id": "CH015",
+    "challenge_title": "Unsegregated Open Municipal Dumping and Toxic Leachate Seepage",
+    "required_expertise": [
+      "EXP017",
+      "EXP002",
+      "EXP004"
+    ],
+    "expected_top_institutions": [
+      {
+        "institution_id": "INST002",
+        "institution_name": "BIT Mesra",
+        "match_score_expected": 0.91,
+        "evidence_references": [
+          "IEXP008"
+        ],
+        "candidate_faculty": [
+          "FAC008"
+        ],
+        "reason": "Prof. R. Naresh Kumar's environmental research lab (FACILITY005) specializes in municipal solid waste characterization, leachate treatment, and pilot biomethanation."
+      },
+      {
+        "institution_id": "INST001",
+        "institution_name": "IIT (ISM) Dhanbad",
+        "match_score_expected": 0.88,
+        "evidence_references": [
+          "IEXP002"
+        ],
+        "candidate_faculty": [
+          "FAC001"
+        ],
+        "reason": "NABL environmental testing laboratory (FACILITY001) for groundwater contaminant tracing and chemical leachate neutralization."
+      }
+    ]
+  },
+  {
+    "test_id": "MTC012",
+    "challenge_id": "CH016",
+    "challenge_title": "High Transmission Losses and Frequent Outages in Off-Grid Mini-Grids",
+    "required_expertise": [
+      "EXP023",
+      "EXP024",
+      "EXP031"
+    ],
+    "expected_top_institutions": [
+      {
+        "institution_id": "INST003",
+        "institution_name": "NIT Jamshedpur",
+        "match_score_expected": 0.85,
+        "evidence_references": [
+          "IEXP012"
+        ],
+        "candidate_faculty": [
+          "FAC012"
+        ],
+        "reason": "Renewable Energy and Solar Systems research facility (FACILITY007) with active research on solar power thermal conversion and microgrid efficiency."
+      },
+      {
+        "institution_id": "INST009",
+        "institution_name": "IIIT Ranchi",
+        "match_score_expected": 0.82,
+        "evidence_references": [
+          "IEXP027",
+          "IEXP028"
+        ],
+        "candidate_faculty": [
+          "FAC021"
+        ],
+        "reason": "Dr. Rashmi Sinha's IoT telemetry and embedded microcontroller labs (EXP031, EXP032) capable of engineering remote battery management system (BMS) telemetry."
+      }
+    ]
+  }
+]

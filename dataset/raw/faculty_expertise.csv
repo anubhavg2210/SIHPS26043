@@ -1,0 +1,39 @@
+faculty_expertise_id,faculty_id,expertise_id,confidence_score,evidence,source_url,verification_status
+FEXP001,FAC001,EXP002,0.95,Extensive peer-reviewed publications on industrial contaminant characterization and water quality parameters.,https://www.iitism.ac.in/~alok,verified
+FEXP002,FAC001,EXP003,0.95,Expert in advanced oxidation processes and membrane separation for drinking water purification.,https://www.iitism.ac.in/~alok,verified
+FEXP003,FAC001,EXP004,0.9,Research lead on chemical remediation of effluent and industrial recycling systems.,https://www.iitism.ac.in/~alok,verified
+FEXP004,FAC002,EXP018,0.98,Pioneered research on acid mine drainage neutralization and fly ash stabilization in coal mining belts.,https://www.iitism.ac.in/~gurdeep,verified
+FEXP005,FAC002,EXP020,0.9,Government advisor on environmental impact assessment and mine dump ecological reclamation.,https://www.iitism.ac.in/~gurdeep,verified
+FEXP006,FAC003,EXP001,0.98,"Decades of hydrogeological modeling, aquifer yield mapping, and groundwater exploration in hard-rock terrains.",https://www.iitism.ac.in/~bcsarkar,verified
+FEXP007,FAC003,EXP022,0.85,Spatial GIS and geostatistical modeling of subsurface water reserves.,https://www.iitism.ac.in/~bcsarkar,verified
+FEXP008,FAC004,EXP031,0.95,Published protocols for energy-efficient routing in wireless sensor networks and IoT gateways.,https://www.iitism.ac.in/~chiranjeev,verified
+FEXP009,FAC004,EXP034,0.85,Distributed telemetry architectures and cloud edge data ingestion.,https://www.iitism.ac.in/~chiranjeev,verified
+FEXP010,FAC005,EXP001,0.92,Numerical simulation of subsurface solute flow and aquifer recharge dynamics.,https://www.iitism.ac.in/~srinivas,verified
+FEXP011,FAC005,EXP026,0.9,Runoff hydraulics and municipal stormwater drainage modeling.,https://www.iitism.ac.in/~srinivas,verified
+FEXP012,FAC006,EXP021,0.98,Internationally cited authority on multi-spectral satellite imagery and forest canopy phonology.,https://www.bitmesra.ac.in/Faculty_Profile?facid=12101,verified
+FEXP013,FAC006,EXP022,0.95,Author of geospatial models for land use classification and natural resource tracking.,https://www.bitmesra.ac.in/Faculty_Profile?facid=12101,verified
+FEXP014,FAC007,EXP005,0.92,Remote-sensing-based delineation of watershed check-dams and micro-catchments.,https://www.bitmesra.ac.in/Faculty_Profile?facid=12102,verified
+FEXP015,FAC007,EXP022,0.92,Thematic GIS spatial layers for drought mitigation and soil moisture indexing.,https://www.bitmesra.ac.in/Faculty_Profile?facid=12102,verified
+FEXP016,FAC008,EXP017,0.94,Municipal solid waste compositional analysis and leachate treatment engineering.,https://www.bitmesra.ac.in/Faculty_Profile?facid=7001,verified
+FEXP017,FAC008,EXP025,0.88,Anaerobic digester design and biogas yield enhancement from organic substrates.,https://www.bitmesra.ac.in/Faculty_Profile?facid=7001,verified
+FEXP018,FAC009,EXP030,0.95,Machine learning algorithms for predictive scoring and tabular anomaly detection.,https://www.bitmesra.ac.in/Faculty_Profile?facid=7501,verified
+FEXP019,FAC010,EXP027,0.95,Field-validated designs of low-cost rural roads utilizing stabilized soil and blast furnace slag.,https://www.nitjsr.ac.in/faculty/civil/akchoudhary,verified
+FEXP020,FAC010,EXP018,0.9,Reuse of industrial overburden and coal ash in civil highway construction.,https://www.nitjsr.ac.in/faculty/civil/akchoudhary,verified
+FEXP021,FAC011,EXP026,0.9,Hydraulic routing calculations for urban storm culverts and waterlogged basins.,https://www.nitjsr.ac.in/faculty/civil/sbprasad,verified
+FEXP022,FAC012,EXP023,0.9,Thermodynamic modeling of solar collector panels and decentralized solar heating.,https://www.nitjsr.ac.in/faculty/me/sanjay,verified
+FEXP023,FAC013,EXP003,0.92,Chemical kinetic models of heavy metal extraction using agricultural waste bio-sorbents.,https://www.bitsindri.ac.in/faculty/ghanshyam,verified
+FEXP024,FAC014,EXP006,0.96,"Field diagnosis and biological control of rice blast, sheath blight, and tribal pulse diseases in Jharkhand.",https://www.bauranchi.org/faculty/savita-ekka,verified
+FEXP025,FAC015,EXP008,0.97,Principal investigator for soil testing campaigns across acidic Chota Nagpur plateau belts.,https://www.bauranchi.org/faculty/dk-shahi,verified
+FEXP026,FAC015,EXP011,0.92,Optimization of soil fertility regimes for dryland plateau crops and millets.,https://www.bauranchi.org/faculty/dk-shahi,verified
+FEXP027,FAC016,EXP012,0.98,Heads community outreach; manages state epidemiological response and public primary care programs.,https://www.rimsranchi.ac.in/faculty/vivek-kashyap,verified
+FEXP028,FAC016,EXP014,0.94,"Program director for maternal, newborn, and infant malnutrition prevention initiatives in Jharkhand.",https://www.rimsranchi.ac.in/faculty/vivek-kashyap,verified
+FEXP029,FAC017,EXP013,0.93,Active epidemiological monitoring of Kala-azar and vector-borne infections in Santhal Pargana.,https://www.aiimsdeoghar.edu.in/faculty/santosh-kumar,verified
+FEXP030,FAC017,EXP015,0.91,Deploys teleconsultation workflows linking sub-centers to apex medical specialists.,https://www.aiimsdeoghar.edu.in/faculty/santosh-kumar,verified
+FEXP031,FAC018,EXP043,0.95,Operations research and logistical optimization modeling for agricultural aggregation and distribution.,https://www.iimranchi.ac.in/faculty/pkbala,verified
+FEXP032,FAC019,EXP042,0.92,Field research on minor forest produce collectives and value chain empowerment for tribal artisans.,https://www.iimranchi.ac.in/faculty/gmarathe,verified
+FEXP033,FAC019,EXP044,0.9,Quantitative and qualitative assessment of rural welfare scheme delivery.,https://www.iimranchi.ac.in/faculty/gmarathe,verified
+FEXP034,FAC020,EXP028,0.96,Published neural network architectures for visual anomaly detection and automated leaf-lesion identification.,https://www.iiitranchi.ac.in/faculty/bharat,verified
+FEXP035,FAC021,EXP031,0.94,Hardware design of low-power sensor nodes and LoRa transmission modules for environmental tracking.,https://www.iiitranchi.ac.in/faculty/rashmi,verified
+FEXP036,FAC021,EXP032,0.92,Microcontroller firmware development for duty-cycled battery-powered field sensors.,https://www.iiitranchi.ac.in/faculty/rashmi,verified
+FEXP037,FAC022,EXP039,0.95,Phytoremediation of heavy-metal contaminated soils and coal ash dumps using hyperaccumulating indigenous flora.,https://www.cuj.ac.in/faculty/manoj-kumar,verified
+FEXP038,FAC022,EXP020,0.91,Published ecological rehabilitation frameworks for degraded open-cast mining zones.,https://www.cuj.ac.in/faculty/manoj-kumar,verified
