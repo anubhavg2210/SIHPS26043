@@ -1,19 +1,22 @@
 const express = require("express");
 const pool = require("./config/db");
 const cors = require("cors");
+
 const {
     findMatchingInstitutions
 } = require("./services/matchingService");
 
-const challengeRoutes =
-    require("./routes/challengeRoutes");
-
+const challengeRoutes = require("./routes/challengeRoutes");
+const authRoutes = require("./routes/authRoutes");
+const problemRoutes = require("./routes/problemRoutes");
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
-app.use(express.json());
+app.use("/api/auth", authRoutes);
+app.use("/api/problems", problemRoutes);
 app.use("/api/challenges", challengeRoutes);
 
 app.get("/health", async (req, res) => {
@@ -34,6 +37,7 @@ app.get("/health", async (req, res) => {
         });
     }
 });
+
 app.get("/test-matching", async (req, res) => {
     try {
         const requiredExpertise = [
@@ -63,6 +67,7 @@ app.get("/test-matching", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
+
 console.log("🔥 SIH26043 SERVER FILE LOADED - TEST MATCHING VERSION");
 
 app.listen(PORT, () => {
