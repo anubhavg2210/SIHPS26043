@@ -10,6 +10,7 @@ const challengeRoutes = require("./routes/challengeRoutes");
 const authRoutes = require("./routes/authRoutes");
 const problemRoutes = require("./routes/problemRoutes");
 const clusterRoutes = require("./routes/clusterRoutes");
+const authorityDashboardRoutes = require("./routes/authorityDashboardRoutes");
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/problems", problemRoutes);
 app.use("/api/challenges", challengeRoutes);
 app.use("/api/clusters", clusterRoutes);
+app.use("/api/authority/dashboard", authorityDashboardRoutes);
 
 app.get("/health", async (req, res) => {
     try {
