@@ -11,6 +11,11 @@ const {
 } = require("../controllers/problemController");
 
 const {
+    getProblemCluster,
+    triggerClustering
+} = require("../controllers/clusteringController");
+
+const {
     authenticate
 } = require("../middleware/authMiddleware");
 
@@ -49,6 +54,22 @@ router.get(
     "/:id/duplicates",
     authenticate,
     getDuplicates
+);
+
+// GET /api/problems/:id/cluster
+router.get(
+    "/:id/cluster",
+    authenticate,
+    getProblemCluster
+);
+
+// POST /api/problems/:id/cluster — manually trigger / re-run clustering.
+// Restricted to AUTHORITY and ADMIN so citizens cannot spam re-clustering.
+router.post(
+    "/:id/cluster",
+    authenticate,
+    authorizeRoles("AUTHORITY", "ADMIN"),
+    triggerClustering
 );
 
 router.get(

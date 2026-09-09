@@ -8,6 +8,11 @@ const {
     findDuplicates,
     getDuplicatesForProblem
 } = require("../services/duplicateService");
+
+const {
+    clusterProblem
+} = require("../services/clusteringService");
+
 async function createProblem(req, res) {
     try {
         const {
@@ -121,11 +126,34 @@ console.log("🔥 PRIORITY SCORE:", priorityScore);
             };
         }
 
+        // ------------------------------------------------------------------
+        // Clustering — runs after duplicate detection. Errors must never
+        // cause problem creation to fail.
+        // ------------------------------------------------------------------
+        let clusterCheck = null;
+
+        try {
+            const clusterResult = await clusterProblem(problem.id);
+            clusterCheck = {
+                checked: true,
+                action: clusterResult.action,
+                cluster_id: clusterResult.cluster_id,
+                cluster: clusterResult.cluster || null
+            };
+        } catch (clusterError) {
+            console.error("⚠️  Clustering failed (non-fatal):", clusterError.message);
+            clusterCheck = {
+                checked: false,
+                error: "Clustering temporarily unavailable"
+            };
+        }
+
         res.status(201).json({
             message: "Problem submitted successfully",
             problem,
             ai_analysis: ai,
-            duplicate_check: duplicateCheck
+            duplicate_check: duplicateCheck,
+            cluster_check: clusterCheck
         });
 
     } catch (error) {
