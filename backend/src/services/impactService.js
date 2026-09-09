@@ -829,6 +829,51 @@ async function verifyImpactAssessment({ assessmentId, user, payload }) {
     // Recalculate score with new verification points
     const scoreComponents = await recalculateAndPersistScore(assessmentId);
 
+    // Non-blocking Module 14 Reputation Integration (Mandatory Fix 3)
+    try {
+        const { recordEvent, recordReversal } = require("./reputationService");
+        const relRes = await pool.query(
+            `SELECT si.executing_user_id, s.submitted_by, s.title
+             FROM implementation_impact_assessments iia
+             JOIN solution_implementations si ON si.id = iia.implementation_id
+             JOIN solutions s ON s.id = si.solution_id
+             WHERE iia.id = $1`,
+            [assessmentId]
+        );
+
+        if (relRes.rows.length > 0) {
+            const rel = relRes.rows[0];
+            const targetUsers = Array.from(new Set([rel.submitted_by, rel.executing_user_id].filter(Boolean)));
+
+            if (newStatus === "VERIFIED") {
+                for (const uid of targetUsers) {
+                    await recordEvent({
+                        userId: uid,
+                        contributionType: "IMPACT_VERIFIED",
+                        sourceEntityType: "IMPACT",
+                        sourceEntityId: assessmentId,
+                        actorId: user.id,
+                        description: `Verified societal impact for solution "${rel.title}"`,
+                        impactScore: scoreComponents.total_score,
+                    });
+                }
+            } else if (newStatus === "REJECTED" && currentStatus === "VERIFIED") {
+                for (const uid of targetUsers) {
+                    await recordReversal({
+                        userId: uid,
+                        originalContributionType: "IMPACT_VERIFIED",
+                        sourceEntityType: "IMPACT",
+                        sourceEntityId: assessmentId,
+                        actorId: user.id,
+                        reason: payload.verification_notes || "Impact assessment rejected/revoked",
+                    });
+                }
+            }
+        }
+    } catch (repErr) {
+        console.error("Non-blocking reputation error on impact verification:", repErr);
+    }
+
     return formatAssessment(updateRes.rows[0], scoreComponents);
 }
 
@@ -864,6 +909,36 @@ async function markSustainedOutcome({ assessmentId, user, payload }) {
     );
 
     const scoreComponents = await computeImpactScore(assessmentId, updateRes.rows[0].verification_status);
+
+    // Non-blocking Module 14 Reputation Integration for sustained outcome
+    try {
+        const { recordEvent } = require("./reputationService");
+        const relRes = await pool.query(
+            `SELECT si.executing_user_id, s.submitted_by, s.title
+             FROM implementation_impact_assessments iia
+             JOIN solution_implementations si ON si.id = iia.implementation_id
+             JOIN solutions s ON s.id = si.solution_id
+             WHERE iia.id = $1`,
+            [assessmentId]
+        );
+        if (relRes.rows.length > 0) {
+            const rel = relRes.rows[0];
+            const targetUsers = Array.from(new Set([rel.submitted_by, rel.executing_user_id].filter(Boolean)));
+            for (const uid of targetUsers) {
+                await recordEvent({
+                    userId: uid,
+                    contributionType: "IMPACT_SUSTAINED_VERIFIED",
+                    sourceEntityType: "IMPACT",
+                    sourceEntityId: assessmentId,
+                    actorId: user.id,
+                    description: `Sustained 6-month societal impact verified for "${rel.title}"`,
+                });
+            }
+        }
+    } catch (repErr) {
+        console.error("Non-blocking reputation error on sustained outcome:", repErr);
+    }
+
     return formatAssessment(updateRes.rows[0], scoreComponents);
 }
 

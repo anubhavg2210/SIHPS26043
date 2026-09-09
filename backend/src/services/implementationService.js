@@ -472,6 +472,23 @@ async function updateStatus({ id, newStatus, user }) {
             `UPDATE solutions SET status = 'COMPLETED', updated_at = CURRENT_TIMESTAMP WHERE id = $1`,
             [impl.solution_id]
         );
+
+        // Non-blocking Module 14 Reputation Integration (Mandatory Fix 3)
+        try {
+            const { recordEvent } = require("./reputationService");
+            if (impl.executing_user_id) {
+                await recordEvent({
+                    userId: impl.executing_user_id,
+                    contributionType: "IMPLEMENTATION_COMPLETED",
+                    sourceEntityType: "IMPLEMENTATION",
+                    sourceEntityId: id,
+                    actorId: user.id,
+                    description: `Completed implementation pilot "${impl.title}"`,
+                });
+            }
+        } catch (repErr) {
+            console.error("Non-blocking reputation error on implementation complete:", repErr);
+        }
     }
 
     // Log update
@@ -661,6 +678,21 @@ async function updateMilestone({ implementationId, milestoneId, user, payload })
              VALUES ($1, $2, 'MILESTONE_REACHED', $3)`,
             [implementationId, user.id, `Milestone completed: "${title}"`]
         );
+
+        // Non-blocking Module 14 Reputation Integration (Mandatory Fix 3)
+        try {
+            const { recordEvent } = require("./reputationService");
+            await recordEvent({
+                userId: user.id,
+                contributionType: "MILESTONE_COMPLETED",
+                sourceEntityType: "MILESTONE",
+                sourceEntityId: milestoneId,
+                actorId: user.id,
+                description: `Completed milestone "${title}"`,
+            });
+        } catch (repErr) {
+            console.error("Non-blocking reputation error on milestone complete:", repErr);
+        }
     }
 
     return updateRes.rows[0];

@@ -132,6 +132,48 @@ async function updateSolutionStatus({ solutionId, newStatus, user }) {
         [trimmedStatus, solutionId]
     );
 
+    // Non-blocking Module 14 Reputation Integration (Mandatory Fix 3)
+    if (trimmedStatus === "APPROVED") {
+        try {
+            const { recordEvent } = require("./reputationService");
+            const evalRes = await pool.query(
+                `SELECT composite_score FROM solution_evaluations WHERE solution_id = $1 ORDER BY created_at DESC LIMIT 1`,
+                [solutionId]
+            );
+            const evalScore = evalRes.rows.length > 0 ? Number(evalRes.rows[0].composite_score) : null;
+
+            if (solRes.rows[0].submitted_by) {
+                await recordEvent({
+                    userId: solRes.rows[0].submitted_by,
+                    contributionType: "SOLUTION_APPROVED",
+                    sourceEntityType: "SOLUTION",
+                    sourceEntityId: solutionId,
+                    actorId: user.id,
+                    description: `Solution "${solRes.rows[0].title}" approved`,
+                    evaluationScore: evalScore,
+                });
+            }
+
+            const contribRes = await pool.query(
+                `SELECT user_id, contribution_role FROM solution_contributors WHERE solution_id = $1`,
+                [solutionId]
+            );
+            for (const c of contribRes.rows) {
+                await recordEvent({
+                    userId: c.user_id,
+                    contributionType: "SOLUTION_CONTRIBUTION_APPROVED",
+                    sourceEntityType: "SOLUTION",
+                    sourceEntityId: solutionId,
+                    actorId: user.id,
+                    description: `Contributor (${c.contribution_role}) on approved solution "${solRes.rows[0].title}"`,
+                    evaluationScore: evalScore,
+                });
+            }
+        } catch (repErr) {
+            console.error("Non-blocking reputation error on solution approval:", repErr);
+        }
+    }
+
     return updateRes.rows[0];
 }
 

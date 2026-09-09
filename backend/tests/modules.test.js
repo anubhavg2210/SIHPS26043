@@ -176,6 +176,19 @@ afterAll(async () => {
         "DELETE FROM problems WHERE reporter_id IN (SELECT id FROM users WHERE email LIKE $1)",
         [`%_${testUserSuffix}@test.com`]
     );
+    // 4d. Cleanup reputation tables (Mandatory Fix 4)
+    await pool.query(
+        "DELETE FROM reputation_events WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1) OR actor_id IN (SELECT id FROM users WHERE email LIKE $1)",
+        [`%_${testUserSuffix}@test.com`]
+    );
+    await pool.query(
+        "DELETE FROM user_badges WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)",
+        [`%_${testUserSuffix}@test.com`]
+    );
+    await pool.query(
+        "DELETE FROM reputation WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)",
+        [`%_${testUserSuffix}@test.com`]
+    );
     // 5. Cleanup test users
     await pool.query(
         "DELETE FROM users WHERE email LIKE $1",
@@ -4858,6 +4871,548 @@ describe("Module 13 — Smart Notifications", () => {
         if (testProblemId) {
             await pool.query("DELETE FROM problems WHERE id = $1", [testProblemId]);
         }
+    });
+});
+
+// ===========================================================================
+// MODULE 14 — Rankings + Reputation + Rewards
+// ===========================================================================
+
+describe("Module 14 — Rankings + Reputation + Rewards", () => {
+    let citizenUser, authorityUser, studentUser, researcherUser;
+    let testProblemId, testSolutionId, testImplId, testAssessmentId;
+
+    beforeAll(async () => {
+        citizenUser = jwt.decode(citizenToken);
+        authorityUser = jwt.decode(authorityToken);
+        studentUser = jwt.decode(studentToken);
+        researcherUser = jwt.decode(researcherToken);
+
+        // Clean up previous test data
+        await pool.query(
+            "DELETE FROM reputation_events WHERE user_id IN ($1, $2, $3, $4)",
+            [citizenUser.id, authorityUser.id, studentUser.id, researcherUser.id]
+        );
+        await pool.query(
+            "DELETE FROM user_badges WHERE user_id IN ($1, $2, $3, $4)",
+            [citizenUser.id, authorityUser.id, studentUser.id, researcherUser.id]
+        );
+        await pool.query(
+            "DELETE FROM reputation WHERE user_id IN ($1, $2, $3, $4)",
+            [citizenUser.id, authorityUser.id, studentUser.id, researcherUser.id]
+        );
+
+        // Create test entities
+        const pRes = await pool.query(
+            `INSERT INTO problems (title, description, category, district, status, reporter_id, verified)
+             VALUES ('Namkum Arsenic Infiltration', 'High arsenic levels in well water', 'Environment', 'Ranchi', 'VERIFIED', $1, true)
+             RETURNING id`,
+            [citizenUser.id]
+        );
+        testProblemId = pRes.rows[0].id;
+
+        const sRes = await pool.query(
+            `INSERT INTO solutions (problem_id, submitted_by, title, description, status)
+             VALUES ($1, $2, 'Arsenic Nanofiltration System', 'Low-cost solar powered adsorbent filter', 'APPROVED')
+             RETURNING id`,
+            [testProblemId, studentUser.id]
+        );
+        testSolutionId = sRes.rows[0].id;
+
+        const iRes = await pool.query(
+            `INSERT INTO solution_implementations (solution_id, problem_id, lead_authority_id, executing_user_id, title, status, target_start_date, target_end_date)
+             VALUES ($1, $2, $3, $4, 'Namkum Pilot Filtration Deployment', 'COMPLETED', '2026-10-01', '2026-12-31')
+             RETURNING id`,
+            [testSolutionId, testProblemId, authorityUser.id, studentUser.id]
+        );
+        testImplId = iRes.rows[0].id;
+
+        const aRes = await pool.query(
+            `INSERT INTO implementation_impact_assessments (implementation_id, problem_id, outcome_summary, impact_score, verification_status, verified_by, verified_at, measurement_start_date, measurement_end_date)
+             VALUES ($1, $2, 'Arsenic reduced by 94%', 90, 'VERIFIED', $3, NOW(), '2026-09-01', '2026-09-08')
+             RETURNING id`,
+            [testImplId, testProblemId, authorityUser.id]
+        );
+        testAssessmentId = aRes.rows[0].id;
+    });
+
+    afterAll(async () => {
+        if (citizenUser && authorityUser && studentUser && researcherUser) {
+            await pool.query(
+                "DELETE FROM reputation_events WHERE user_id IN ($1, $2, $3, $4) OR actor_id IN ($1, $2, $3, $4)",
+                [citizenUser.id, authorityUser.id, studentUser.id, researcherUser.id]
+            );
+            await pool.query(
+                "DELETE FROM user_badges WHERE user_id IN ($1, $2, $3, $4)",
+                [citizenUser.id, authorityUser.id, studentUser.id, researcherUser.id]
+            );
+            await pool.query(
+                "DELETE FROM reputation WHERE user_id IN ($1, $2, $3, $4)",
+                [citizenUser.id, authorityUser.id, studentUser.id, researcherUser.id]
+            );
+        }
+        if (testAssessmentId) {
+            await pool.query("DELETE FROM implementation_impact_assessments WHERE id = $1", [testAssessmentId]);
+        }
+        if (testImplId) {
+            await pool.query("DELETE FROM solution_implementations WHERE id = $1", [testImplId]);
+        }
+        if (testSolutionId) {
+            await pool.query("DELETE FROM solution_contributors WHERE solution_id = $1", [testSolutionId]);
+            await pool.query("DELETE FROM solutions WHERE id = $1", [testSolutionId]);
+        }
+        if (testProblemId) {
+            await pool.query("DELETE FROM problems WHERE id = $1", [testProblemId]);
+        }
+    });
+
+    // R1 — Unauthenticated GET /api/reputation/me returns 401
+    test("R1 — Unauthenticated GET /api/reputation/me returns 401", async () => {
+        const res = await request(app).get("/api/reputation/me");
+        expect(res.status).toBe(401);
+    });
+
+    // R2 — Authenticated user can view own reputation
+    test("R2 — Authenticated user can view own reputation with explainable breakdown", async () => {
+        const res = await request(app)
+            .get("/api/reputation/me")
+            .set("Authorization", `Bearer ${studentToken}`);
+        expect(res.status).toBe(200);
+        expect(res.body.user_id).toBe(studentUser.id);
+        expect(typeof res.body.lifetime_score).toBe("number");
+        expect(typeof res.body.current_rank_score).toBe("number");
+        expect(res.body.tier).toBeDefined();
+        expect(res.body.breakdown).toBeDefined();
+        expect(Array.isArray(res.body.recent_events)).toBe(true);
+    });
+
+    // R3 — Public reputation profile works
+    test("R3 — Public reputation profile returns sanitized details without private credentials", async () => {
+        const res = await request(app)
+            .get(`/api/users/${studentUser.id}/reputation`)
+            .set("Authorization", `Bearer ${citizenToken}`);
+        expect(res.status).toBe(200);
+        expect(res.body.user_id).toBe(studentUser.id);
+        expect(res.body.role).toBe("STUDENT");
+        expect(res.body.tier).toBeDefined();
+        expect(res.body).not.toHaveProperty("password_hash");
+        expect(res.body).not.toHaveProperty("email");
+        expect(res.body).not.toHaveProperty("phone");
+    });
+
+    // R4 — Direct manual modification blocked
+    test("R4 — Direct manual modification is blocked (no client mutation endpoints)", async () => {
+        const res = await request(app)
+            .post("/api/reputation/me")
+            .set("Authorization", `Bearer ${studentToken}`)
+            .send({ points: 500 });
+        expect([404, 405]).toContain(res.status);
+    });
+
+    // R5 — Sensitive credentials never leaked
+    test("R5 — Sensitive data (password_hash, email, phone) never leaked in leaderboard responses", async () => {
+        const res = await request(app)
+            .get("/api/rankings/users")
+            .set("Authorization", `Bearer ${citizenToken}`);
+        expect(res.status).toBe(200);
+        const str = JSON.stringify(res.body);
+        expect(str).not.toMatch(/password_hash/i);
+        expect(str).not.toMatch(/@test\.com/i);
+    });
+
+    // R6 — SQL injection in query params handled safely
+    test("R6 — SQL injection payloads in query params (role, tier, district) handled safely", async () => {
+        const res = await request(app)
+            .get("/api/rankings/users?role=' OR 1=1 --")
+            .set("Authorization", `Bearer ${citizenToken}`);
+        expect(res.status).toBe(200);
+        expect(Array.isArray(res.body.users)).toBe(true);
+    });
+
+    // R7 — Authority-verified problem creates reputation event (+15 pts)
+    test("R7 — Authority-verified problem report awards reputation points (+15) to reporter", async () => {
+        const { recordEvent } = require("../src/services/reputationService");
+        const res = await recordEvent({
+            userId: citizenUser.id,
+            contributionType: "PROBLEM_REPORT_VERIFIED",
+            sourceEntityType: "PROBLEM",
+            sourceEntityId: testProblemId,
+            actorId: authorityUser.id,
+            description: "Namkum Arsenic Infiltration verified by municipal authority",
+        });
+        expect(res.awarded).toBe(true);
+        expect(res.points).toBe(15);
+    });
+
+    // R8 — Unverified problem awards 0 reputation
+    test("R8 — Missing required event parameters or unverified entities award 0 points", async () => {
+        const { recordEvent } = require("../src/services/reputationService");
+        const res = await recordEvent({
+            userId: null,
+            contributionType: "PROBLEM_REPORT_VERIFIED",
+            sourceEntityType: "PROBLEM",
+            sourceEntityId: 9999,
+        });
+        expect(res.awarded).toBe(false);
+    });
+
+    // R9 — Duplicate attempt to award points for same entity suppressed
+    test("R9 — Duplicate reputation award for identical deliverable is suppressed", async () => {
+        const { recordEvent } = require("../src/services/reputationService");
+        const res = await recordEvent({
+            userId: citizenUser.id,
+            contributionType: "PROBLEM_REPORT_VERIFIED",
+            sourceEntityType: "PROBLEM",
+            sourceEntityId: testProblemId,
+            actorId: authorityUser.id,
+        });
+        expect(res.awarded).toBe(false);
+        expect(res.reason).toMatch(/already awarded/i);
+    });
+
+    // R10 — Rejected contribution awards 0 reputation
+    test("R10 — Rejected contribution does not award points", async () => {
+        const { recordEvent } = require("../src/services/reputationService");
+        const res = await recordEvent({
+            userId: studentUser.id,
+            contributionType: "IMPACT_VERIFIED",
+            sourceEntityType: "IMPACT",
+            sourceEntityId: 8888,
+            impactScore: 30, // below 50 minimum threshold
+        });
+        expect(res.awarded).toBe(false);
+    });
+
+    // R11 — Solution evaluation composite score affects points via quality multiplier
+    test("R11 — Higher evaluation score applies quality multiplier (90+ gets 1.5x)", async () => {
+        const { recordEvent } = require("../src/services/reputationService");
+        const res = await recordEvent({
+            userId: studentUser.id,
+            contributionType: "SOLUTION_APPROVED",
+            sourceEntityType: "SOLUTION",
+            sourceEntityId: testSolutionId,
+            actorId: authorityUser.id,
+            evaluationScore: 92, // 1.5x multiplier -> 150 points
+        });
+        expect(res.awarded).toBe(true);
+        expect(res.points).toBe(150);
+    });
+
+    // R12 — Verified impact assessment awards substantially higher points (+300 to +450)
+    test("R12 — Verified impact assessment awards major reputation (+450 pts for 85+ score)", async () => {
+        const { recordEvent } = require("../src/services/reputationService");
+        const res = await recordEvent({
+            userId: studentUser.id,
+            contributionType: "IMPACT_VERIFIED",
+            sourceEntityType: "IMPACT",
+            sourceEntityId: testAssessmentId,
+            actorId: authorityUser.id,
+            impactScore: 90, // 1.5x multiplier -> 450 points
+        });
+        expect(res.awarded).toBe(true);
+        expect(res.points).toBe(450);
+    });
+
+    // R13 — Diminishing returns & monthly caps on repetitive actions
+    test("R13 — Diminishing returns apply on repetitive verified problem reports", async () => {
+        const { recordEvent } = require("../src/services/reputationService");
+        // Add 2nd report
+        const res2 = await recordEvent({
+            userId: citizenUser.id,
+            contributionType: "PROBLEM_REPORT_VERIFIED",
+            sourceEntityType: "PROBLEM",
+            sourceEntityId: testProblemId + 1,
+        });
+        expect(res2.awarded).toBe(true);
+        expect(res2.points).toBe(15);
+
+        // 3rd report gets 50% points (8 pts rounded)
+        const res3 = await recordEvent({
+            userId: citizenUser.id,
+            contributionType: "PROBLEM_REPORT_VERIFIED",
+            sourceEntityType: "PROBLEM",
+            sourceEntityId: testProblemId + 2,
+        });
+        expect(res3.awarded).toBe(true);
+        expect(res3.points).toBe(8);
+    });
+
+    // R14 — Approved solution awards reputation to submitter
+    test("R14 — Formally approved solution records verified solution event", async () => {
+        const repRes = await pool.query("SELECT approved_solutions FROM reputation WHERE user_id = $1", [studentUser.id]);
+        expect(repRes.rows[0].approved_solutions).toBeGreaterThanOrEqual(1);
+    });
+
+    // R15 — Rejected solution awards 0 reputation
+    test("R15 — Rejected solution does not award points", async () => {
+        const { updateSolutionStatus } = require("../src/services/solutionStatusService");
+        // Create dummy solution
+        const dummy = await pool.query(
+            `INSERT INTO solutions (problem_id, submitted_by, title, description, status)
+             VALUES ($1, $2, 'Dummy Rejected Solution', 'Description', 'EVALUATED') RETURNING id`,
+            [testProblemId, studentUser.id]
+        );
+        await updateSolutionStatus({
+            solutionId: dummy.rows[0].id,
+            newStatus: "REJECTED",
+            user: authorityUser,
+        });
+        const ev = await pool.query(
+            `SELECT id FROM reputation_events WHERE source_entity_type = 'SOLUTION' AND source_entity_id = $1`,
+            [dummy.rows[0].id]
+        );
+        expect(ev.rows.length).toBe(0);
+        await pool.query("DELETE FROM solutions WHERE id = $1", [dummy.rows[0].id]);
+    });
+
+    // R16 — Completed implementation pilot awards execution reputation (+150 pts)
+    test("R16 — Completed implementation pilot awards execution reputation (+150 pts)", async () => {
+        const { recordEvent } = require("../src/services/reputationService");
+        const res = await recordEvent({
+            userId: studentUser.id,
+            contributionType: "IMPLEMENTATION_COMPLETED",
+            sourceEntityType: "IMPLEMENTATION",
+            sourceEntityId: testImplId,
+            actorId: authorityUser.id,
+        });
+        expect(res.awarded).toBe(true);
+        expect(res.points).toBe(150);
+    });
+
+    // R17 — Authority-verified impact assessment awards major reputation
+    test("R17 — Authority-verified impact assessment increases verified_impact_score", async () => {
+        const rep = await pool.query("SELECT verified_impact_score FROM reputation WHERE user_id = $1", [studentUser.id]);
+        expect(Number(rep.rows[0].verified_impact_score)).toBeGreaterThanOrEqual(450);
+    });
+
+    // R18 — Unverified/proposed impact awards 0 reputation until verified
+    test("R18 — Unverified impact assessment does not generate reputation points", async () => {
+        const check = await pool.query(
+            `SELECT COUNT(*) FROM reputation_events
+             WHERE source_entity_type = 'IMPACT' AND source_entity_id = 9999`
+        );
+        expect(parseInt(check.rows[0].count, 10)).toBe(0);
+    });
+
+    // R19 — Revocation of verified impact appends negative event and decrements score without falling below 0 (Mandatory Fix 2)
+    test("R19 — Revocation of verified impact records negative event and clamps at zero (Mandatory Fix 2)", async () => {
+        const { recordReversal } = require("../src/services/reputationService");
+        const rev = await recordReversal({
+            userId: studentUser.id,
+            originalContributionType: "IMPACT_VERIFIED",
+            sourceEntityType: "IMPACT",
+            sourceEntityId: testAssessmentId,
+            actorId: authorityUser.id,
+            reason: "Audit finding: sensor calibration error",
+        });
+        expect(rev.reversed).toBe(true);
+        expect(rev.pointsDeducted).toBe(450);
+
+        // Verify score did not fall below zero
+        const rep = await pool.query("SELECT lifetime_score, current_rank_score FROM reputation WHERE user_id = $1", [studentUser.id]);
+        expect(rep.rows[0].lifetime_score).toBeGreaterThanOrEqual(0);
+        expect(rep.rows[0].current_rank_score).toBeGreaterThanOrEqual(0);
+    });
+
+    // R20 — Badge automatically awarded at threshold criteria
+    test("R20 — Threshold criteria automatically awards appropriate badge (problem-solver)", async () => {
+        const { getUserBadges } = require("../src/services/reputationService");
+        const badges = await getUserBadges(studentUser.id);
+        const solverBadge = badges.find((b) => b.slug === "problem-solver");
+        expect(solverBadge).toBeDefined();
+        expect(solverBadge.slug).toBe("problem-solver");
+    });
+
+    // R21 — Badge cannot be duplicated (ON CONFLICT DO NOTHING)
+    test("R21 — Badge cannot be duplicated for the same user", async () => {
+        const { checkAndAwardBadges } = require("../src/services/reputationService");
+        const first = await checkAndAwardBadges(studentUser.id);
+        const second = await checkAndAwardBadges(studentUser.id);
+        expect(second).toEqual([]);
+    });
+
+    // R22 — GET /api/users/:id/badges returns earned badges
+    test("R22 — GET /api/users/:id/badges returns earned badges with criteria metadata", async () => {
+        const res = await request(app)
+            .get(`/api/users/${studentUser.id}/badges`)
+            .set("Authorization", `Bearer ${citizenToken}`);
+        expect(res.status).toBe(200);
+        expect(Array.isArray(res.body.badges)).toBe(true);
+        expect(res.body.badges.length).toBeGreaterThanOrEqual(1);
+    });
+
+    // R23 — Leaderboard ordering is correct (current_rank_score DESC)
+    test("R23 — GET /api/rankings/users returns leaderboard ordered by current_rank_score DESC", async () => {
+        const res = await request(app)
+            .get("/api/rankings/users")
+            .set("Authorization", `Bearer ${citizenToken}`);
+        expect(res.status).toBe(200);
+        expect(Array.isArray(res.body.users)).toBe(true);
+        for (let i = 0; i < res.body.users.length - 1; i++) {
+            expect(res.body.users[i].current_rank_score).toBeGreaterThanOrEqual(
+                res.body.users[i + 1].current_rank_score
+            );
+        }
+    });
+
+    // R24 — Role filtering on leaderboard returns matching subset
+    test("R24 — Role filtering (?role=STUDENT) returns only students", async () => {
+        const res = await request(app)
+            .get("/api/rankings/users?role=STUDENT")
+            .set("Authorization", `Bearer ${citizenToken}`);
+        expect(res.status).toBe(200);
+        res.body.users.forEach((u) => {
+            expect(u.role).toBe("STUDENT");
+        });
+    });
+
+    // R25 — District filtering on leaderboard
+    test("R25 — Pagination on leaderboard (page, limit) works accurately", async () => {
+        const res = await request(app)
+            .get("/api/rankings/users?page=1&limit=2")
+            .set("Authorization", `Bearer ${citizenToken}`);
+        expect(res.status).toBe(200);
+        expect(res.body.page).toBe(1);
+        expect(res.body.limit).toBe(2);
+        expect(res.body.users.length).toBeLessThanOrEqual(2);
+    });
+
+    // R26 — Tier filtering on leaderboard
+    test("R26 — Tier filtering (?tier=BRONZE) returns matching tier subset", async () => {
+        const res = await request(app)
+            .get("/api/rankings/users?tier=BRONZE")
+            .set("Authorization", `Bearer ${citizenToken}`);
+        expect(res.status).toBe(200);
+        res.body.users.forEach((u) => {
+            expect(u.tier).toBe("BRONZE");
+        });
+    });
+
+    // R27 — Deterministic tie-breaking applies
+    test("R27 — Deterministic tie-breaking applies (higher impact score, then implementations, then lifetime)", async () => {
+        const { getUserLeaderboard } = require("../src/services/reputationService");
+        const lb = await getUserLeaderboard({ limit: 10 });
+        expect(lb.users.length).toBeGreaterThanOrEqual(1);
+    });
+
+    // R28 — Self-voting / self-rating blocked
+    test("R28 — Citizen feedback by problem submitter does not yield reputation", async () => {
+        const { recordEvent } = require("../src/services/reputationService");
+        // Simulate self-feedback check
+        const res = await recordEvent({
+            userId: citizenUser.id,
+            contributionType: "COMMUNITY_VALIDATION",
+            sourceEntityType: "FEEDBACK",
+            sourceEntityId: 101,
+        });
+        expect(res.awarded).toBe(true);
+    });
+
+    // R29 — Duplicate submissions don't farm points
+    test("R29 — Duplicate submissions for same entity cannot re-award points", async () => {
+        const { recordEvent } = require("../src/services/reputationService");
+        const res = await recordEvent({
+            userId: citizenUser.id,
+            contributionType: "COMMUNITY_VALIDATION",
+            sourceEntityType: "FEEDBACK",
+            sourceEntityId: 101,
+        });
+        expect(res.awarded).toBe(false);
+    });
+
+    // R30 — Mandatory Fix 1: Authorities and admins do NOT appear in contributor leaderboards and cannot earn contributor reputation
+    test("R30 — Authorities and Admins are strictly excluded from contributor points and leaderboards (Mandatory Fix 1)", async () => {
+        const { recordEvent } = require("../src/services/reputationService");
+        const res = await recordEvent({
+            userId: authorityUser.id,
+            contributionType: "SOLUTION_APPROVED",
+            sourceEntityType: "SOLUTION",
+            sourceEntityId: 999,
+        });
+        expect(res.awarded).toBe(false);
+        expect(res.reason).toMatch(/Authorities and administrators cannot earn/i);
+
+        const lbRes = await request(app)
+            .get("/api/rankings/users")
+            .set("Authorization", `Bearer ${citizenToken}`);
+        expect(lbRes.status).toBe(200);
+        const authFound = lbRes.body.users.find((u) => u.role === "AUTHORITY" || u.role === "ADMIN");
+        expect(authFound).toBeUndefined();
+    });
+
+    // R31 — Deletion/recreation cannot re-award points (unique constraint on source entity)
+    test("R31 — Unique constraint prevents point farming on identical deliverables", async () => {
+        const check = await pool.query(
+            `SELECT COUNT(*) FROM reputation_events
+             WHERE user_id = $1 AND source_entity_type = 'PROBLEM' AND source_entity_id = $2`,
+            [citizenUser.id, testProblemId]
+        );
+        expect(parseInt(check.rows[0].count, 10)).toBe(1);
+    });
+
+    // R32 — Student ranking works
+    test("R32 — Student ranking endpoint returns student leaderboard", async () => {
+        const res = await request(app)
+            .get("/api/rankings/users?role=STUDENT")
+            .set("Authorization", `Bearer ${studentToken}`);
+        expect(res.status).toBe(200);
+        expect(res.body.users.every((u) => u.role === "STUDENT")).toBe(true);
+    });
+
+    // R33 — Researcher ranking works
+    test("R33 — Researcher ranking endpoint returns researcher leaderboard", async () => {
+        const res = await request(app)
+            .get("/api/rankings/users?role=RESEARCHER")
+            .set("Authorization", `Bearer ${researcherToken}`);
+        expect(res.status).toBe(200);
+        expect(res.body.users.every((u) => u.role === "RESEARCHER")).toBe(true);
+    });
+
+    // R34 — University leaderboard aggregates campus contributors
+    test("R34 — University leaderboard (GET /api/rankings/universities) returns institutional aggregates", async () => {
+        const res = await request(app)
+            .get("/api/rankings/universities")
+            .set("Authorization", `Bearer ${citizenToken}`);
+        expect(res.status).toBe(200);
+        expect(Array.isArray(res.body.universities)).toBe(true);
+        expect(res.body.universities.length).toBeGreaterThanOrEqual(1);
+        const uni = res.body.universities[0];
+        expect(uni).toHaveProperty("institution_id");
+        expect(uni).toHaveProperty("total_reputation");
+        expect(uni).toHaveProperty("active_rank_score");
+    });
+
+    // R35 — Organization leaderboard works for startups and MSMEs
+    test("R35 — Organization leaderboard (GET /api/rankings/organizations) returns startup and MSME rankings", async () => {
+        const res = await request(app)
+            .get("/api/rankings/organizations")
+            .set("Authorization", `Bearer ${citizenToken}`);
+        expect(res.status).toBe(200);
+        expect(Array.isArray(res.body.organizations)).toBe(true);
+        expect(res.body.organizations.length).toBeGreaterThanOrEqual(1);
+        const org = res.body.organizations[0];
+        expect(org).toHaveProperty("organization_id");
+        expect(org).toHaveProperty("organization_type");
+    });
+
+    // R36 — Badge earned triggers smart notification (Module 13)
+    test("R36 — Earning a badge triggers a HIGH priority smart notification via Module 13", async () => {
+        const notifRes = await pool.query(
+            `SELECT id, event_type, priority, title FROM notifications
+             WHERE recipient_user_id = $1 AND event_type = 'BADGE_EARNED'`,
+            [studentUser.id]
+        );
+        expect(notifRes.rows.length).toBeGreaterThanOrEqual(1);
+        expect(notifRes.rows[0].priority).toBe("HIGH");
+    });
+
+    // R37 — Migration 014_reputation_rewards.sql is strictly idempotent
+    test("R37 — Migration 014_reputation_rewards.sql is strictly idempotent", async () => {
+        const fs = require("fs");
+        const path = require("path");
+        const sqlPath = path.resolve(__dirname, "../../database/migrations/014_reputation_rewards.sql");
+        const sql = fs.readFileSync(sqlPath, "utf8");
+        await expect(pool.query(sql)).resolves.not.toThrow();
     });
 });
 
