@@ -25,7 +25,7 @@ const { parseIntParam } = require("./studentMatchingService");
 /**
  * Build a human-readable explanation of why a researcher was recommended.
  */
-function buildReason(matched, required, names) {
+function buildReason(matched, required) {
     if (matched === 0) return "No matching expertise areas.";
     return `Matched ${matched} of ${required} required expertise area${required !== 1 ? "s" : ""}`;
 }
@@ -119,11 +119,11 @@ async function findResearcherMatches(problemId, options = {}) {
             profile_url: row.profile_url,
             matched_expertise: row.matched_expertise,
             score: score,
-            reason: buildReason(row.matched_count, totalRequired, row.matched_expertise)
+            reason: buildReason(row.matched_count, totalRequired)
         };
     });
 
-    matches.sort((a, b) => {
+matches.sort((a, b) => {
         if (b.score !== a.score) return b.score - a.score;
         return a.name.localeCompare(b.name);
     });

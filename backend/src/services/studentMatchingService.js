@@ -43,7 +43,7 @@ function parseIntParam(value, name, min, max) {
 /**
  * Build a human-readable explanation of why a student was recommended.
  */
-function buildReason(matched, required, names) {
+function buildReason(matched, required) {
     if (matched === 0) return "No matching expertise areas.";
     return `Matched ${matched} of ${required} required expertise area${required !== 1 ? "s" : ""}`;
 }
@@ -145,11 +145,10 @@ async function findStudentMatches(problemId, options = {}) {
             name: row.name,
             matched_skills: row.matched_skills,
             score: score,
-            reason: buildReason(row.matched_count, totalRequired, row.matched_skills)
+            reason: buildReason(row.matched_count, totalRequired)
         };
     });
 
-    // Re-sort just to be absolutely certain it's score DESC, name ASC
     matches.sort((a, b) => {
         if (b.score !== a.score) return b.score - a.score;
         return a.name.localeCompare(b.name);
