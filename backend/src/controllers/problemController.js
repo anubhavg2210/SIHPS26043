@@ -68,13 +68,14 @@ console.log("🔥 PRIORITY SCORE:", priorityScore);
         affected_people,
         ai_summary,
         ai_keywords,
+        required_expertise,
         severity,
         urgency,
         ai_confidence,
         priority_score
     )
     VALUES
-    ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19)
+    ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)
     RETURNING *`,
     [
         req.user.id,
@@ -92,6 +93,7 @@ console.log("🔥 PRIORITY SCORE:", priorityScore);
         affected_people || null,
         ai.summary,
         ai.keywords,
+        ai.required_expertise,
         ai.severity,
         ai.urgency,
         ai.confidence,

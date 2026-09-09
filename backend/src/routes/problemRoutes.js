@@ -16,6 +16,10 @@ const {
 } = require("../controllers/clusteringController");
 
 const {
+    getFacultyMatches
+} = require("../controllers/facultyMatchingController");
+
+const {
     authenticate
 } = require("../middleware/authMiddleware");
 
@@ -70,6 +74,13 @@ router.post(
     authenticate,
     authorizeRoles("AUTHORITY", "ADMIN"),
     triggerClustering
+);
+
+// GET /api/problems/:id/faculty-matches
+router.get(
+    "/:id/faculty-matches",
+    authenticate,
+    getFacultyMatches
 );
 
 router.get(
