@@ -20,6 +20,14 @@ const {
 } = require("../controllers/facultyMatchingController");
 
 const {
+    getStudentMatches
+} = require("../controllers/studentMatchingController");
+
+const {
+    getResearcherMatches
+} = require("../controllers/researcherMatchingController");
+
+const {
     authenticate
 } = require("../middleware/authMiddleware");
 
@@ -81,6 +89,20 @@ router.get(
     "/:id/faculty-matches",
     authenticate,
     getFacultyMatches
+);
+
+// GET /api/problems/:id/student-matches
+router.get(
+    "/:id/student-matches",
+    authenticate,
+    getStudentMatches
+);
+
+// GET /api/problems/:id/researcher-matches
+router.get(
+    "/:id/researcher-matches",
+    authenticate,
+    getResearcherMatches
 );
 
 router.get(
