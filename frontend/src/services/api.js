@@ -1,0 +1,574 @@
+/**
+ * api.js
+ * Domain-Specific API Handlers for CivicSync.
+ *
+ * All endpoints match backend/src/routes strictly.
+ * No imaginary endpoints or payload shapes.
+ */
+
+import { apiRequest } from "./apiClient.js";
+
+// ============================================================================
+// AUTHENTICATION APIs (backend/src/routes/authRoutes.js)
+// ============================================================================
+export const authApi = {
+  register: (payload) =>
+    apiRequest("/auth/register", {
+      method: "POST",
+      body: payload,
+      requireAuth: false,
+    }),
+
+  login: (payload) =>
+    apiRequest("/auth/login", {
+      method: "POST",
+      body: payload,
+      requireAuth: false,
+    }),
+
+  me: () =>
+    apiRequest("/auth/me", {
+      method: "GET",
+    }),
+};
+
+// ============================================================================
+// CHALLENGE APIs (backend/src/routes/challengeRoutes.js - pre-auth / fast AI)
+// ============================================================================
+export const challengeApi = {
+  createChallenge: (payload) =>
+    apiRequest("/challenges", {
+      method: "POST",
+      body: payload,
+      requireAuth: false,
+    }),
+};
+
+// ============================================================================
+// PROBLEMS APIs (backend/src/routes/problemRoutes.js)
+// ============================================================================
+export const problemApi = {
+  createProblem: (payload) =>
+    apiRequest("/problems", {
+      method: "POST",
+      body: payload,
+    }),
+
+  getProblems: (params = {}) =>
+    apiRequest("/problems", {
+      method: "GET",
+      params,
+    }),
+
+  getMyProblems: () =>
+    apiRequest("/problems/mine", {
+      method: "GET",
+    }),
+
+  getProblemById: (id) =>
+    apiRequest(`/problems/${id}`, {
+      method: "GET",
+    }),
+
+  updateProblemStatus: (id, payload) =>
+    apiRequest(`/problems/${id}/status`, {
+      method: "PATCH",
+      body: payload,
+    }),
+
+  getProblemStatusHistory: (id) =>
+    apiRequest(`/problems/${id}/status-history`, {
+      method: "GET",
+    }),
+
+  getDuplicates: (id) =>
+    apiRequest(`/problems/${id}/duplicates`, {
+      method: "GET",
+    }),
+
+  getProblemCluster: (id) =>
+    apiRequest(`/problems/${id}/cluster`, {
+      method: "GET",
+    }),
+
+  triggerClustering: (id) =>
+    apiRequest(`/problems/${id}/cluster`, {
+      method: "POST",
+    }),
+
+  getProblemImplementations: (problemId) =>
+    apiRequest(`/problems/${problemId}/implementations`, {
+      method: "GET",
+    }),
+};
+
+// ============================================================================
+// EXPERTISE MATCHING APIs (backend/src/routes/problemRoutes.js)
+// ============================================================================
+export const matchingApi = {
+  getFacultyMatches: (problemId, params = {}) =>
+    apiRequest(`/problems/${problemId}/faculty-matches`, {
+      method: "GET",
+      params,
+    }),
+
+  getStudentMatches: (problemId, params = {}) =>
+    apiRequest(`/problems/${problemId}/student-matches`, {
+      method: "GET",
+      params,
+    }),
+
+  getResearcherMatches: (problemId, params = {}) =>
+    apiRequest(`/problems/${problemId}/researcher-matches`, {
+      method: "GET",
+      params,
+    }),
+
+  getStartupMatches: (problemId, params = {}) =>
+    apiRequest(`/problems/${problemId}/startup-matches`, {
+      method: "GET",
+      params,
+    }),
+
+  getMsmeMatches: (problemId, params = {}) =>
+    apiRequest(`/problems/${problemId}/msme-matches`, {
+      method: "GET",
+      params,
+    }),
+};
+
+// ============================================================================
+// SOLUTIONS & EVALUATION APIs (backend/src/routes/solutionRoutes.js)
+// ============================================================================
+export const solutionApi = {
+  getSolutionsForProblem: (problemId, params = {}) =>
+    apiRequest(`/problems/${problemId}/solutions`, {
+      method: "GET",
+      params,
+    }),
+
+  createSolution: (problemId, payload) =>
+    apiRequest(`/problems/${problemId}/solutions`, {
+      method: "POST",
+      body: payload,
+    }),
+
+  getRankedSolutions: (problemId) =>
+    apiRequest(`/problems/${problemId}/solutions/ranked`, {
+      method: "GET",
+    }),
+
+  getSolutionById: (id) =>
+    apiRequest(`/solutions/${id}`, {
+      method: "GET",
+    }),
+
+  submitEvaluation: (solutionId, payload) =>
+    apiRequest(`/solutions/${solutionId}/evaluations`, {
+      method: "POST",
+      body: payload,
+    }),
+
+  getEvaluations: (solutionId) =>
+    apiRequest(`/solutions/${solutionId}/evaluations`, {
+      method: "GET",
+    }),
+
+  getEvaluationSummary: (solutionId) =>
+    apiRequest(`/solutions/${solutionId}/evaluations/summary`, {
+      method: "GET",
+    }),
+
+  updateSolutionStatus: (solutionId, payload) =>
+    apiRequest(`/solutions/${solutionId}/status`, {
+      method: "PATCH",
+      body: payload,
+    }),
+};
+
+// ============================================================================
+// IMPLEMENTATION & PILOT TRACKING (backend/src/routes/implementationRoutes.js)
+// ============================================================================
+export const implementationApi = {
+  getProblemImplementations: (problemId) =>
+    apiRequest(`/problems/${problemId}/implementations`, {
+      method: "GET",
+    }),
+
+  createImplementationForSolution: (solutionId, payload) =>
+    apiRequest(`/solutions/${solutionId}/implementations`, {
+      method: "POST",
+      body: payload,
+    }),
+
+  getSolutionImplementation: (solutionId) =>
+    apiRequest(`/solutions/${solutionId}/implementation`, {
+      method: "GET",
+    }),
+
+  getImplementationById: (id) =>
+    apiRequest(`/implementations/${id}`, {
+      method: "GET",
+    }),
+
+  updateStatus: (id, payload) =>
+    apiRequest(`/implementations/${id}/status`, {
+      method: "PATCH",
+      body: payload,
+    }),
+
+  updateProgress: (id, payload) =>
+    apiRequest(`/implementations/${id}/progress`, {
+      method: "PATCH",
+      body: payload,
+    }),
+
+  addMilestone: (id, payload) =>
+    apiRequest(`/implementations/${id}/milestones`, {
+      method: "POST",
+      body: payload,
+    }),
+
+  updateMilestone: (id, mId, payload) =>
+    apiRequest(`/implementations/${id}/milestones/${mId}`, {
+      method: "PATCH",
+      body: payload,
+    }),
+
+  addUpdate: (id, payload) =>
+    apiRequest(`/implementations/${id}/updates`, {
+      method: "POST",
+      body: payload,
+    }),
+
+  getUpdates: (id) =>
+    apiRequest(`/implementations/${id}/updates`, {
+      method: "GET",
+    }),
+
+  addEvidence: (id, payload) =>
+    apiRequest(`/implementations/${id}/evidence`, {
+      method: "POST",
+      body: payload,
+    }),
+
+  getEvidence: (id) =>
+    apiRequest(`/implementations/${id}/evidence`, {
+      method: "GET",
+    }),
+
+  raiseBlocker: (id, payload) =>
+    apiRequest(`/implementations/${id}/blockers`, {
+      method: "POST",
+      body: payload,
+    }),
+
+  resolveBlocker: (id, bId, payload) =>
+    apiRequest(`/implementations/${id}/blockers/${bId}/resolve`, {
+      method: "PATCH",
+      body: payload,
+    }),
+};
+
+// ============================================================================
+// IMPACT TRACKING APIs (backend/src/routes/impactRoutes.js)
+// ============================================================================
+export const impactApi = {
+  getProblemImpactSummary: (problemId) =>
+    apiRequest(`/problems/${problemId}/impact-summary`, {
+      method: "GET",
+    }),
+
+  createImpactAssessment: (implementationId, payload) =>
+    apiRequest(`/implementations/${implementationId}/impact`, {
+      method: "POST",
+      body: payload,
+    }),
+
+  getImpactAssessmentByImplementation: (implementationId) =>
+    apiRequest(`/implementations/${implementationId}/impact`, {
+      method: "GET",
+    }),
+
+  getImpactAssessmentById: (id) =>
+    apiRequest(`/impact-assessments/${id}`, {
+      method: "GET",
+    }),
+
+  updateImpactAssessment: (id, payload) =>
+    apiRequest(`/impact-assessments/${id}`, {
+      method: "PATCH",
+      body: payload,
+    }),
+
+  addMetric: (id, payload) =>
+    apiRequest(`/impact-assessments/${id}/metrics`, {
+      method: "POST",
+      body: payload,
+    }),
+
+  updateMetric: (id, mId, payload) =>
+    apiRequest(`/impact-assessments/${id}/metrics/${mId}`, {
+      method: "PATCH",
+      body: payload,
+    }),
+
+  getComparison: (id) =>
+    apiRequest(`/impact-assessments/${id}/comparison`, {
+      method: "GET",
+    }),
+
+  submitFeedback: (id, payload) =>
+    apiRequest(`/impact-assessments/${id}/feedback`, {
+      method: "POST",
+      body: payload,
+    }),
+
+  getFeedback: (id) =>
+    apiRequest(`/impact-assessments/${id}/feedback`, {
+      method: "GET",
+    }),
+
+  verifyImpact: (id, payload) =>
+    apiRequest(`/impact-assessments/${id}/verify`, {
+      method: "PATCH",
+      body: payload,
+    }),
+
+  markSustained: (id, payload) =>
+    apiRequest(`/impact-assessments/${id}/sustained`, {
+      method: "PATCH",
+      body: payload,
+    }),
+};
+
+// ============================================================================
+// ROOT CAUSE ANALYSIS APIs (backend/src/routes/rootCauseRoutes.js)
+// ============================================================================
+export const rootCauseApi = {
+  getProblemRootCauses: (problemId) =>
+    apiRequest(`/problems/${problemId}/root-causes`, {
+      method: "GET",
+    }),
+
+  getProblemRootCausesSummary: (problemId) =>
+    apiRequest(`/problems/${problemId}/root-causes/summary`, {
+      method: "GET",
+    }),
+
+  analyzeRootCauses: (problemId) =>
+    apiRequest(`/problems/${problemId}/root-causes/analyze`, {
+      method: "POST",
+    }),
+
+  createRootCause: (problemId, payload) =>
+    apiRequest(`/problems/${problemId}/root-causes`, {
+      method: "POST",
+      body: payload,
+    }),
+
+  getRootCauseById: (id) =>
+    apiRequest(`/root-causes/${id}`, {
+      method: "GET",
+    }),
+
+  updateRootCause: (id, payload) =>
+    apiRequest(`/root-causes/${id}`, {
+      method: "PATCH",
+      body: payload,
+    }),
+
+  addEvidence: (id, payload) =>
+    apiRequest(`/root-causes/${id}/evidence`, {
+      method: "POST",
+      body: payload,
+    }),
+
+  getRootCauseEvidence: (id) =>
+    apiRequest(`/root-causes/${id}/evidence`, {
+      method: "GET",
+    }),
+
+  verifyRootCause: (id, payload) =>
+    apiRequest(`/root-causes/${id}/verify`, {
+      method: "PATCH",
+      body: payload,
+    }),
+};
+
+// ============================================================================
+// PROBLEM DEPENDENCIES APIs (backend/src/routes/dependencyRoutes.js)
+// ============================================================================
+export const dependencyApi = {
+  getProblemDependencies: (problemId) =>
+    apiRequest(`/problems/${problemId}/dependencies`, {
+      method: "GET",
+    }),
+
+  getDependencyGraph: (problemId) =>
+    apiRequest(`/problems/${problemId}/dependency-graph`, {
+      method: "GET",
+    }),
+
+  getImpactChain: (problemId) =>
+    apiRequest(`/problems/${problemId}/impact-chain`, {
+      method: "GET",
+    }),
+
+  detectDependencies: (problemId) =>
+    apiRequest(`/problems/${problemId}/dependencies/detect`, {
+      method: "POST",
+    }),
+
+  createDependency: (problemId, payload) =>
+    apiRequest(`/problems/${problemId}/dependencies`, {
+      method: "POST",
+      body: payload,
+    }),
+
+  getDependencyById: (id) =>
+    apiRequest(`/dependencies/${id}`, {
+      method: "GET",
+    }),
+
+  updateDependency: (id, payload) =>
+    apiRequest(`/dependencies/${id}`, {
+      method: "PATCH",
+      body: payload,
+    }),
+
+  deleteDependency: (id) =>
+    apiRequest(`/dependencies/${id}`, {
+      method: "DELETE",
+    }),
+
+  verifyDependency: (id, payload) =>
+    apiRequest(`/dependencies/${id}/verify`, {
+      method: "PATCH",
+      body: payload,
+    }),
+
+  getCriticalPaths: () =>
+    apiRequest("/dependencies/critical-paths", {
+      method: "GET",
+    }),
+};
+
+// ============================================================================
+// AUTHORITY DASHBOARD APIs (backend/src/routes/authorityDashboardRoutes.js)
+// ============================================================================
+export const authorityDashboardApi = {
+  getSummary: () =>
+    apiRequest("/authority/dashboard/summary", {
+      method: "GET",
+    }),
+
+  getPriority: (limit = 10) =>
+    apiRequest("/authority/dashboard/priority", {
+      method: "GET",
+      params: { limit },
+    }),
+
+  getProblems: (params = {}) =>
+    apiRequest("/authority/dashboard/problems", {
+      method: "GET",
+      params,
+    }),
+
+  getDistricts: () =>
+    apiRequest("/authority/dashboard/districts", {
+      method: "GET",
+    }),
+
+  getStatusAnalytics: () =>
+    apiRequest("/authority/dashboard/status", {
+      method: "GET",
+    }),
+
+  getClusters: () =>
+    apiRequest("/authority/dashboard/clusters", {
+      method: "GET",
+    }),
+
+  getRecent: (limit = 10) =>
+    apiRequest("/authority/dashboard/recent", {
+      method: "GET",
+      params: { limit },
+    }),
+};
+
+// ============================================================================
+// REPUTATION & RANKINGS APIs (backend/src/routes/reputationRoutes.js)
+// ============================================================================
+export const reputationApi = {
+  getMyReputation: () =>
+    apiRequest("/reputation/me", {
+      method: "GET",
+    }),
+
+  getRankingsOverview: () =>
+    apiRequest("/rankings", {
+      method: "GET",
+    }),
+
+  getUserRankings: () =>
+    apiRequest("/rankings/users", {
+      method: "GET",
+    }),
+
+  getUniversityRankings: () =>
+    apiRequest("/rankings/universities", {
+      method: "GET",
+    }),
+
+  getOrganizationRankings: () =>
+    apiRequest("/rankings/organizations", {
+      method: "GET",
+    }),
+
+  getUserReputation: (userId) =>
+    apiRequest(`/users/${userId}/reputation`, {
+      method: "GET",
+    }),
+
+  getUserBadges: (userId) =>
+    apiRequest(`/users/${userId}/badges`, {
+      method: "GET",
+    }),
+};
+
+// ============================================================================
+// NOTIFICATIONS APIs (backend/src/routes/notificationRoutes.js)
+// ============================================================================
+export const notificationApi = {
+  getNotifications: (params = {}) =>
+    apiRequest("/notifications", {
+      method: "GET",
+      params,
+    }),
+
+  getUnreadCount: () =>
+    apiRequest("/notifications/unread-count", {
+      method: "GET",
+    }),
+
+  markAllRead: () =>
+    apiRequest("/notifications/read-all", {
+      method: "PATCH",
+    }),
+
+  getNotificationById: (id) =>
+    apiRequest(`/notifications/${id}`, {
+      method: "GET",
+    }),
+
+  markRead: (id) =>
+    apiRequest(`/notifications/${id}/read`, {
+      method: "PATCH",
+    }),
+
+  deleteNotification: (id) =>
+    apiRequest(`/notifications/${id}`, {
+      method: "DELETE",
+    }),
+};
