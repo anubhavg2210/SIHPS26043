@@ -21,6 +21,7 @@
 const pool = require("../config/db");
 const crypto = require("crypto");
 const { notify } = require("./notificationService");
+const trustService = require("./trustService");
 
 // ---------------------------------------------------------------------------
 // Constants & Configuration
@@ -103,6 +104,8 @@ async function recordEvent({
             [uid, sourceEntityType, sourceEntityId, contributionType]
         );
         if (dupCheck.rows.length > 0) {
+            // Log trust event for repeated point farming attempt
+            await trustService.logTrustEvent(uid, 'DUPLICATE_REWARD_ATTEMPT', sourceEntityType, sourceEntityId, 'LOW', `Attempted to farm duplicate points for ${contributionType}`);
             return { awarded: false, reason: "Reputation already awarded for this deliverable" };
         }
 

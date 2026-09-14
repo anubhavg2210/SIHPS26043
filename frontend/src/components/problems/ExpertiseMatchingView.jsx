@@ -7,6 +7,7 @@ import { DemoBadge } from "../common/Badges";
 import { EmptyState } from "../common/Feedback";
 import { Icon } from "../common/Icons";
 import { useToast } from "../../context/useToast.js";
+import { teamApi } from "../../services/api.js";
 
 export function ExpertiseMatchingView({
   institutions = [],
@@ -17,14 +18,60 @@ export function ExpertiseMatchingView({
   msmes = [],
   loading = false,
   requiredExpertise = [],
+  problem = null,
 }) {
   const toast = useToast();
   const [activeTab, setActiveTab] = useState("institutions");
   const [connectedIds, setConnectedIds] = useState(new Set());
+  const [invitingId, setInvitingId] = useState(null);
+  const [activeTeamId, setActiveTeamId] = useState(null);
 
-  const handleConnect = (id, name) => {
-    setConnectedIds((prev) => new Set(prev).add(id));
-    toast.success(`Collaboration request initiated with ${name}!`);
+  // Fetch the first active/forming team for this problem on mount
+  const [teamFetched, setTeamFetched] = useState(false);
+  if (!teamFetched && problem?.id) {
+    setTeamFetched(true);
+    teamApi.getTeamsForProblem(problem.id)
+      .then((res) => {
+        const teams = res?.teams || [];
+        const found = teams.find((t) => t.status === "FORMING" || t.status === "ACTIVE");
+        if (found) setActiveTeamId(found.id);
+      })
+      .catch(() => {});
+  }
+
+  const handleConnect = async (userId, name, userRole) => {
+    if (!problem?.id) {
+      toast.error("Problem context not available");
+      return;
+    }
+    setInvitingId(userId);
+    try {
+      let teamId = activeTeamId;
+      // If no team, create one first
+      if (!teamId) {
+        const created = await teamApi.createTeam({
+          problemId: problem.id,
+          name: `${problem.title} — Collaboration Team`,
+        });
+        teamId = created?.team?.id;
+        setActiveTeamId(teamId);
+        toast.success("Collaboration team created!");
+      }
+      // Determine role from user's system role
+      const roleMap = {
+        FACULTY: "FACULTY", STUDENT: "STUDENT", RESEARCHER: "RESEARCHER",
+        STARTUP: "STARTUP", MSME: "MSME", UNIVERSITY: "FACULTY",
+        CITIZEN: "CITIZEN",
+      };
+      const memberRole = roleMap[userRole?.toUpperCase()] || "CITIZEN";
+      await teamApi.inviteMember(teamId, { userId, role: memberRole });
+      setConnectedIds((prev) => new Set(prev).add(userId));
+      toast.success(`Invitation sent to ${name}!`);
+    } catch (err) {
+      toast.error(err?.message || `Failed to invite ${name}`);
+    } finally {
+      setInvitingId(null);
+    }
   };
 
   const tabs = [
@@ -209,11 +256,20 @@ export function ExpertiseMatchingView({
                   <Button
                     variant={isConnected ? "outline" : "primary"}
                     size="sm"
-                    icon={isConnected ? "check" : "users"}
+                    icon={isConnected ? "check" : "user-plus"}
                     disabled={isConnected}
-                    onClick={() => handleConnect(id, displayName)}
+                    loading={invitingId === id}
+                    onClick={() => handleConnect(
+                      item.user_id || id,
+                      displayName,
+                      item.role || item.organization_type
+                    )}
                   >
-                    {isConnected ? "Connected" : "Connect"}
+                    {isConnected
+                      ? "Invited"
+                      : activeTeamId
+                      ? "Invite to Team"
+                      : "Create Team & Invite"}
                   </Button>
                 </div>
               </div>

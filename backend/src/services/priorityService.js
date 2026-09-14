@@ -3,7 +3,8 @@ function calculatePriority({
     affectedPeople = 0,
     recurrence = 0,
     dependencyImportance = 0,
-    daysUnresolved = 0
+    daysUnresolved = 0,
+    communitySupport = 0
 }) {
     const severityScore = severity * 10;
 
@@ -27,12 +28,18 @@ function calculatePriority({
         15
     );
 
+    const supportScore = Math.min(
+        communitySupport * 0.5,
+        10
+    );
+
     const total =
         severityScore +
         affectedScore +
         recurrenceScore +
         dependencyScore +
-        unresolvedScore;
+        unresolvedScore +
+        supportScore;
 
     return Math.min(
         Math.round(total),

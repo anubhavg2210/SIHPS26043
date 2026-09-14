@@ -20,6 +20,7 @@ const {
     getUpdatesHandler,
     addEvidenceHandler,
     getEvidenceHandler,
+    verifyEvidenceHandler,
     raiseBlockerHandler,
     resolveBlockerHandler,
 } = require("../controllers/implementationController");
@@ -107,6 +108,12 @@ router.get(
     "/:id/evidence",
     authenticate,
     getEvidenceHandler
+);
+
+router.patch(
+    "/:id/evidence/:evidenceId/verify",
+    authenticate,
+    verifyEvidenceHandler
 );
 
 // Blockers

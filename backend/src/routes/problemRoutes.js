@@ -65,12 +65,29 @@ const {
 } = require("../controllers/dependencyController");
 
 const {
+    getImpactPassportHandler
+} = require("../controllers/impactPassportController");
+
+const {
     authenticate
 } = require("../middleware/authMiddleware");
 
 const {
     authorizeRoles
 } = require("../middleware/roleMiddleware");
+
+const {
+    supportProblem,
+    removeSupport,
+    getSupports,
+    addComment,
+    getComments,
+    moderateComment
+} = require("../controllers/communityController");
+
+const {
+    listTeamsForProblemHandler
+} = require("../controllers/collaborationController");
 
 const router = express.Router();
 
@@ -191,6 +208,13 @@ router.get(
     getProblemImpactSummaryHandler
 );
 
+// GET /api/problems/:id/impact-passport
+router.get(
+    "/:id/impact-passport",
+    authenticate,
+    getImpactPassportHandler
+);
+
 // POST /api/problems/:id/root-causes/analyze
 router.post(
     "/:id/root-causes/analyze",
@@ -252,6 +276,56 @@ router.get(
     "/:id/impact-chain",
     authenticate,
     getImpactChainHandler
+);
+
+// POST /api/problems/:id/support
+router.post(
+    "/:id/support",
+    authenticate,
+    supportProblem
+);
+
+// DELETE /api/problems/:id/support
+router.delete(
+    "/:id/support",
+    authenticate,
+    removeSupport
+);
+
+// GET /api/problems/:id/supports
+router.get(
+    "/:id/supports",
+    authenticate,
+    getSupports
+);
+
+// GET /api/problems/:id/teams
+router.get(
+    "/:id/teams",
+    authenticate,
+    listTeamsForProblemHandler
+);
+
+// POST /api/problems/:id/comments
+router.post(
+    "/:id/comments",
+    authenticate,
+    addComment
+);
+
+// GET /api/problems/:id/comments
+router.get(
+    "/:id/comments",
+    authenticate,
+    getComments
+);
+
+// PATCH /api/problems/:id/comments/:commentId/status
+router.patch(
+    "/:id/comments/:commentId/status",
+    authenticate,
+    authorizeRoles("AUTHORITY", "ADMIN"),
+    moderateComment
 );
 
 router.get(

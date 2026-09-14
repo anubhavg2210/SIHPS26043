@@ -20,6 +20,9 @@ const {
     getFeedbackHandler,
     verifyHandler,
     markSustainedHandler,
+    addEvidenceHandler,
+    getEvidenceHandler,
+    verifyEvidenceHandler,
 } = require("../controllers/impactController");
 
 const { authenticate } = require("../middleware/authMiddleware");
@@ -74,6 +77,25 @@ router.patch(
     "/:id/sustained",
     authenticate,
     markSustainedHandler
+);
+
+// Evidence (M13)
+router.post(
+    "/:id/evidence",
+    authenticate,
+    addEvidenceHandler
+);
+
+router.get(
+    "/:id/evidence",
+    authenticate,
+    getEvidenceHandler
+);
+
+router.patch(
+    "/:id/evidence/:evidenceId/verify",
+    authenticate,
+    verifyEvidenceHandler
 );
 
 // GET /api/impact-assessments/:id

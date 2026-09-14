@@ -100,6 +100,43 @@ export const problemApi = {
     apiRequest(`/problems/${problemId}/implementations`, {
       method: "GET",
     }),
+
+  supportProblem: (id) =>
+    apiRequest(`/problems/${id}/support`, {
+      method: "POST",
+    }),
+
+  removeSupport: (id) =>
+    apiRequest(`/problems/${id}/support`, {
+      method: "DELETE",
+    }),
+
+  getSupports: (id) =>
+    apiRequest(`/problems/${id}/supports`, {
+      method: "GET",
+    }),
+
+  getImpactPassport: (id) =>
+    apiRequest(`/problems/${id}/impact-passport`, {
+      method: "GET",
+    }),
+
+  addComment: (id, payload) =>
+    apiRequest(`/problems/${id}/comments`, {
+      method: "POST",
+      body: payload,
+    }),
+
+  getComments: (id) =>
+    apiRequest(`/problems/${id}/comments`, {
+      method: "GET",
+    }),
+
+  moderateComment: (id, commentId, payload) =>
+    apiRequest(`/problems/${id}/comments/${commentId}/status`, {
+      method: "PATCH",
+      body: payload,
+    }),
 };
 
 // ============================================================================
@@ -257,6 +294,12 @@ export const implementationApi = {
       method: "GET",
     }),
 
+  verifyEvidence: (id, evidenceId, payload) =>
+    apiRequest(`/implementations/${id}/evidence/${evidenceId}/verify`, {
+      method: "PATCH",
+      body: payload,
+    }),
+
   raiseBlocker: (id, payload) =>
     apiRequest(`/implementations/${id}/blockers`, {
       method: "POST",
@@ -337,6 +380,23 @@ export const impactApi = {
 
   markSustained: (id, payload) =>
     apiRequest(`/impact-assessments/${id}/sustained`, {
+      method: "PATCH",
+      body: payload,
+    }),
+
+  addEvidence: (id, payload) =>
+    apiRequest(`/impact-assessments/${id}/evidence`, {
+      method: "POST",
+      body: payload,
+    }),
+
+  getEvidence: (id) =>
+    apiRequest(`/impact-assessments/${id}/evidence`, {
+      method: "GET",
+    }),
+
+  verifyEvidence: (id, evidenceId, payload) =>
+    apiRequest(`/impact-assessments/${id}/evidence/${evidenceId}/verify`, {
       method: "PATCH",
       body: payload,
     }),
@@ -570,5 +630,70 @@ export const notificationApi = {
   deleteNotification: (id) =>
     apiRequest(`/notifications/${id}`, {
       method: "DELETE",
+    }),
+};
+
+// ============================================================================
+// COLLABORATION TEAMS APIs (backend/src/routes/teamRoutes.js) — M9
+// ============================================================================
+export const teamApi = {
+  createTeam: (payload) =>
+    apiRequest("/teams", {
+      method: "POST",
+      body: payload,
+    }),
+
+  getTeam: (id) =>
+    apiRequest(`/teams/${id}`, {
+      method: "GET",
+    }),
+
+  getTeamsForProblem: (problemId) =>
+    apiRequest(`/problems/${problemId}/teams`, {
+      method: "GET",
+    }),
+
+  inviteMember: (teamId, payload) =>
+    apiRequest(`/teams/${teamId}/invite`, {
+      method: "POST",
+      body: payload,
+    }),
+
+  acceptInvitation: (teamId) =>
+    apiRequest(`/teams/${teamId}/accept`, {
+      method: "POST",
+    }),
+
+  declineInvitation: (teamId) =>
+    apiRequest(`/teams/${teamId}/decline`, {
+      method: "POST",
+    }),
+
+  removeMember: (teamId, userId) =>
+    apiRequest(`/teams/${teamId}/members/${userId}`, {
+      method: "DELETE",
+    }),
+
+  updateTeamStatus: (teamId, payload) =>
+    apiRequest(`/teams/${teamId}/status`, {
+      method: "PATCH",
+      body: payload,
+    }),
+};
+
+// ============================================================================
+// TRUST & ANTI-GAMING APIs (backend/src/routes/trustRoutes.js) — M16
+// ============================================================================
+export const trustApi = {
+  getEvents: (params = {}) =>
+    apiRequest("/trust", {
+      method: "GET",
+      params,
+    }),
+
+  reviewEvent: (id, payload) =>
+    apiRequest(`/trust/${id}/review`, {
+      method: "PATCH",
+      body: payload,
     }),
 };

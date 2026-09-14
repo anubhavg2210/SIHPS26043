@@ -152,20 +152,36 @@ async function submitSolution({ problemId, userId, payload }) {
         return null;
     }
 
-    // 3. Insert solution with SUBMITTED status (never allow client to set status)
+    // 3. Optional team_id — validate and link if present
+    let teamId = null;
+    if (payload.team_id !== undefined && payload.team_id !== null && payload.team_id !== "") {
+        teamId = parseInt(payload.team_id, 10);
+        if (isNaN(teamId)) {
+            throw new ValidationError('"team_id" must be a valid integer');
+        }
+        const teamCheck = await pool.query(
+            "SELECT id FROM collaboration_teams WHERE id = $1",
+            [teamId]
+        );
+        if (teamCheck.rows.length === 0) {
+            throw new ValidationError("Team not found");
+        }
+    }
+
+    // 4. Insert solution with SUBMITTED status (never allow client to set status)
     const result = await pool.query(
         `INSERT INTO solutions
             (problem_id, submitted_by, title, description,
              methodology, technology, expected_impact,
              estimated_cost, implementation_time, scalability,
              required_resources, risks, evidence,
-             status)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, 'SUBMITTED')
+             status, team_id)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, 'SUBMITTED', $14)
          RETURNING id, problem_id, submitted_by, title, description,
                    methodology, technology, expected_impact,
                    estimated_cost, implementation_time, scalability,
                    required_resources, risks, evidence,
-                   status, created_at, updated_at`,
+                   status, team_id, created_at, updated_at`,
         [
             problemId,
             userId,
@@ -182,6 +198,7 @@ async function submitSolution({ problemId, userId, payload }) {
             payload.required_resources ? payload.required_resources.trim() : null,
             payload.risks ? payload.risks.trim() : null,
             payload.evidence ? payload.evidence.trim() : null,
+            teamId,
         ]
     );
 

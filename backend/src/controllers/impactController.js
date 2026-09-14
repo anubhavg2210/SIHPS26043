@@ -23,6 +23,9 @@ const {
     verifyImpactAssessment,
     markSustainedOutcome,
     getProblemImpactSummary,
+    addEvidence,
+    getEvidence,
+    verifyEvidence,
 } = require("../services/impactService");
 
 function handleError(error, res, fallbackMessage) {
@@ -282,6 +285,77 @@ async function getProblemImpactSummaryHandler(req, res) {
     }
 }
 
+// ---------------------------------------------------------------------------
+// POST /api/impact-assessments/:id/evidence
+// ---------------------------------------------------------------------------
+async function addEvidenceHandler(req, res) {
+    const impactId = parseInt(req.params.id, 10);
+    if (isNaN(impactId)) {
+        return res.status(400).json({ message: "Invalid impact assessment id" });
+    }
+
+    try {
+        const evidence = await addEvidence({
+            impactId,
+            user: req.user,
+            payload: req.body,
+        });
+
+        res.status(201).json({
+            message: "Impact evidence submitted successfully",
+            evidence,
+        });
+    } catch (err) {
+        handleError(err, res, "Failed to submit impact evidence");
+    }
+}
+
+// ---------------------------------------------------------------------------
+// GET /api/impact-assessments/:id/evidence
+// ---------------------------------------------------------------------------
+async function getEvidenceHandler(req, res) {
+    const impactId = parseInt(req.params.id, 10);
+    if (isNaN(impactId)) {
+        return res.status(400).json({ message: "Invalid impact assessment id" });
+    }
+
+    try {
+        const evidence = await getEvidence(impactId);
+        res.json({ impact_assessment_id: impactId, total: evidence.length, evidence });
+    } catch (err) {
+        handleError(err, res, "Failed to fetch impact evidence");
+    }
+}
+
+// ---------------------------------------------------------------------------
+// PATCH /api/impact-assessments/:id/evidence/:evidenceId/verify
+// ---------------------------------------------------------------------------
+async function verifyEvidenceHandler(req, res) {
+    const impactId = parseInt(req.params.id, 10);
+    const evidenceId = parseInt(req.params.evidenceId, 10);
+    
+    if (isNaN(impactId) || isNaN(evidenceId)) {
+        return res.status(400).json({ message: "Invalid impact assessment or evidence id" });
+    }
+
+    try {
+        const evidence = await verifyEvidence({
+            impactId,
+            evidenceId,
+            user: req.user,
+            status: req.body?.status,
+            remarks: req.body?.remarks,
+        });
+
+        res.json({
+            message: `Impact evidence ${req.body?.status} successfully`,
+            evidence,
+        });
+    } catch (err) {
+        handleError(err, res, "Failed to verify impact evidence");
+    }
+}
+
 module.exports = {
     createImpactAssessmentHandler,
     getImpactAssessmentByImplementationHandler,
@@ -295,4 +369,7 @@ module.exports = {
     verifyHandler,
     markSustainedHandler,
     getProblemImpactSummaryHandler,
+    addEvidenceHandler,
+    getEvidenceHandler,
+    verifyEvidenceHandler,
 };

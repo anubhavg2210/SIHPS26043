@@ -11,6 +11,8 @@ import { ImplementationView } from "../../components/problems/ImplementationView
 import { ImpactView } from "../../components/problems/ImpactView";
 import { ExpertiseMatchingView } from "../../components/problems/ExpertiseMatchingView";
 import { AIAnalysisView } from "../../components/problems/AIAnalysisView";
+import { CommunityView } from "../../components/problems/CommunityView";
+import { TeamView } from "../../components/teams/TeamView";
 import { problemApi, matchingApi, challengeApi } from "../../services/api";
 import { useRouter } from "../../context/useRouter.js";
 
@@ -73,6 +75,7 @@ function ProblemMatchingTab({ problem, requiredExpertise }) {
       msmes={msmes}
       loading={loading}
       requiredExpertise={requiredExpertise}
+      problem={problem}
     />
   );
 }
@@ -191,6 +194,8 @@ export function ProblemDetailPage({ id }) {
     { key: "solutions", label: "Solutions & Evaluation", icon: "check-circle" },
     { key: "implementation", label: "Implementation & Pilot", icon: "activity" },
     { key: "impact", label: "Impact & Verification", icon: "star" },
+    { key: "community", label: "Community", icon: "message-circle" },
+    { key: "collaboration", label: "Collaboration", icon: "users" },
     { key: "history", label: "Status History", icon: "clock" },
   ];
 
@@ -276,6 +281,14 @@ export function ProblemDetailPage({ id }) {
             </div>
           </div>
 
+          <div style={{ display: "flex", gap: "1rem" }}>
+            <Button 
+              variant="outline" 
+              onClick={() => navigate(`/problems/${id}/impact-passport`)}
+            >
+              View Impact Passport
+            </Button>
+
           {/* Priority Score Widget */}
           <div
             style={{
@@ -294,6 +307,7 @@ export function ProblemDetailPage({ id }) {
               {problem.priority_score || (problem.severity * 5 + problem.urgency * 5)}
               <span style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 500 }}> / 100</span>
             </div>
+          </div>
           </div>
         </div>
 
@@ -421,7 +435,17 @@ export function ProblemDetailPage({ id }) {
           <ImpactView problemId={problem.id} />
         )}
 
-        {/* Tab 8: Status History / Audit Log */}
+        {/* Tab 8: Community */}
+        {activeTab === "community" && (
+          <CommunityView problemId={problem.id} />
+        )}
+
+        {/* Tab 9: Collaboration Teams — M9 */}
+        {activeTab === "collaboration" && (
+          <TeamView problem={problem} />
+        )}
+
+        {/* Tab 9: Status History / Audit Log */}
         {activeTab === "history" && (
           <Card title="Statutory Lifecycle Audit Trail" subtitle="Chronological record of status mutations">
             {statusHistory.length === 0 ? (

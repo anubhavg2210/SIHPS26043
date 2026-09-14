@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "../../context/useAuth.js";
 import { Icon } from "../common/Icons";
 import { Button } from "../common/Button";
 import { Card } from "../common/Cards";
@@ -9,10 +10,12 @@ import { useToast } from "../../context/useToast.js";
 
 export function ImpactView({ problemId }) {
   const toast = useToast();
+  const { role } = useAuth();
 
   const [loading, setLoading] = useState(true);
   const [impactSummary, setImpactSummary] = useState(null);
   const [feedbackList, setFeedbackList] = useState([]);
+  const [evidence, setEvidence] = useState([]);
 
   // Feedback Modal
   const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
@@ -22,6 +25,21 @@ export function ImpactView({ problemId }) {
     comments: "",
   });
   const [submittingFeedback, setSubmittingFeedback] = useState(false);
+
+  // Add Evidence Modal
+  const [evidenceModalOpen, setEvidenceModalOpen] = useState(false);
+  const [evidenceForm, setEvidenceForm] = useState({
+    title: "",
+    evidence_type: "LAB_REPORT",
+    file_url: "",
+  });
+  const [submittingEvidence, setSubmittingEvidence] = useState(false);
+
+  // Verify Evidence Modal
+  const [verifyModalOpen, setVerifyModalOpen] = useState(false);
+  const [verifyingEvidenceId, setVerifyingEvidenceId] = useState(null);
+  const [verifyForm, setVerifyForm] = useState({ status: "VERIFIED", remarks: "" });
+  const [submittingVerify, setSubmittingVerify] = useState(false);
 
   useEffect(() => {
     let ignore = false;
@@ -40,6 +58,12 @@ export function ImpactView({ problemId }) {
             if (!ignore) {
               setFeedbackList(fbRes.feedback || []);
             }
+            
+            // Fetch evidence
+            const evRes = await impactApi.getEvidence(summaryRes.assessment.id);
+            if (!ignore) {
+              setEvidence(evRes.evidence || []);
+            }
           } catch (e) {
             console.error("Feedback fetch failed", e);
           }
@@ -48,6 +72,8 @@ export function ImpactView({ problemId }) {
         if (!ignore) {
           console.error(err);
           setImpactSummary(null);
+          setFeedbackList([]);
+          setEvidence([]);
           setLoading(false);
         }
       }
@@ -79,6 +105,52 @@ export function ImpactView({ problemId }) {
       toast.error(err.message || "Failed to submit feedback");
     } finally {
       setSubmittingFeedback(false);
+    }
+  };
+
+  const handlePostEvidence = async (e) => {
+    e.preventDefault();
+    if (!impactSummary?.assessment?.id) return;
+    setSubmittingEvidence(true);
+    try {
+      await impactApi.addEvidence(impactSummary.assessment.id, {
+        title: evidenceForm.title.trim(),
+        evidence_type: evidenceForm.evidence_type,
+        file_url: evidenceForm.file_url.trim() || undefined,
+      });
+      toast.success("Impact Evidence submitted successfully (Pending Verification)");
+      setEvidenceModalOpen(false);
+      setEvidenceForm({ title: "", evidence_type: "LAB_REPORT", file_url: "" });
+      
+      const evRes = await impactApi.getEvidence(impactSummary.assessment.id);
+      setEvidence(evRes.evidence || []);
+    } catch (err) {
+      toast.error(err.message || "Failed to submit impact evidence");
+    } finally {
+      setSubmittingEvidence(false);
+    }
+  };
+
+  const handleVerifyEvidence = async (e) => {
+    e.preventDefault();
+    if (!impactSummary?.assessment?.id || !verifyingEvidenceId) return;
+    setSubmittingVerify(true);
+    try {
+      await impactApi.verifyEvidence(impactSummary.assessment.id, verifyingEvidenceId, {
+        status: verifyForm.status,
+        remarks: verifyForm.remarks.trim() || undefined,
+      });
+      toast.success(`Evidence marked as ${verifyForm.status}`);
+      setVerifyModalOpen(false);
+      setVerifyingEvidenceId(null);
+      setVerifyForm({ status: "VERIFIED", remarks: "" });
+      
+      const evRes = await impactApi.getEvidence(impactSummary.assessment.id);
+      setEvidence(evRes.evidence || []);
+    } catch (err) {
+      toast.error(err.message || "Failed to verify evidence");
+    } finally {
+      setSubmittingVerify(false);
     }
   };
 
@@ -121,13 +193,25 @@ export function ImpactView({ problemId }) {
         </div>
 
         {hasData && (
-          <Button
-            variant="primary"
-            icon="star"
-            onClick={() => setFeedbackModalOpen(true)}
-          >
-            Submit Citizen Feedback
-          </Button>
+          <div style={{ display: "flex", gap: "0.5rem" }}>
+            <Button
+              variant="outline"
+              icon="camera"
+              onClick={() => {
+                setEvidenceForm({ title: "", evidence_type: "LAB_REPORT", file_url: "" });
+                setEvidenceModalOpen(true);
+              }}
+            >
+              Submit Evidence
+            </Button>
+            <Button
+              variant="primary"
+              icon="star"
+              onClick={() => setFeedbackModalOpen(true)}
+            >
+              Submit Citizen Feedback
+            </Button>
+          </div>
         )}
       </div>
 
@@ -203,6 +287,77 @@ export function ImpactView({ problemId }) {
                 {impactSummary.assessment?.verified ? "Authority confirmed" : "Audit in progress"}
               </div>
             </div>
+          </div>
+
+          {/* Impact Evidence Section (M13) */}
+          <div style={{ marginTop: "1rem" }}>
+            <h5 style={{ margin: "0 0 0.75rem", fontSize: "0.95rem", fontWeight: 700 }}>
+              Impact Verification Evidence (M13)
+            </h5>
+            {evidence.length === 0 ? (
+              <p style={{ margin: 0, fontSize: "0.85rem", color: "var(--text-muted)" }}>
+                No evidence submitted yet.
+              </p>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                {evidence.map((ev) => (
+                  <div
+                    key={ev.id}
+                    style={{
+                      padding: "0.85rem",
+                      borderRadius: "var(--radius-md)",
+                      backgroundColor: "var(--bg-muted)",
+                      borderLeft: `3px solid ${
+                        ev.verification_status === "VERIFIED"
+                          ? "var(--color-success)"
+                          : ev.verification_status === "REJECTED"
+                          ? "var(--color-danger)"
+                          : "var(--color-warning)"
+                      }`,
+                    }}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <div>
+                        <span style={{ fontWeight: 700, fontSize: "0.9rem", marginRight: "0.5rem" }}>{ev.title}</span>
+                        <span style={{ fontSize: "0.75rem", padding: "0.15rem 0.4rem", backgroundColor: "#e2e8f0", borderRadius: "4px" }}>
+                          {ev.evidence_type}
+                        </span>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                        <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--text-muted)" }}>
+                          Status: {ev.verification_status}
+                        </span>
+                        {role === "AUTHORITY" && ev.verification_status === "PENDING" && (
+                          <Button
+                            variant="outline"
+                            size="small"
+                            onClick={() => {
+                              setVerifyingEvidenceId(ev.id);
+                              setVerifyForm({ status: "VERIFIED", remarks: "" });
+                              setVerifyModalOpen(true);
+                            }}
+                          >
+                            Verify
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                    {ev.file_url && (
+                      <div style={{ marginTop: "0.5rem", fontSize: "0.8rem" }}>
+                        <a href={ev.file_url} target="_blank" rel="noreferrer" style={{ color: "var(--color-primary)" }}>
+                          View Attached File
+                        </a>
+                      </div>
+                    )}
+                    {ev.reviewer_remarks && (
+                      <div style={{ marginTop: "0.5rem", fontSize: "0.8rem", color: "var(--text-secondary)", fontStyle: "italic" }}>
+                        <strong>Reviewer Remarks:</strong> {ev.reviewer_remarks}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Citizen Feedback Feed */}
@@ -319,6 +474,105 @@ export function ImpactView({ problemId }) {
             </Button>
             <Button type="submit" variant="primary" loading={submittingFeedback}>
               Submit Feedback
+            </Button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Add Evidence Modal */}
+      <Modal
+        isOpen={evidenceModalOpen}
+        onClose={() => setEvidenceModalOpen(false)}
+        title="Submit Impact Evidence"
+      >
+        <form onSubmit={handlePostEvidence}>
+          <div className="cs-form-group">
+            <label className="cs-label">
+              Evidence Title <span className="required">*</span>
+            </label>
+            <input
+              type="text"
+              className="cs-input"
+              placeholder="e.g., Water Quality Lab Report"
+              value={evidenceForm.title}
+              onChange={(e) => setEvidenceForm({ ...evidenceForm, title: e.target.value })}
+              required
+            />
+          </div>
+
+          <div className="cs-form-group">
+            <label className="cs-label">Evidence Type</label>
+            <select
+              className="cs-input"
+              value={evidenceForm.evidence_type}
+              onChange={(e) => setEvidenceForm({ ...evidenceForm, evidence_type: e.target.value })}
+            >
+              <option value="LAB_REPORT">Lab Report</option>
+              <option value="PHOTO">Photo</option>
+              <option value="VIDEO">Video</option>
+              <option value="DOCUMENT">Document</option>
+              <option value="LINK">Link</option>
+            </select>
+          </div>
+
+          <div className="cs-form-group">
+            <label className="cs-label">File URL / Link</label>
+            <input
+              type="text"
+              className="cs-input"
+              placeholder="https://..."
+              value={evidenceForm.file_url}
+              onChange={(e) => setEvidenceForm({ ...evidenceForm, file_url: e.target.value })}
+            />
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem", marginTop: "1rem" }}>
+            <Button type="button" variant="outline" onClick={() => setEvidenceModalOpen(false)} disabled={submittingEvidence}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="primary" loading={submittingEvidence}>
+              Submit Evidence
+            </Button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Verify Evidence Modal */}
+      <Modal
+        isOpen={verifyModalOpen}
+        onClose={() => setVerifyModalOpen(false)}
+        title="Verify Impact Evidence"
+      >
+        <form onSubmit={handleVerifyEvidence}>
+          <div className="cs-form-group">
+            <label className="cs-label">Status</label>
+            <select
+              className="cs-input"
+              value={verifyForm.status}
+              onChange={(e) => setVerifyForm({ ...verifyForm, status: e.target.value })}
+            >
+              <option value="VERIFIED">Approve (VERIFIED)</option>
+              <option value="REJECTED">Reject (REJECTED)</option>
+            </select>
+          </div>
+
+          <div className="cs-form-group">
+            <label className="cs-label">Review Remarks</label>
+            <textarea
+              className="cs-textarea"
+              rows={3}
+              placeholder="Explain your verification decision..."
+              value={verifyForm.remarks}
+              onChange={(e) => setVerifyForm({ ...verifyForm, remarks: e.target.value })}
+            />
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem", marginTop: "1rem" }}>
+            <Button type="button" variant="outline" onClick={() => setVerifyModalOpen(false)} disabled={submittingVerify}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="primary" loading={submittingVerify}>
+              Confirm Verdict
             </Button>
           </div>
         </form>
