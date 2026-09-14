@@ -5,7 +5,7 @@ async function getOverview() {
         SELECT
             (SELECT COUNT(*) FROM problems) AS total_problems,
             (SELECT COUNT(*) FROM problems WHERE status NOT IN ('RESOLVED', 'REJECTED')) AS active_problems,
-            (SELECT COUNT(*) FROM problems WHERE priority_score > 50 OR severity >= 4) AS high_priority,
+            (SELECT COUNT(*) FROM problems WHERE priority_score > 50 OR severity IN ('HIGH', 'CRITICAL', '4', '5') OR severity::text >= '4') AS high_priority,
             (SELECT COUNT(*) FROM problems WHERE status = 'RESOLVED') AS resolved_problems
     `;
     const res = await pool.query(query);

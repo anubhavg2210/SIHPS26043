@@ -21,6 +21,7 @@ import ProfilePage from "./pages/profile/ProfilePage.jsx";
 import { DashboardPage } from "./pages/dashboard/DashboardPage.jsx";
 import ImpactPassportPage from "./pages/impactPassport/ImpactPassportPage.jsx";
 import TrustDashboardPage from "./pages/dashboard/TrustDashboardPage.jsx";
+import AnalyticsDashboardPage from "./pages/dashboard/AnalyticsDashboardPage.jsx";
 
 /**
  * Main Application View Routing Switcher
@@ -75,6 +76,9 @@ function AppContent() {
       {/* Route: /dashboard/trust */}
       {path === "/dashboard/trust" && <TrustDashboardPage />}
 
+      {/* Route: /dashboard/analytics */}
+      {path === "/dashboard/analytics" && <AnalyticsDashboardPage />}
+
       {/* Route: /explore, /matches, /my-reports */}
       {(path === "/explore" || path === "/matches" || path === "/my-reports") && <ExplorePage />}
 
@@ -102,6 +106,7 @@ function AppContent() {
       {/* Other routes placeholder */}
       {path !== "/dashboard" &&
         path !== "/dashboard/trust" &&
+        path !== "/dashboard/analytics" &&
         path !== "/explore" &&
         path !== "/matches" &&
         path !== "/my-reports" &&

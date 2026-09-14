@@ -57,9 +57,10 @@ async function generateImpactPassport(problemId) {
     }
 
     if (prob.priority_score) {
+        const scoreNum = Number(prob.priority_score);
         passport.priority = {
-            score: prob.priority_score,
-            level: prob.priority_score > 75 ? "CRITICAL" : prob.priority_score > 50 ? "HIGH" : "NORMAL"
+            score: scoreNum,
+            level: scoreNum > 75 ? "CRITICAL" : scoreNum > 50 ? "HIGH" : "NORMAL"
         };
     }
 
