@@ -39,6 +39,7 @@ const {
     getUpdates,
     addEvidence,
     getEvidence,
+    verifyEvidence,
     raiseBlocker,
     resolveBlocker,
 } = require("../services/implementationService");
@@ -328,6 +329,35 @@ async function getEvidenceHandler(req, res) {
 }
 
 // ---------------------------------------------------------------------------
+// PATCH /api/implementations/:id/evidence/:evidenceId/verify
+// ---------------------------------------------------------------------------
+async function verifyEvidenceHandler(req, res) {
+    const implementationId = parseInt(req.params.id, 10);
+    const evidenceId = parseInt(req.params.evidenceId, 10);
+    
+    if (isNaN(implementationId) || isNaN(evidenceId)) {
+        return res.status(400).json({ message: "Invalid implementation or evidence id" });
+    }
+
+    try {
+        const evidence = await verifyEvidence({
+            implementationId,
+            evidenceId,
+            user: req.user,
+            status: req.body?.status,
+            remarks: req.body?.remarks,
+        });
+
+        res.json({
+            message: `Evidence ${req.body?.status} successfully`,
+            evidence,
+        });
+    } catch (err) {
+        handleError(err, res, "Failed to verify evidence");
+    }
+}
+
+// ---------------------------------------------------------------------------
 // POST /api/implementations/:id/blockers
 // ---------------------------------------------------------------------------
 async function raiseBlockerHandler(req, res) {
@@ -393,6 +423,7 @@ module.exports = {
     getUpdatesHandler,
     addEvidenceHandler,
     getEvidenceHandler,
+    verifyEvidenceHandler,
     raiseBlockerHandler,
     resolveBlockerHandler,
 };

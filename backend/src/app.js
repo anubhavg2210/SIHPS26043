@@ -17,11 +17,14 @@ const impactRoutes = require("./routes/impactRoutes");
 const rootCauseRoutes = require("./routes/rootCauseRoutes");
 const dependencyRoutes = require("./routes/dependencyRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
+const teamRoutes = require("./routes/teamRoutes");
 const {
     reputationRouter,
     rankingsRouter,
     usersRouter,
 } = require("./routes/reputationRoutes");
+const trustRoutes = require("./routes/trustRoutes");
+const analyticsRoutes = require("./routes/analyticsRoutes");
 
 const app = express();
 
@@ -39,10 +42,12 @@ app.use("/api/impact-assessments", impactRoutes);
 app.use("/api/root-causes", rootCauseRoutes);
 app.use("/api/dependencies", dependencyRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/teams", teamRoutes);
 app.use("/api/reputation", reputationRouter);
 app.use("/api/rankings", rankingsRouter);
 app.use("/api/users", usersRouter);
-
+app.use("/api/trust", trustRoutes);
+app.use("/api/analytics", analyticsRoutes);
 
 
 app.get("/health", async (req, res) => {

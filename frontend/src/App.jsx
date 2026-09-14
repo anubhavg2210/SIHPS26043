@@ -19,6 +19,8 @@ import ReputationPage from "./pages/reputation/ReputationPage.jsx";
 import RankingsPage from "./pages/rankings/RankingsPage.jsx";
 import ProfilePage from "./pages/profile/ProfilePage.jsx";
 import { DashboardPage } from "./pages/dashboard/DashboardPage.jsx";
+import ImpactPassportPage from "./pages/impactPassport/ImpactPassportPage.jsx";
+import TrustDashboardPage from "./pages/dashboard/TrustDashboardPage.jsx";
 
 /**
  * Main Application View Routing Switcher
@@ -70,6 +72,9 @@ function AppContent() {
       {/* Route: /dashboard */}
       {path === "/dashboard" && <DashboardPage />}
 
+      {/* Route: /dashboard/trust */}
+      {path === "/dashboard/trust" && <TrustDashboardPage />}
+
       {/* Route: /explore, /matches, /my-reports */}
       {(path === "/explore" || path === "/matches" || path === "/my-reports") && <ExplorePage />}
 
@@ -77,7 +82,10 @@ function AppContent() {
       {path === "/report" && <ReportProblemPage />}
 
       {/* Route: /problems/:id */}
-      {isProblemDetail && <ProblemDetailPage id={problemId} />}
+      {isProblemDetail && !segments[2] && <ProblemDetailPage id={problemId} />}
+
+      {/* Route: /problems/:id/impact-passport */}
+      {isProblemDetail && segments[2] === "impact-passport" && <ImpactPassportPage />}
 
       {/* Route: /notifications */}
       {path === "/notifications" && <NotificationsPage />}
@@ -93,6 +101,7 @@ function AppContent() {
 
       {/* Other routes placeholder */}
       {path !== "/dashboard" &&
+        path !== "/dashboard/trust" &&
         path !== "/explore" &&
         path !== "/matches" &&
         path !== "/my-reports" &&

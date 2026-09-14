@@ -10,6 +10,8 @@
 "use strict";
 
 const pool = require("../config/db");
+const { notify } = require("./notificationService");
+const trustService = require("./trustService");
 
 class ValidationError extends Error {
     constructor(message) {
@@ -1018,6 +1020,155 @@ async function getProblemImpactSummary(problemId) {
     };
 }
 
+// ---------------------------------------------------------------------------
+// 9. EVIDENCE (M13)
+// ---------------------------------------------------------------------------
+async function addEvidence({ impactId, user, payload }) {
+    if (!payload || !payload.title || !payload.evidence_type || !payload.file_url) {
+        throw new ValidationError("Missing required evidence fields (title, evidence_type, file_url)");
+    }
+
+    const check = await pool.query(
+        `SELECT id FROM implementation_impact_assessments WHERE id = $1`,
+        [impactId]
+    );
+
+    if (check.rows.length === 0) {
+        throw new NotFoundError("Impact assessment not found");
+    }
+
+    const eType = payload.evidence_type.toUpperCase();
+    const VALID_EVIDENCE_TYPES = ["PHOTO", "LAB_REPORT", "DOCUMENT", "METRIC_DATA", "CERTIFICATE", "OTHER"];
+    if (!VALID_EVIDENCE_TYPES.includes(eType)) {
+        throw new ValidationError(`"evidence_type" must be one of: ${VALID_EVIDENCE_TYPES.join(", ")}`);
+    }
+
+    const res = await pool.query(
+        `INSERT INTO verification_evidence
+            (impact_assessment_id, submitted_by, title, evidence_type, reference, description)
+         VALUES ($1, $2, $3, $4, $5, $6)
+         RETURNING *`,
+        [
+            impactId,
+            user.id,
+            payload.title.trim(),
+            eType,
+            payload.file_url.trim(),
+            payload.description ? payload.description.trim() : null,
+        ]
+    );
+
+    return {
+        ...res.rows[0],
+        file_url: res.rows[0].reference,
+        submitted_by: { id: user.id, name: user.name, role: user.role },
+        uploaded_by: { id: user.id, name: user.name, role: user.role },
+    };
+}
+
+async function getEvidence(impactId) {
+    const check = await pool.query(`SELECT id FROM implementation_impact_assessments WHERE id = $1`, [impactId]);
+    if (check.rows.length === 0) {
+        throw new NotFoundError("Impact assessment not found");
+    }
+
+    const res = await pool.query(
+        `SELECT ie.*, u.name AS uploader_name, u.role AS uploader_role,
+                v.name AS verifier_name, v.role AS verifier_role
+         FROM verification_evidence ie
+         JOIN users u ON u.id = ie.submitted_by
+         LEFT JOIN users v ON v.id = ie.verified_by
+         WHERE ie.impact_assessment_id = $1
+         ORDER BY ie.created_at DESC`,
+        [impactId]
+    );
+
+    return res.rows.map((row) => ({
+        id: row.id,
+        impact_assessment_id: row.impact_assessment_id,
+        title: row.title,
+        evidence_type: row.evidence_type,
+        file_url: row.reference,
+        reference: row.reference,
+        description: row.description,
+        created_at: row.created_at,
+        verification_status: row.verification_status,
+        reviewer_remarks: row.reviewer_remarks,
+        verified_at: row.verified_at,
+        uploaded_by: {
+            id: row.submitted_by,
+            name: row.uploader_name,
+            role: row.uploader_role,
+        },
+        submitted_by: {
+            id: row.submitted_by,
+            name: row.uploader_name,
+            role: row.uploader_role,
+        },
+        verified_by: row.verified_by ? {
+            id: row.verified_by,
+            name: row.verifier_name,
+            role: row.verifier_role,
+        } : null,
+    }));
+}
+
+async function verifyEvidence({ impactId, evidenceId, user, status, remarks }) {
+    if (!["VERIFIED", "REJECTED"].includes(status)) {
+        throw new ValidationError("Status must be VERIFIED or REJECTED");
+    }
+
+    if (!isAuthorityOrAdmin(user)) {
+        throw new ForbiddenError("Only authorities can verify evidence.");
+    }
+
+    const check = await pool.query(
+        `SELECT id, submitted_by, verification_status 
+         FROM verification_evidence 
+         WHERE id = $1 AND impact_assessment_id = $2`,
+        [evidenceId, impactId]
+    );
+
+    if (check.rows.length === 0) {
+        throw new NotFoundError("Evidence not found");
+    }
+
+    const evidence = check.rows[0];
+
+    // M16: Anti-Gaming check for self-verification
+    if (Number(evidence.submitted_by) === Number(user.id)) {
+        await trustService.logTrustEvent(user.id, 'SELF_ACTION_ATTEMPT', 'IMPACT_EVIDENCE', evidenceId, 'HIGH', 'Attempted to verify own evidence');
+        trustService.preventSelfAction(evidence.submitted_by, user.id, 'verify');
+    }
+
+    if (evidence.verification_status !== "PENDING") {
+        throw new ValidationError(`Evidence is already ${evidence.verification_status}`);
+    }
+
+    const res = await pool.query(
+        `UPDATE verification_evidence
+         SET verification_status = $1,
+             verified_by = $2,
+             reviewer_remarks = $3,
+             verified_at = CURRENT_TIMESTAMP,
+             updated_at = CURRENT_TIMESTAMP
+         WHERE id = $4
+         RETURNING *`,
+        [status, user.id, remarks || null, evidenceId]
+    );
+
+    await notify({
+        userId: evidence.submitted_by,
+        type: "EVIDENCE_REVIEWED",
+        priority: "HIGH",
+        title: `Impact Evidence ${status}`,
+        message: `Your submitted impact evidence has been ${status.toLowerCase()} by an authority.`,
+        actionUrl: `/impacts/${impactId}`,
+    });
+
+    return res.rows[0];
+}
+
 module.exports = {
     ValidationError,
     ForbiddenError,
@@ -1044,4 +1195,7 @@ module.exports = {
     verifyImpactAssessment,
     markSustainedOutcome,
     getProblemImpactSummary,
+    addEvidence,
+    getEvidence,
+    verifyEvidence,
 };

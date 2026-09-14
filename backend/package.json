@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/server.js",
-    "test": "jest --verbose --forceExit"
+    "test": "jest --verbose --forceExit --runInBand"
   },
   "keywords": [],
   "author": "",

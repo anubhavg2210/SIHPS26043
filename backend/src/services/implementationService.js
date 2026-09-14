@@ -10,6 +10,8 @@
 "use strict";
 
 const pool = require("../config/db");
+const { notify } = require("./notificationService");
+const trustService = require("./trustService");
 
 class ValidationError extends Error {
     constructor(message) {
@@ -792,8 +794,8 @@ async function addEvidence({ implementationId, user, payload }) {
     }
 
     const res = await pool.query(
-        `INSERT INTO implementation_evidence
-            (implementation_id, milestone_id, uploaded_by, title, evidence_type, file_url, description)
+        `INSERT INTO verification_evidence
+            (implementation_id, milestone_id, submitted_by, title, evidence_type, reference, description)
          VALUES ($1, $2, $3, $4, $5, $6, $7)
          RETURNING *`,
         [
@@ -809,7 +811,9 @@ async function addEvidence({ implementationId, user, payload }) {
 
     return {
         ...res.rows[0],
+        file_url: res.rows[0].reference,
         uploaded_by: { id: user.id, name: user.name, role: user.role },
+        submitted_by: { id: user.id, name: user.name, role: user.role },
     };
 }
 
@@ -820,9 +824,11 @@ async function getEvidence(implementationId) {
     }
 
     const res = await pool.query(
-        `SELECT ie.*, u.name AS uploader_name, u.role AS uploader_role
-         FROM implementation_evidence ie
-         JOIN users u ON u.id = ie.uploaded_by
+        `SELECT ie.*, u.name AS uploader_name, u.role AS uploader_role,
+                v.name AS verifier_name, v.role AS verifier_role
+         FROM verification_evidence ie
+         JOIN users u ON u.id = ie.submitted_by
+         LEFT JOIN users v ON v.id = ie.verified_by
          WHERE ie.implementation_id = $1
          ORDER BY ie.created_at DESC`,
         [implementationId]
@@ -834,15 +840,89 @@ async function getEvidence(implementationId) {
         milestone_id: row.milestone_id,
         title: row.title,
         evidence_type: row.evidence_type,
-        file_url: row.file_url,
+        file_url: row.reference,
+        reference: row.reference,
         description: row.description,
         created_at: row.created_at,
+        verification_status: row.verification_status,
+        reviewer_remarks: row.reviewer_remarks,
+        verified_at: row.verified_at,
         uploaded_by: {
-            id: row.uploaded_by,
+            id: row.submitted_by,
             name: row.uploader_name,
             role: row.uploader_role,
         },
+        submitted_by: {
+            id: row.submitted_by,
+            name: row.uploader_name,
+            role: row.uploader_role,
+        },
+        verified_by: row.verified_by ? {
+            id: row.verified_by,
+            name: row.verifier_name,
+            role: row.verifier_role,
+        } : null,
     }));
+}
+
+// ---------------------------------------------------------------------------
+// 9.5 VERIFY EVIDENCE (M13)
+// ---------------------------------------------------------------------------
+async function verifyEvidence({ implementationId, evidenceId, user, status, remarks }) {
+    if (!["VERIFIED", "REJECTED"].includes(status)) {
+        throw new ValidationError("Status must be VERIFIED or REJECTED");
+    }
+
+    if (user.role !== "AUTHORITY" && user.role !== "ADMIN") {
+        throw new ForbiddenError("Only authorities can verify evidence.");
+    }
+
+    const check = await pool.query(
+        `SELECT id, submitted_by, verification_status 
+         FROM verification_evidence 
+         WHERE id = $1 AND implementation_id = $2`,
+        [evidenceId, implementationId]
+    );
+
+    if (check.rows.length === 0) {
+        throw new NotFoundError("Evidence not found");
+    }
+    const evRes = check;
+    const evidence = evRes.rows[0];
+
+    // M16: Anti-Gaming check for self-verification
+    if (Number(evidence.submitted_by) === Number(user.id)) {
+        await trustService.logTrustEvent(user.id, 'SELF_ACTION_ATTEMPT', 'IMPLEMENTATION_EVIDENCE', evidenceId, 'HIGH', 'Attempted to verify own evidence');
+        trustService.preventSelfAction(evidence.submitted_by, user.id, 'verify');
+    }
+
+    if (evidence.verification_status !== "PENDING") {
+        throw new ValidationError(`Evidence is already ${evidence.verification_status}`);
+    }
+
+    const res = await pool.query(
+        `UPDATE verification_evidence
+         SET verification_status = $1,
+             verified_by = $2,
+             reviewer_remarks = $3,
+             verified_at = CURRENT_TIMESTAMP,
+             updated_at = CURRENT_TIMESTAMP
+         WHERE id = $4
+         RETURNING *`,
+        [status, user.id, remarks || null, evidenceId]
+    );
+
+    // Notify submitter
+    await notify({
+        userId: evidence.submitted_by,
+        type: "EVIDENCE_REVIEWED",
+        priority: "HIGH",
+        title: `Evidence ${status}`,
+        message: `Your submitted evidence has been ${status.toLowerCase()} by an authority.`,
+        actionUrl: `/implementations/${implementationId}`,
+    });
+
+    return res.rows[0];
 }
 
 // ---------------------------------------------------------------------------
@@ -993,6 +1073,7 @@ module.exports = {
     getUpdates,
     addEvidence,
     getEvidence,
+    verifyEvidence,
     raiseBlocker,
     resolveBlocker,
 };
