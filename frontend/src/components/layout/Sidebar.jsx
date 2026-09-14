@@ -75,6 +75,8 @@ export function Sidebar() {
           { path: "/explore", label: "Priority Problems", icon: "alert-triangle" },
           { path: "/solutions", label: "Solution Review", icon: "cpu" },
           { path: "/impact", label: "Implementation & Pilot", icon: "activity" },
+          { path: "/dashboard/analytics", label: "Analytics Dashboard", icon: "activity" },
+          { path: "/dashboard/trust", label: "Trust & Anti-Gaming", icon: "shield-check" },
         ];
         break;
 
@@ -83,6 +85,8 @@ export function Sidebar() {
           { path: "/report", label: "Report Problem", icon: "plus-circle" },
           { path: "/solutions", label: "Solution Review", icon: "cpu" },
           { path: "/impact", label: "Impact & Pilots", icon: "activity" },
+          { path: "/dashboard/analytics", label: "Analytics Dashboard", icon: "activity" },
+          { path: "/dashboard/trust", label: "Trust & Anti-Gaming", icon: "shield-check" },
         ];
         break;
 

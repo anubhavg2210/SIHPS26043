@@ -697,3 +697,29 @@ export const trustApi = {
       body: payload,
     }),
 };
+
+// ============================================================================
+// ANALYTICS DASHBOARD APIs (backend/src/routes/analyticsRoutes.js) — M17
+// ============================================================================
+export const analyticsApi = {
+  getOverview: () =>
+    apiRequest("/analytics/overview", {
+      method: "GET",
+    }),
+
+  getPipeline: () =>
+    apiRequest("/analytics/pipeline", {
+      method: "GET",
+    }),
+
+  getCommunity: () =>
+    apiRequest("/analytics/community", {
+      method: "GET",
+    }),
+
+  getTrust: () =>
+    apiRequest("/analytics/trust", {
+      method: "GET",
+    }),
+};
+
