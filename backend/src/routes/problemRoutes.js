@@ -69,7 +69,8 @@ const {
 } = require("../controllers/impactPassportController");
 
 const {
-    authenticate
+    authenticate,
+    optionalAuthenticate
 } = require("../middleware/authMiddleware");
 
 const {
@@ -96,20 +97,18 @@ const router = express.Router();
 router.post(
     "/",
     authenticate,
-    authorizeRoles("CITIZEN"),
     createProblem
 );
 
 router.get(
     "/",
-    authenticate,
+    optionalAuthenticate,
     getProblems
 );
 
 router.get(
     "/mine",
     authenticate,
-    authorizeRoles("CITIZEN"),
     getMyProblems
 );
 

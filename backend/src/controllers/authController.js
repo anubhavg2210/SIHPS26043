@@ -88,21 +88,35 @@ async function login(req, res) {
             password
         } = req.body;
 
+        if (!email || !password) {
+            return res.status(400).json({
+                message: "Email and password are required"
+            });
+        }
+
+        const formattedEmail = String(email).toLowerCase().trim();
+
         const result = await pool.query(
             "SELECT * FROM users WHERE email = $1 AND is_active = TRUE",
-            [email]
+            [formattedEmail]
         );
 
-        if (result.rows.length === 0) {
+        if (!result.rows || result.rows.length === 0) {
             return res.status(401).json({
                 message: "Invalid email or password"
             });
         }
 
-        const user = result.rows[0];
+        const user = { ...result.rows[0] };
+
+        if (!user.password_hash) {
+            return res.status(401).json({
+                message: "Invalid email or password"
+            });
+        }
 
         const passwordMatch = await bcrypt.compare(
-            password,
+            String(password),
             user.password_hash
         );
 

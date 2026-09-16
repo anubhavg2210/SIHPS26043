@@ -24,4 +24,19 @@ function authenticate(req, res, next) {
     }
 }
 
-module.exports = { authenticate };
+function optionalAuthenticate(req, res, next) {
+    try {
+        const authHeader = req.headers.authorization;
+
+        if (authHeader && authHeader.startsWith("Bearer ")) {
+            const token = authHeader.split(" ")[1];
+            const decoded = verifyToken(token);
+            req.user = decoded;
+        }
+    } catch (error) {
+        // Silently ignore token errors for optional authentication
+    }
+    next();
+}
+
+module.exports = { authenticate, optionalAuthenticate };

@@ -1,0 +1,31 @@
+{
+  "dependency_patterns": {
+    "Street Lighting": [
+      {"name": "Street-light Asset Inventory", "type": "DATA", "why_required": "To map specific pole numbers, fixture specifications, and wattage", "status": "known", "source": "Municipal Asset Register"},
+      {"name": "Pole & Feeder Location Map", "type": "INFRASTRUCTURE", "why_required": "To trace power feed and junction box connections", "status": "known", "source": "Electricity Distribution Board"},
+      {"name": "Maintenance History Log", "type": "DATA", "why_required": "To identify recurring fixture or wiring breakdown points", "status": "known", "source": "Ward Maintenance Records"},
+      {"name": "Municipal Procurement / Repair Approval", "type": "APPROVAL", "why_required": "Sanction for replacement components or contractor assignment", "status": "unknown", "source": "Municipal Electrical Dept"}
+    ],
+    "Drinking Water Quality": [
+      {"name": "Water Pipeline & Valve Map", "type": "INFRASTRUCTURE", "why_required": "To isolate contaminated pipe segments and trace flow origin", "status": "known", "source": "Water Board Utility Map"},
+      {"name": "Laboratory Water Test Certification", "type": "MEASUREMENT", "why_required": "Official confirmation of chemical/bacteriological safety parameters", "status": "unknown", "source": "NABL Accredited Lab"},
+      {"name": "Public Health Clearance", "type": "AUTHORITY", "why_required": "Declaration of water safety for public consumption", "status": "unknown", "source": "District Health Office"}
+    ],
+    "Roads & Potholes": [
+      {"name": "Road Ownership & Jurisdiction Record", "type": "AUTHORITY", "why_required": "To identify responsible agency (PWD, Municipal Corp, NHAI)", "status": "known", "source": "District Land/Road Registry"},
+      {"name": "Underground Utility Cable/Pipe Clearance", "type": "APPROVAL", "why_required": "To prevent damaging underlying gas/telecom/water pipes during digging", "status": "unknown", "source": "City Utility Coordination Committee"}
+    ],
+    "Public Drainage": [
+      {"name": "Drainage Master Plan & Outfall Map", "type": "DATA", "why_required": "To trace downstream discharge route and obstruction points", "status": "known", "source": "Municipal Drainage Dept"},
+      {"name": "Desilting Equipment Access", "type": "FACILITY", "why_required": "Availability of suction jetting machines or excavator access", "status": "known", "source": "Sanitation Fleet"}
+    ],
+    "School Infrastructure": [
+      {"name": "School Building Safety Audit", "type": "SAFETY", "why_required": "Structural stability clearance before roof waterproofing work", "status": "known", "source": "Public Works Dept (PWD)"},
+      {"name": "Department of Education Sanction", "type": "APPROVAL", "why_required": "Budget release for school building maintenance", "status": "unknown", "source": "District Education Office"}
+    ],
+    "Generic": [
+      {"name": "Site Access & Safety Clearance", "type": "SAFETY", "why_required": "Permission to conduct field verification and technical work", "status": "known", "source": "Local Authority / Ward Office"},
+      {"name": "Baseline Verification Report", "type": "DATA", "why_required": "Confirmed field evidence before initiating solution work", "status": "unknown", "source": "Field Inspection Team"}
+    ]
+  }
+}

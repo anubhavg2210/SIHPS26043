@@ -1,0 +1,96 @@
+{
+  "domains": {
+    "Urban Infrastructure": {
+      "subdomains": {
+        "Street Lighting": {
+          "capabilities": ["Electrical Engineering", "Street Lighting Systems", "Urban Infrastructure", "Road Safety", "Municipal Maintenance"]
+        },
+        "Roads & Potholes": {
+          "capabilities": ["Civil Engineering", "Highway Engineering", "Urban Infrastructure", "Road Safety", "Pavement Design"]
+        },
+        "Public Drainage": {
+          "capabilities": ["Sanitary Engineering", "Civil Engineering", "Drainage Systems", "Urban Infrastructure", "Hydraulics"]
+        },
+        "Building Maintenance": {
+          "capabilities": ["Civil Engineering", "Structural Engineering", "HVAC & Ventilation", "Building Maintenance"]
+        },
+        "Public Facilities": {
+          "capabilities": ["Civil Engineering", "Urban Accessibility", "Public Safety", "Municipal Operations"]
+        }
+      }
+    },
+    "Water & Sanitation": {
+      "subdomains": {
+        "Groundwater": {
+          "capabilities": ["Hydrogeology", "Water Quality", "Environmental Engineering", "Geotechnical Engineering"]
+        },
+        "Drinking Water Quality": {
+          "capabilities": ["Water Quality", "Water Treatment", "Environmental Engineering", "Public Health", "Laboratory Testing"]
+        },
+        "Sanitation & Sewerage": {
+          "capabilities": ["Sanitary Engineering", "Public Health", "Civil Engineering", "Wastewater Treatment"]
+        }
+      }
+    },
+    "Agriculture": {
+      "subdomains": {
+        "Irrigation Systems": {
+          "capabilities": ["Agricultural Engineering", "Irrigation Systems", "Hydraulics", "Water Resource Management"]
+        },
+        "Soil Quality": {
+          "capabilities": ["Soil Science", "Agronomy", "Agricultural Chemistry", "Crop Management"]
+        },
+        "Crop Health": {
+          "capabilities": ["Plant Pathology", "Agronomy", "Crop Protection", "Agricultural Extension"]
+        }
+      }
+    },
+    "Healthcare": {
+      "subdomains": {
+        "Hospital Services": {
+          "capabilities": ["Healthcare Administration", "Public Health", "Medical Technology", "Emergency Medicine"]
+        },
+        "Medicine Availability": {
+          "capabilities": ["Pharmacy Management", "Pharmaceutical Supply Chain", "Public Health", "Hospital Operations"]
+        }
+      }
+    },
+    "Environment": {
+      "subdomains": {
+        "Solid Waste Management": {
+          "capabilities": ["Waste Management", "Environmental Engineering", "Municipal Operations", "Public Hygiene"]
+        },
+        "Air Pollution": {
+          "capabilities": ["Environmental Engineering", "Air Quality Monitoring", "Industrial Safety", "Public Health"]
+        }
+      }
+    },
+    "Energy": {
+      "subdomains": {
+        "Power Grid & Transformers": {
+          "capabilities": ["Electrical Engineering", "Power Systems", "High Voltage Engineering", "Grid Maintenance"]
+        }
+      }
+    },
+    "Education": {
+      "subdomains": {
+        "School Infrastructure": {
+          "capabilities": ["Civil Engineering", "Structural Engineering", "Building Maintenance", "Public Safety"]
+        }
+      }
+    },
+    "Governance & Public Services": {
+      "subdomains": {
+        "Traffic Management": {
+          "capabilities": ["Traffic Engineering", "Signal Systems", "Road Safety", "Municipal Operations"]
+        },
+        "Digital & Connectivity": {
+          "capabilities": ["Telecommunications", "Network Engineering", "RF Engineering", "Digital Infrastructure"]
+        },
+        "Urban Accessibility": {
+          "capabilities": ["Urban Planning", "Civil Engineering", "Accessibility Standards", "Public Safety"]
+        }
+      }
+    }
+  }
+}

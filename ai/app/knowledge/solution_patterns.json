@@ -1,0 +1,164 @@
+{
+  "solution_patterns": {
+    "Street Lighting": [
+      {
+        "name": "Component Repair & Junction Rewiring",
+        "description": "Replace faulty LED drivers, blown fuses, and damaged pole junction wiring",
+        "why_it_may_fit": "Suitable if pole structure and main housing are intact and failure is localized to driver/wiring",
+        "required_capabilities": ["Electrical Engineering", "Street Lighting Maintenance"],
+        "dependencies": ["Asset Inventory", "Feeder Power Access"],
+        "risks": ["Underground cable deterioration may cause recurring failure"],
+        "effort": "low",
+        "evidence_needed": ["Voltage continuity check", "Field inspection"]
+      },
+      {
+        "name": "Fixture Replacement with High-Efficiency Smart LEDs",
+        "description": "Replace legacy/failed sodium or halogen fixtures with energy-efficient LED luminaires",
+        "why_it_may_fit": "Best option for complete fixture burnout or obsolete lighting hardware",
+        "required_capabilities": ["Electrical Engineering", "Urban Infrastructure"],
+        "dependencies": ["Procurement Sanction", "Municipal Approval"],
+        "risks": ["Procurement lead time delay"],
+        "effort": "medium",
+        "evidence_needed": ["Failed light count audit", "DPR approval"]
+      }
+    ],
+    "Sanitation & Sewerage": [
+      {
+        "name": "Super-Sucker Machine Sewer Jetting & Desilting",
+        "description": "Deploy high-pressure hydraulic sewer jetting machine to clear underground sludge blockage",
+        "why_it_may_fit": "Best solution for heavily clogged sewer lines or manhole overflows",
+        "required_capabilities": ["Sanitary Engineering", "Municipal Operations"],
+        "dependencies": ["Sewer Suction Fleet Access"],
+        "risks": ["Traffic disruption during jetting"],
+        "effort": "low",
+        "evidence_needed": ["Desilting completion certificate"]
+      },
+      {
+        "name": "Heavy Duty Manhole & Drain Cover Installation",
+        "description": "Install reinforced concrete / ductile iron manhole frame and cover slab",
+        "why_it_may_fit": "Solves open manhole safety risk and prevents solid waste ingress",
+        "required_capabilities": ["Civil Engineering", "Public Safety"],
+        "dependencies": ["Cover Inventory"],
+        "risks": ["Theft if non-locking covers are installed"],
+        "effort": "low",
+        "evidence_needed": ["Installed cover photos"]
+      }
+    ],
+    "Drinking Water Quality": [
+      {
+        "name": "Community Water Filtration Unit Installation",
+        "description": "Install multi-stage iron-removal / activated carbon filtration unit at supply head",
+        "why_it_may_fit": "Provides safe drinking water by eliminating metallic taste and mineral turbidity",
+        "required_capabilities": ["Water Treatment", "Environmental Engineering"],
+        "dependencies": ["Power Supply", "Lab Test Report"],
+        "risks": ["Regular filter backwashing maintenance required"],
+        "effort": "medium",
+        "evidence_needed": ["Post-filter lab test certificate"]
+      }
+    ],
+    "Building Maintenance": [
+      {
+        "name": "Installation of Mechanical Exhaust & Passive Ventilation Ducts",
+        "description": "Install roof wind turbines and wall exhaust fan units to restore indoor air exchange",
+        "why_it_may_fit": "Ideal for stale air, high humidity, and poor indoor air quality in public buildings",
+        "required_capabilities": ["HVAC & Ventilation", "Building Maintenance"],
+        "dependencies": ["Building Maintenance Sanction"],
+        "risks": ["Electrical wiring check required"],
+        "effort": "medium",
+        "evidence_needed": ["Indoor air flow measurement"]
+      },
+      {
+        "name": "Roof Slab Waterproofing & Membrane Overhaul",
+        "description": "Apply elastomeric polymer waterproofing coating and re-lay terrace drainage slope",
+        "why_it_may_fit": "Long-term fix for rainwater ceiling leaks and structural dampness",
+        "required_capabilities": ["Civil Engineering", "Building Maintenance"],
+        "dependencies": ["Dry Weather Window"],
+        "risks": ["Surface preparation must be thorough"],
+        "effort": "medium",
+        "evidence_needed": ["Water ponding test report"]
+      }
+    ],
+    "Traffic Management": [
+      {
+        "name": "Signal Controller Circuit Replacement & Solar UPS Backup",
+        "description": "Replace damaged signal timer relay and integrate battery solar backup power",
+        "why_it_may_fit": "Ensures uninterrupted signal operation even during grid load shedding",
+        "required_capabilities": ["Traffic Engineering", "Signal Systems"],
+        "dependencies": ["Traffic Police Coordination"],
+        "risks": ["Junction cable tracing"],
+        "effort": "low",
+        "evidence_needed": ["Signal commissioning test"]
+      }
+    ],
+    "Digital & Connectivity": [
+      {
+        "name": "Cellular Small-Cell Repeater & Antenna Installation",
+        "description": "Install local coverage repeater unit to boost 4G/5G mobile signal strength",
+        "why_it_may_fit": "Effective for network shadow zones in rural or dense settlements",
+        "required_capabilities": ["Telecommunications", "RF Engineering"],
+        "dependencies": ["Telecom Operator Approval"],
+        "risks": ["Spectrum licensing and power supply"],
+        "effort": "medium",
+        "evidence_needed": ["RSRP signal survey"]
+      }
+    ],
+    "Urban Accessibility": [
+      {
+        "name": "Standardized Wheelchair Ramp & Tactile Paving Construction",
+        "description": "Construct 1:12 gradient concrete access ramp with handrails at public transport stop",
+        "why_it_may_fit": "Enables universal barrier-free access for elderly and disabled citizens",
+        "required_capabilities": ["Accessibility Standards", "Civil Engineering"],
+        "dependencies": ["Right-of-Way Clearance"],
+        "risks": ["Encroachment by vehicles"],
+        "effort": "low",
+        "evidence_needed": ["Ramp slope measurement audit"]
+      }
+    ],
+    "Irrigation Systems": [
+      {
+        "name": "Canal Desilting & Bank Reconstruction",
+        "description": "Excavate accumulated silt and restore collapsed canal bunds along distributor branch",
+        "why_it_may_fit": "Restores design water flow velocity to tail-end agricultural fields",
+        "required_capabilities": ["Agricultural Engineering", "Irrigation Systems"],
+        "dependencies": ["Canal Water Closure Period"],
+        "risks": ["Work must complete before sowing season"],
+        "effort": "medium",
+        "evidence_needed": ["Canal discharge gauge reading"]
+      }
+    ],
+    "Roads & Potholes": [
+      {
+        "name": "Cold Mix Asphalt Patching",
+        "description": "Clean pothole cavities, apply tack coat, and fill with dense cold asphalt mix",
+        "why_it_may_fit": "Rapid temporary repair suitable for rain season or immediate hazard mitigation",
+        "required_capabilities": ["Civil Engineering", "Road Safety"],
+        "dependencies": ["Material Availability"],
+        "risks": ["Shorter lifespan if sub-grade drainage is uncorrected"],
+        "effort": "low",
+        "evidence_needed": ["Pothole measurement survey"]
+      },
+      {
+        "name": "Anti-Skid Surface Treatment & Bituminous Resurfacing",
+        "description": "Apply high-friction anti-skid aggregate slurry seal over smooth road sections",
+        "why_it_may_fit": "Eliminates rain-related vehicle skidding hazards on accident-prone stretches",
+        "required_capabilities": ["Civil Engineering", "Highway Engineering"],
+        "dependencies": ["Road Surfacing Equipment"],
+        "risks": ["Requires dry weather during application"],
+        "effort": "medium",
+        "evidence_needed": ["Skid resistance friction test"]
+      }
+    ],
+    "Generic": [
+      {
+        "name": "Localized Maintenance & Component Repair",
+        "description": "Inspect failure site and replace worn or defective operational parts",
+        "why_it_may_fit": "Standard targeted repair for isolated infrastructure failures",
+        "required_capabilities": ["Municipal Operations", "Civil Engineering"],
+        "dependencies": ["Site Access", "Maintenance Approval"],
+        "risks": ["Potential recurrence if root cause is systemic"],
+        "effort": "low",
+        "evidence_needed": ["Field inspection report"]
+      }
+    ]
+  }
+}
