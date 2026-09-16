@@ -1,0 +1,197 @@
+/**
+ * CivicSync English Translations (en)
+ */
+export default {
+  // Navigation
+  nav: {
+    dashboard: "Dashboard",
+    explore: "Explore Problems",
+    report: "Report Problem",
+    myReports: "My Reports",
+    notifications: "Notifications",
+    reputation: "Reputation & Badges",
+    leaderboards: "Leaderboards",
+    profile: "My Profile",
+    logout: "Sign Out",
+    role: "Role",
+  },
+
+  // Header & Global Search
+  header: {
+    searchPlaceholder: "Search problems, domains, districts...",
+    searchResults: "Search Results",
+    noResults: "No matching problems found",
+    searching: "Searching problems...",
+    clearSearch: "Clear",
+    viewAllResults: "View all matching problems in catalog",
+    language: "Language",
+  },
+
+  // Dashboard
+  dashboard: {
+    welcome: "Welcome",
+    reportProblemBtn: "Report Problem",
+    exploreBtn: "Explore Problems",
+    stats: {
+      reported: "Problems Reported",
+      reportedSub: "Submitted by your account",
+      underReview: "Under Review",
+      underReviewSub: "Awaiting municipal verification",
+      inProgress: "In Progress",
+      inProgressSub: "Active root cause or solutions",
+      resolved: "Resolved",
+      resolvedSub: "Verified community impact",
+    },
+    reputation: {
+      title: "Civic Reputation Standing",
+      points: "Points",
+      viewBtn: "View Reputation →",
+      notificationsBtn: "View Notifications →",
+    },
+    recentReports: {
+      title: "My Recent Submissions",
+      subtitle: "Track live statuses, root cause analysis, and community feedback",
+      emptyTitle: "No societal challenges submitted yet",
+      emptyDesc: "Report a ground-truth problem in your local district to connect it with academic experts, student innovators, and municipal leaders.",
+      reportNow: "Submit First Problem",
+      viewAll: "View All Reports",
+    },
+    prioritySection: {
+      title: "High Priority Problems Across Districts",
+      subtitle: "Challenges needing immediate community validation and research intervention",
+    },
+  },
+
+  // Report Problem Page (Citizen-First Workflow)
+  report: {
+    pageTitle: "Report a Problem",
+    pageSubtitle: "Submit a civic or environmental issue in your community for automated AI analysis and resolution.",
+    problemDetails: "Problem Details",
+    titleLabel: "Problem Title",
+    titlePlaceholder: "e.g. Unsafe drinking water in village school",
+    titleHint: "Provide a short, clear summary of the issue.",
+    descLabel: "Problem Description",
+    descPlaceholder: "Describe what is happening, where it is happening, what you have observed, and how it is affecting people...",
+    descHint: "Be as detailed as possible to help AI accurately assess the problem.",
+    speakBtn: "Speak",
+    speaking: "Listening...",
+    stopSpeakBtn: "Stop",
+    speechUnsupported: "Speech recognition is not supported in this browser. Please use Chrome/Edge or type directly.",
+    speechPermissionDenied: "Microphone access was denied. Please allow microphone access in browser settings.",
+    speechError: "Speech recognition encountered an error. Please try again.",
+    
+    // Location Section
+    locationSectionTitle: "Location",
+    stateLabel: "State",
+    selectState: "Select State",
+    districtLabel: "District",
+    selectDistrict: "Select District",
+    selectStateFirst: "Select State first",
+    cityLabel: "City / Town / Block",
+    cityPlaceholder: "e.g. Kanke Block",
+    specificLocationLabel: "Specific Location",
+    specificLocationPlaceholder: "e.g. Government Middle School, Kanke or Near Main Market",
+    useCurrentLocationBtn: "Use Current Location",
+    detectingLocation: "Detecting location...",
+    locationDetected: "Current location detected",
+    locationDenied: "Location permission denied. You can select your state and district manually.",
+    locationUnavailable: "Location information is unavailable. Please select manually.",
+    locationTimeout: "Location request timed out. Please try again or select manually.",
+    locationUnsupported: "Geolocation is not supported by your browser.",
+    
+    // Evidence Section
+    evidenceSectionTitle: "Evidence",
+    evidenceSectionSubtitle: "Add photos or videos to help explain the problem.",
+    uploadPhotoBtn: "Upload Photo",
+    uploadVideoBtn: "Upload Video",
+    photoAllowedHint: "Allowed: JPG, JPEG, PNG, WEBP (Max 25MB)",
+    videoAllowedHint: "Allowed: MP4, WEBM, MOV (Max 25MB)",
+    removeFile: "Remove",
+    invalidFileType: "Unsupported file format. Please upload JPG, PNG, WEBP for photos, or MP4, WEBM, MOV for videos.",
+    fileTooLarge: "File exceeds 25MB size limit. Please select a smaller file.",
+    
+    // Category Section (Optional)
+    categorySectionTitle: "Category (Optional)",
+    categoryLabel: "Category (Optional)",
+    categoryPlaceholder: "Select if you know",
+    categories: {
+      water: "Water & Sanitation",
+      agriculture: "Agriculture",
+      waste: "Waste Management",
+      healthcare: "Healthcare",
+      education: "Education",
+      environment: "Environment",
+      energy: "Energy",
+      transport: "Transport & Mobility",
+      other: "Other",
+    },
+    
+    // Submit & Validation
+    submitBtn: "Submit Problem",
+    submittingBtn: "Submitting Problem...",
+    validationTitle: "Please enter a problem title.",
+    validationDesc: "Please enter a detailed problem description.",
+    validationState: "Please select a state.",
+    validationDistrict: "Please select a district.",
+    successToast: "Problem registered and analyzed successfully!",
+    
+    // Post-Submission Receipt
+    receiptSuccessTitle: "Problem Submitted Successfully",
+    problemIdLabel: "Problem ID",
+    analyzingSubtitle: "CivicSync is analyzing your problem...",
+    stepReceived: "Problem received",
+    stepProcessed: "Problem information processed",
+    stepRelated: "Related problems checked",
+    stepExpertise: "Required expertise identified",
+    stepPriority: "Priority assessment generated",
+    viewProblemBtn: "View Problem",
+    submitAnotherBtn: "Submit Another Problem",
+    exploreProblemsBtn: "Explore Problems",
+    aiAnalysisTitle: "AI Problem Analysis",
+    domainLabel: "Domain",
+    subdomainLabel: "Subdomain",
+    severityLabel: "Severity",
+    urgencyLabel: "Urgency",
+    requiredExpertiseLabel: "Required Expertise",
+    priorityScoreLabel: "Priority Score",
+    relatedProblemsLabel: "Related Problems",
+  },
+
+  // Problem Details
+  problemDetail: {
+    back: "Back",
+    overview: "Overview & Intelligence",
+    matching: "Expertise Matching",
+    evidenceTitle: "Attached Field Evidence",
+    status: "Status",
+    district: "District",
+    peopleAffected: "people affected",
+    reportedOn: "Reported on",
+  },
+
+  // Common UI
+  common: {
+    loading: "Loading...",
+    submit: "Submit",
+    cancel: "Cancel",
+    save: "Save",
+    remove: "Remove",
+    close: "Close",
+    error: "Error",
+    success: "Success",
+    all: "All",
+    status: {
+      OPEN: "Open",
+      UNDER_REVIEW: "Under Review",
+      ASSIGNED: "Assigned",
+      ROOT_CAUSE_ANALYSIS: "Root Cause Analysis",
+      SOLUTION_SEARCH: "Solution Search",
+      SOLUTION_EVALUATION: "Solution Evaluation",
+      APPROVED: "Approved",
+      PILOT: "Pilot Stage",
+      IMPLEMENTING: "Implementing",
+      RESOLVED: "Resolved",
+      REJECTED: "Rejected",
+    },
+  },
+};

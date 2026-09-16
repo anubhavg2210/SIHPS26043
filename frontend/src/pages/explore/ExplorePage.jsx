@@ -6,16 +6,26 @@ import { Button } from "../../components/common/Button";
 import { Card } from "../../components/common/Cards";
 import { EmptyState, LoadingSkeleton } from "../../components/common/Feedback";
 import { useRouter } from "../../context/useRouter";
+import { useAuth } from "../../context/useAuth";
 
 export function ExplorePage() {
-  const { navigate } = useRouter();
+  const { navigate, query } = useRouter();
+  const { role } = useAuth();
+  const isAuthorityOrAdmin = role === "AUTHORITY" || role === "ADMIN";
 
   const [loading, setLoading] = useState(true);
   const [problems, setProblems] = useState([]);
   const [error, setError] = useState("");
 
   // Search state
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(query?.search || "");
+
+  useEffect(() => {
+    if (query?.search !== undefined) {
+      const t = setTimeout(() => setSearchQuery(query.search), 0);
+      return () => clearTimeout(t);
+    }
+  }, [query?.search]);
 
   // Filter states
   const [districtFilter, setDistrictFilter] = useState("ALL");
@@ -38,7 +48,12 @@ export function ExplorePage() {
       try {
         const res = await problemApi.getProblems({ limit: 100 });
         if (!ignore) {
-          setProblems(res.problems || []);
+          const isTestRecord = (p) => {
+            const t = (p.title || "").trim();
+            return /^(M\d+|Test\s+M\d+|Passport\s+Problem|Cit\d+|Auth\d+)/i.test(t);
+          };
+          const cleanProblems = (res.problems || []).filter((p) => isAuthorityOrAdmin || !isTestRecord(p));
+          setProblems(cleanProblems);
           setLoading(false);
         }
       } catch (err) {
@@ -54,7 +69,7 @@ export function ExplorePage() {
     return () => {
       ignore = true;
     };
-  }, [reloadKey]);
+  }, [reloadKey, isAuthorityOrAdmin]);
 
   // Extract unique filter options from actual backend data
   const availableDistricts = useMemo(() => {
@@ -233,93 +248,82 @@ export function ExplorePage() {
         }}
       >
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <h1 style={{ margin: 0, fontSize: "1.75rem", fontWeight: 800, letterSpacing: "-0.02em" }}>
-              Problem Catalog & Explore
-            </h1>
-            <span
-              style={{
-                fontSize: "0.7rem",
-                fontWeight: 700,
-                padding: "0.15rem 0.5rem",
-                borderRadius: "var(--radius-sm)",
-                backgroundColor: "var(--bg-muted)",
-                color: "var(--text-muted)",
-                border: "1px solid var(--border-color)",
-              }}
-            >
-              [DEMO DATA]
-            </span>
-          </div>
+          <h1 style={{ margin: 0, fontSize: "1.75rem", fontWeight: 800, letterSpacing: "-0.02em" }}>
+            Problem Catalog & Explore
+          </h1>
           <p style={{ margin: "0.25rem 0 0", color: "var(--text-muted)", fontSize: "0.9rem" }}>
-            Discover societal challenges, root-cause analyses, and contribution opportunities across Jharkhand
+            Discover societal challenges, civic updates, and verified problem records
           </p>
         </div>
 
         <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
-          {/* Tab Switcher: Catalog vs District Intelligence */}
-          <div
-            style={{
-              display: "inline-flex",
-              backgroundColor: "var(--bg-muted)",
-              padding: "0.25rem",
-              borderRadius: "var(--radius-md)",
-              border: "1px solid var(--border-color)",
-            }}
-          >
-            <button
-              type="button"
-              onClick={() => setActiveTab("catalog")}
+          {/* Tab Switcher: Catalog vs District Intelligence (Restricted to Authority/Admin) */}
+          {isAuthorityOrAdmin && (
+            <div
               style={{
-                border: "none",
-                padding: "0.4rem 0.85rem",
-                borderRadius: "var(--radius-sm)",
-                fontSize: "0.8rem",
-                fontWeight: 600,
-                cursor: "pointer",
-                backgroundColor: activeTab === "catalog" ? "#ffffff" : "transparent",
-                color: activeTab === "catalog" ? "var(--color-primary)" : "var(--text-secondary)",
-                boxShadow: activeTab === "catalog" ? "var(--shadow-xs)" : "none",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.35rem",
+                display: "inline-flex",
+                backgroundColor: "var(--bg-muted)",
+                padding: "0.25rem",
+                borderRadius: "var(--radius-md)",
+                border: "1px solid var(--border-color)",
               }}
             >
-              <Icon name="layers" size={14} />
-              Problem Feed ({filteredProblems.length})
-            </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("catalog")}
+                style={{
+                  border: "none",
+                  padding: "0.4rem 0.85rem",
+                  borderRadius: "var(--radius-sm)",
+                  fontSize: "0.8rem",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  backgroundColor: activeTab === "catalog" ? "#ffffff" : "transparent",
+                  color: activeTab === "catalog" ? "var(--color-primary)" : "var(--text-secondary)",
+                  boxShadow: activeTab === "catalog" ? "var(--shadow-xs)" : "none",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.35rem",
+                }}
+              >
+                <Icon name="layers" size={14} />
+                Problem Feed ({filteredProblems.length})
+              </button>
 
-            <button
-              type="button"
-              onClick={() => setActiveTab("district-intel")}
-              style={{
-                border: "none",
-                padding: "0.4rem 0.85rem",
-                borderRadius: "var(--radius-sm)",
-                fontSize: "0.8rem",
-                fontWeight: 600,
-                cursor: "pointer",
-                backgroundColor: activeTab === "district-intel" ? "#ffffff" : "transparent",
-                color: activeTab === "district-intel" ? "var(--color-primary)" : "var(--text-secondary)",
-                boxShadow: activeTab === "district-intel" ? "var(--shadow-xs)" : "none",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.35rem",
-              }}
+              <button
+                type="button"
+                onClick={() => setActiveTab("district-intel")}
+                style={{
+                  border: "none",
+                  padding: "0.4rem 0.85rem",
+                  borderRadius: "var(--radius-sm)",
+                  fontSize: "0.8rem",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  backgroundColor: activeTab === "district-intel" ? "#ffffff" : "transparent",
+                  color: activeTab === "district-intel" ? "var(--color-primary)" : "var(--text-secondary)",
+                  boxShadow: activeTab === "district-intel" ? "var(--shadow-xs)" : "none",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.35rem",
+                }}
+              >
+                <Icon name="map-pin" size={14} />
+                District Intelligence ({districtAnalytics.length})
+              </button>
+            </div>
+          )}
+
+          {role === "CITIZEN" && (
+            <Button
+              variant="primary"
+              icon="plus-circle"
+              size="sm"
+              onClick={() => navigate("/report")}
             >
-              <Icon name="map-pin" size={14} />
-              District Intelligence ({districtAnalytics.length})
-            </button>
-          </div>
-
-          <Button
-            variant="primary"
-            icon="plus-circle"
-            size="sm"
-            onClick={() => navigate("/report")}
-          >
-            Report Problem
-          </Button>
+              Report Problem
+            </Button>
+          )}
         </div>
       </div>
 
@@ -520,41 +524,45 @@ export function ExplorePage() {
                 </select>
               </div>
 
-              {/* Priority Filter */}
-              <div>
-                <label style={{ display: "block", fontSize: "0.72rem", color: "var(--text-muted)", fontWeight: 600, marginBottom: "0.2rem" }}>
-                  Priority Tier
-                </label>
-                <select
-                  className="cs-select"
-                  value={priorityFilter}
-                  onChange={(e) => setPriorityFilter(e.target.value)}
-                  style={{ fontSize: "0.825rem", padding: "0.4rem 0.6rem" }}
-                >
-                  <option value="ALL">All Priorities</option>
-                  <option value="HIGH">High Priority (60+)</option>
-                  <option value="CRITICAL">Critical Priority (80+)</option>
-                </select>
-              </div>
+              {/* Priority Filter (Authority/Admin Only) */}
+              {isAuthorityOrAdmin && (
+                <div>
+                  <label style={{ display: "block", fontSize: "0.72rem", color: "var(--text-muted)", fontWeight: 600, marginBottom: "0.2rem" }}>
+                    Priority Tier
+                  </label>
+                  <select
+                    className="cs-select"
+                    value={priorityFilter}
+                    onChange={(e) => setPriorityFilter(e.target.value)}
+                    style={{ fontSize: "0.825rem", padding: "0.4rem 0.6rem" }}
+                  >
+                    <option value="ALL">All Priorities</option>
+                    <option value="HIGH">High Priority (60+)</option>
+                    <option value="CRITICAL">Critical Priority (80+)</option>
+                  </select>
+                </div>
+              )}
 
-              {/* Severity Filter */}
-              <div>
-                <label style={{ display: "block", fontSize: "0.72rem", color: "var(--text-muted)", fontWeight: 600, marginBottom: "0.2rem" }}>
-                  Severity
-                </label>
-                <select
-                  className="cs-select"
-                  value={severityFilter}
-                  onChange={(e) => setSeverityFilter(e.target.value)}
-                  style={{ fontSize: "0.825rem", padding: "0.4rem 0.6rem" }}
-                >
-                  <option value="ALL">All Severities</option>
-                  <option value="LOW">Low (1-3)</option>
-                  <option value="MEDIUM">Medium (4-6)</option>
-                  <option value="HIGH">High (7-8)</option>
-                  <option value="CRITICAL">Critical (9-10)</option>
-                </select>
-              </div>
+              {/* Severity Filter (Authority/Admin Only) */}
+              {isAuthorityOrAdmin && (
+                <div>
+                  <label style={{ display: "block", fontSize: "0.72rem", color: "var(--text-muted)", fontWeight: 600, marginBottom: "0.2rem" }}>
+                    Severity
+                  </label>
+                  <select
+                    className="cs-select"
+                    value={severityFilter}
+                    onChange={(e) => setSeverityFilter(e.target.value)}
+                    style={{ fontSize: "0.825rem", padding: "0.4rem 0.6rem" }}
+                  >
+                    <option value="ALL">All Severities</option>
+                    <option value="LOW">Low (1-3)</option>
+                    <option value="MEDIUM">Medium (4-6)</option>
+                    <option value="HIGH">High (7-8)</option>
+                    <option value="CRITICAL">Critical (9-10)</option>
+                  </select>
+                </div>
+              )}
 
               {/* Sort Dropdown */}
               <div>
@@ -568,7 +576,7 @@ export function ExplorePage() {
                   style={{ fontSize: "0.825rem", padding: "0.4rem 0.6rem", fontWeight: 600 }}
                 >
                   <option value="NEWEST">Newest First</option>
-                  <option value="PRIORITY">Highest Priority</option>
+                  {isAuthorityOrAdmin && <option value="PRIORITY">Highest Priority</option>}
                   <option value="AFFECTED">Most Affected</option>
                   <option value="RECENT_UPDATE">Recently Updated</option>
                 </select>

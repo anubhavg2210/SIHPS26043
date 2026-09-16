@@ -7,9 +7,13 @@ import { Icon } from "../common/Icons";
 import { ProblemCard } from "../problems/ProblemCard";
 import { EmptyState, LoadingSkeleton } from "../common/Feedback";
 import { useRouter } from "../../context/useRouter";
+import { useTranslation } from "../../context/useTranslation";
+import { useAuth } from "../../context/useAuth";
 
 export function CitizenSection() {
   const { navigate } = useRouter();
+  const { t, language } = useTranslation();
+  const { user } = useAuth();
 
   const [loading, setLoading] = useState(true);
   const [myProblems, setMyProblems] = useState([]);
@@ -24,18 +28,28 @@ export function CitizenSection() {
       try {
         const [myRes, allRes, repRes] = await Promise.allSettled([
           problemApi.getMyProblems(),
-          problemApi.getProblems({ limit: 20 }),
+          problemApi.getProblems({ limit: 30 }),
           reputationApi.getMyReputation(),
         ]);
 
         if (!ignore) {
           if (myRes.status === "fulfilled") {
-            setMyProblems(myRes.value?.problems || []);
+            const list = myRes.value?.problems || [];
+            // Strictly ensure only current user's submitted reports are shown
+            const userOnly = user?.id ? list.filter((p) => p.reporter_id === user.id) : list;
+            setMyProblems(userOnly);
           }
           if (allRes.status === "fulfilled") {
             const all = allRes.value?.problems || [];
+            // Filter out technical test records
+            const isTestRecord = (item) => {
+              const text = `${item.title || ""} ${item.description || ""}`;
+              return /^(M\d+|Test\s+M\d+|Passport\s+Problem|Cit\d+|Auth\d+)/i.test(item.title || "") ||
+                     /\b(M\d+|test-runner|synthetic-test-suite)\b/i.test(text);
+            };
+            const cleanProblems = all.filter((p) => !isTestRecord(p));
             // Filter high priority problems
-            const high = all
+            const high = cleanProblems
               .filter((p) => (p.priority_score ?? ((p.severity || 0) * 5 + (p.urgency || 0) * 5)) >= 60)
               .slice(0, 4);
             setPriorityProblems(high);
@@ -57,7 +71,7 @@ export function CitizenSection() {
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [user?.id]);
 
   // Compute live metrics from actual retrieved data
   const totalCount = myProblems.length;
@@ -72,29 +86,29 @@ export function CitizenSection() {
       {/* Overview Stat Grid from Real Data */}
       <div className="cs-grid-4">
         <StatCard
-          title="Problems Reported"
+          title={t("dashboard.stats.reported")}
           value={loading ? "..." : String(totalCount)}
-          subtitle="Submitted by your account"
+          subtitle={t("dashboard.stats.reportedSub")}
           icon="layers"
         />
         <StatCard
-          title="Under Review"
+          title={t("dashboard.stats.underReview")}
           value={loading ? "..." : String(underReviewCount)}
-          subtitle="Awaiting municipal verification"
+          subtitle={t("dashboard.stats.underReviewSub")}
           icon="clock"
           iconColor="var(--color-warning)"
         />
         <StatCard
-          title="In Progress"
+          title={t("dashboard.stats.inProgress")}
           value={loading ? "..." : String(inProgressCount)}
-          subtitle="Active root cause or solutions"
+          subtitle={t("dashboard.stats.inProgressSub")}
           icon="activity"
           iconColor="var(--color-primary)"
         />
         <StatCard
-          title="Resolved"
+          title={t("dashboard.stats.resolved")}
           value={loading ? "..." : String(resolvedCount)}
-          subtitle="Verified community impact"
+          subtitle={t("dashboard.stats.resolvedSub")}
           icon="shield-check"
           iconColor="var(--color-success)"
         />
@@ -106,10 +120,10 @@ export function CitizenSection() {
           actions={
             <div style={{ display: "flex", gap: "0.5rem" }}>
               <Button variant="outline" size="sm" onClick={() => navigate("/reputation")}>
-                View Reputation →
+                {t("dashboard.reputation.viewBtn")}
               </Button>
               <Button variant="ghost" size="sm" onClick={() => navigate("/notifications")}>
-                View Notifications →
+                {t("dashboard.reputation.notificationsBtn")}
               </Button>
             </div>
           }
@@ -132,11 +146,11 @@ export function CitizenSection() {
               </div>
               <div>
                 <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase" }}>
-                  Civic Reputation Standing
+                  {t("dashboard.reputation.title")}
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "0.15rem" }}>
                   <span style={{ fontSize: "1.25rem", fontWeight: 800, color: "var(--text-primary)" }}>
-                    {reputation.score || 0} Points
+                    {reputation.score || 0} {t("dashboard.reputation.points")}
                   </span>
                   <span
                     style={{
@@ -178,11 +192,11 @@ export function CitizenSection() {
 
       {/* Section: Problems I Reported */}
       <Card
-        title="Problems You Reported"
-        subtitle="Track the statutory lifecycle of issues you submitted"
+        title={t("dashboard.recentReports.title")}
+        subtitle={t("dashboard.recentReports.subtitle")}
         actions={
           <Button variant="primary" size="sm" icon="plus-circle" onClick={() => navigate("/report")}>
-            Report a Problem
+            {t("dashboard.reportProblemBtn")}
           </Button>
         }
       >
@@ -193,9 +207,9 @@ export function CitizenSection() {
         ) : myProblems.length === 0 ? (
           <EmptyState
             icon="layers"
-            title="No problems reported yet"
-            description="You haven't submitted any civic problems yet. Report a localized issue to trigger AI challenge intelligence and municipal matching."
-            actionLabel="Report Your First Problem"
+            title={t("dashboard.recentReports.emptyTitle")}
+            description={t("dashboard.recentReports.emptyDesc")}
+            actionLabel={t("dashboard.recentReports.reportNow")}
             onAction={() => navigate("/report")}
           />
         ) : (
@@ -240,7 +254,7 @@ export function CitizenSection() {
                 </div>
 
                 <Button variant="outline" size="sm" icon="arrow-right">
-                  View Case
+                  {language === "hi" ? "केस देखें" : "View Case"}
                 </Button>
               </div>
             ))}
@@ -254,15 +268,15 @@ export function CitizenSection() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
             <div>
               <h3 style={{ margin: 0, fontSize: "1.15rem", fontWeight: 700 }}>
-                High-Priority Societal Challenges
+                {t("dashboard.prioritySection.title")}
               </h3>
               <p style={{ margin: "0.2rem 0 0", fontSize: "0.85rem", color: "var(--text-muted)" }}>
-                Critical community issues actively seeking expert solutions and citizen verification
+                {t("dashboard.prioritySection.subtitle")}
               </p>
             </div>
 
             <Button variant="outline" size="sm" icon="search" onClick={() => navigate("/explore")}>
-              Explore All Problems
+              {t("dashboard.exploreBtn")}
             </Button>
           </div>
 

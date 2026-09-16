@@ -7,7 +7,8 @@ const {
     getMyProblems,
     updateProblemStatus,
     getProblemStatusHistory,
-    getDuplicates
+    getDuplicates,
+    uploadEvidence
 } = require("../controllers/problemController");
 
 const {
@@ -20,7 +21,8 @@ const {
 } = require("../controllers/facultyMatchingController");
 
 const {
-    getStudentMatches
+    getStudentMatches,
+    getStudentMatchedProblemsHandler
 } = require("../controllers/studentMatchingController");
 
 const {
@@ -106,10 +108,24 @@ router.get(
     getProblems
 );
 
+router.post(
+    "/upload",
+    authenticate,
+    uploadEvidence
+);
+
 router.get(
     "/mine",
     authenticate,
+    authorizeRoles("CITIZEN", "STUDENT", "FACULTY", "RESEARCHER", "STARTUP", "MSME", "AUTHORITY", "ADMIN"),
     getMyProblems
+);
+
+// GET /api/problems/matching/student
+router.get(
+    "/matching/student",
+    authenticate,
+    getStudentMatchedProblemsHandler
 );
 
 // GET /api/problems/:id/duplicates

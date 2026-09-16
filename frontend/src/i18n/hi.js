@@ -1,0 +1,197 @@
+/**
+ * CivicSync Hindi Translations (hi)
+ */
+export default {
+  // Navigation
+  nav: {
+    dashboard: "डैशबोर्ड",
+    explore: "समस्याएं देखें",
+    report: "समस्या दर्ज करें",
+    myReports: "मेरी रिपोर्ट्स",
+    notifications: "सूचनाएं",
+    reputation: "प्रतिष्ठा और बैज",
+    leaderboards: "लीडरबोर्ड",
+    profile: "मेरी प्रोफाइल",
+    logout: "लॉग आउट",
+    role: "भूमिका",
+  },
+
+  // Header & Global Search
+  header: {
+    searchPlaceholder: "समस्याएं, क्षेत्र, जिले खोजें...",
+    searchResults: "खोज परिणाम",
+    noResults: "कोई समस्या नहीं मिली",
+    searching: "खोज जारी है...",
+    clearSearch: "हटाएं",
+    viewAllResults: "कैटलॉग में सभी परिणाम देखें",
+    language: "भाषा",
+  },
+
+  // Dashboard
+  dashboard: {
+    welcome: "स्वागत है",
+    reportProblemBtn: "समस्या दर्ज करें",
+    exploreBtn: "समस्याएं देखें",
+    stats: {
+      reported: "समस्याएं दर्ज",
+      reportedSub: "आपके द्वारा दर्ज की गई",
+      underReview: "समीक्षाधीन",
+      underReviewSub: "नगरपालिका सत्यापन की प्रतीक्षा",
+      inProgress: "प्रगति पर",
+      inProgressSub: "समाधान अथवा शोध सक्रिय",
+      resolved: "समाधान संपन्न",
+      resolvedSub: "सत्यापित सामुदायिक प्रभाव",
+    },
+    reputation: {
+      title: "नागरिक प्रतिष्ठा स्तर",
+      points: "अंक",
+      viewBtn: "प्रतिष्ठा देखें →",
+      notificationsBtn: "सूचनाएं देखें →",
+    },
+    recentReports: {
+      title: "मेरी हालिया प्रस्तुतियां",
+      subtitle: "लाइव स्थिति, मूल कारण विश्लेषण और सामुदायिक प्रतिक्रिया देखें",
+      emptyTitle: "अभी तक कोई सामाजिक समस्या दर्ज नहीं की गई",
+      emptyDesc: "अपने जिले की जमीनी समस्या दर्ज करें ताकि उसे विषय विशेषज्ञों, छात्रों और नगर अधिकारियों से जोड़ा जा सके।",
+      reportNow: "पहली समस्या दर्ज करें",
+      viewAll: "सभी रिपोर्ट्स देखें",
+    },
+    prioritySection: {
+      title: "जिलों में उच्च प्राथमिकता वाली समस्याएं",
+      subtitle: "वे चुनौतियां जिन्हें तत्काल सामुदायिक सत्यापन और शोध हस्तक्षेप की आवश्यकता है",
+    },
+  },
+
+  // Report Problem Page (Citizen-First Workflow)
+  report: {
+    pageTitle: "समस्या दर्ज करें",
+    pageSubtitle: "स्वचालित एआई विश्लेषण और समाधान के लिए अपने समुदाय की नागरिक अथवा पर्यावरणीय समस्या दर्ज करें।",
+    problemDetails: "समस्या का विवरण",
+    titleLabel: "समस्या का शीर्षक",
+    titlePlaceholder: "उदा. गांव के स्कूल में असुरक्षित पीने का पानी",
+    titleHint: "समस्या का संक्षिप्त और स्पष्ट शीर्षक दें।",
+    descLabel: "समस्या का विस्तृत विवरण",
+    descPlaceholder: "वर्णन करें कि क्या हो रहा है, यह कहाँ हो रहा है, आपने क्या देखा है, और यह लोगों को कैसे प्रभावित कर रहा है...",
+    descHint: "समस्या के सटीक मूल्यांकन के लिए यथासंभव विस्तार से विवरण दें।",
+    speakBtn: "बोलकर बताएं",
+    speaking: "सुन रहे हैं...",
+    stopSpeakBtn: "रोकें",
+    speechUnsupported: "इस ब्राउज़र में स्पीच रिकग्निशन समर्थित नहीं है। कृपया Chrome/Edge का उपयोग करें या सीधे टाइप करें।",
+    speechPermissionDenied: "माइक्रोफ़ोन एक्सेस अस्वीकृत हो गया। कृपया ब्राउज़र सेटिंग में माइक्रोफ़ोन की अनुमति दें।",
+    speechError: "आवाज पहचान में त्रुटि हुई। कृपया पुनः प्रयास करें।",
+    
+    // Location Section
+    locationSectionTitle: "स्थान",
+    stateLabel: "राज्य",
+    selectState: "राज्य चुनें",
+    districtLabel: "जिला",
+    selectDistrict: "जिला चुनें",
+    selectStateFirst: "पहले राज्य चुनें",
+    cityLabel: "शहर / कस्बा / ब्लॉक",
+    cityPlaceholder: "उदा. कांके ब्लॉक",
+    specificLocationLabel: "विशिष्ट स्थान",
+    specificLocationPlaceholder: "उदा. राजकीय मध्य विद्यालय, कांके या मुख्य बाजार के पास",
+    useCurrentLocationBtn: "वर्तमान स्थान का उपयोग करें",
+    detectingLocation: "स्थान का पता लगाया जा रहा है...",
+    locationDetected: "वर्तमान स्थान प्राप्त हुआ",
+    locationDenied: "स्थान अनुमति अस्वीकृत कर दी गई। आप राज्य और जिला मैन्युअल रूप से चुन सकते हैं।",
+    locationUnavailable: "स्थान की जानकारी अनुपलब्ध है। कृपया मैन्युअल रूप से चुनें।",
+    locationTimeout: "स्थान अनुरोध का समय समाप्त हो गया। कृपया पुनः प्रयास करें या मैन्युअल रूप से चुनें।",
+    locationUnsupported: "आपका ब्राउज़र जियोलोकेशन का समर्थन नहीं करता है।",
+    
+    // Evidence Section
+    evidenceSectionTitle: "साक्ष्य / प्रमाण",
+    evidenceSectionSubtitle: "समस्या को समझाने के लिए फोटो या वीडियो जोड़ें।",
+    uploadPhotoBtn: "फोटो अपलोड करें",
+    uploadVideoBtn: "वीडियो अपलोड करें",
+    photoAllowedHint: "स्वीकृत: JPG, JPEG, PNG, WEBP (अधिकतम 25MB)",
+    videoAllowedHint: "स्वीकृत: MP4, WEBM, MOV (अधिकतम 25MB)",
+    removeFile: "हटाएं",
+    invalidFileType: "अमान्य फ़ाइल प्रारूप। कृपया फोटो के लिए JPG, PNG, WEBP या वीडियो के लिए MP4, WEBM, MOV चुनें।",
+    fileTooLarge: "फ़ाइल 25MB की सीमा से अधिक है। कृपया छोटी फ़ाइल चुनें।",
+    
+    // Category Section (Optional)
+    categorySectionTitle: "श्रेणी (वैकल्पिक)",
+    categoryLabel: "श्रेणी (वैकल्पिक)",
+    categoryPlaceholder: "यदि ज्ञात हो तो चुनें",
+    categories: {
+      water: "जल एवं स्वच्छता",
+      agriculture: "कृषि",
+      waste: "अपशिष्ट प्रबंधन",
+      healthcare: "स्वास्थ्य सेवा",
+      education: "शिक्षा",
+      environment: "पर्यावरण",
+      energy: "ऊर्जा",
+      transport: "परिवहन एवं आवागमन",
+      other: "अन्य",
+    },
+    
+    // Submit & Validation
+    submitBtn: "समस्या दर्ज करें",
+    submittingBtn: "समस्या दर्ज की जा रही है...",
+    validationTitle: "कृपया समस्या का शीर्षक दर्ज करें।",
+    validationDesc: "कृपया समस्या का विस्तृत विवरण दर्ज करें।",
+    validationState: "कृपया राज्य चुनें।",
+    validationDistrict: "कृपया जिला चुनें।",
+    successToast: "समस्या सफलतापूर्वक पंजीकृत और विश्लेषित की गई!",
+    
+    // Post-Submission Receipt
+    receiptSuccessTitle: "समस्या सफलतापूर्वक दर्ज की गई",
+    problemIdLabel: "समस्या पहचान संख्या",
+    analyzingSubtitle: "सिविकसिंक आपकी समस्या का विश्लेषण कर रहा है...",
+    stepReceived: "समस्या प्राप्त हुई",
+    stepProcessed: "समस्या विवरण संसाधित किया गया",
+    stepRelated: "संबंधित समस्याओं की जांच की गई",
+    stepExpertise: "आवश्यक विशेषज्ञता की पहचान की गई",
+    stepPriority: "प्राथमिकता मूल्यांकन तैयार किया गया",
+    viewProblemBtn: "समस्या देखें",
+    submitAnotherBtn: "दूसरी समस्या दर्ज करें",
+    exploreProblemsBtn: "समस्याएं देखें",
+    aiAnalysisTitle: "एआई समस्या विश्लेषण",
+    domainLabel: "क्षेत्र",
+    subdomainLabel: "उप-क्षेत्र",
+    severityLabel: "गंभीरता",
+    urgencyLabel: "तात्कालिकता",
+    requiredExpertiseLabel: "आवश्यक विशेषज्ञता",
+    priorityScoreLabel: "प्राथमिकता स्कोर",
+    relatedProblemsLabel: "संबंधित समस्याएं",
+  },
+
+  // Problem Details
+  problemDetail: {
+    back: "वापस जाएं",
+    overview: "अवलोकन और बुद्धिमत्ता",
+    matching: "विशेषज्ञता मिलान",
+    evidenceTitle: "संलग्न क्षेत्रीय साक्ष्य",
+    status: "स्थिति",
+    district: "जिला",
+    peopleAffected: "लोग प्रभावित",
+    reportedOn: "दर्ज की गई तारीख",
+  },
+
+  // Common UI
+  common: {
+    loading: "लोड हो रहा है...",
+    submit: "जमा करें",
+    cancel: "रद्द करें",
+    save: "सहेजें",
+    remove: "हटाएं",
+    close: "बंद करें",
+    error: "त्रुटि",
+    success: "सफलता",
+    all: "सभी",
+    status: {
+      OPEN: "खुली है",
+      UNDER_REVIEW: "समीक्षाधीन",
+      ASSIGNED: "आवंटित",
+      ROOT_CAUSE_ANALYSIS: "मूल कारण विश्लेषण",
+      SOLUTION_SEARCH: "समाधान खोज",
+      SOLUTION_EVALUATION: "समाधान मूल्यांकन",
+      APPROVED: "स्वीकृत",
+      PILOT: "पायलट चरण",
+      IMPLEMENTING: "कार्यान्वयन जारी",
+      RESOLVED: "समाधान संपन्न",
+      REJECTED: "अस्वीकृत",
+    },
+  },
+};
