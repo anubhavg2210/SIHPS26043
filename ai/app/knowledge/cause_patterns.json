@@ -1,0 +1,88 @@
+{
+  "cause_patterns": {
+    "Street Lighting": [
+      {"cause": "Fixture / LED failure", "reason": "Burnt out bulb or failed LED driver unit", "verification_needed": true},
+      {"cause": "Power supply / feeder failure", "reason": "Interrupted local power line or tripped breaker", "verification_needed": true},
+      {"cause": "Wiring / connection fault", "reason": "Corroded wires, loose connections, or underground cable breakdown", "verification_needed": true},
+      {"cause": "Controller / timer fault", "reason": "Defective automatic light sensor or timer switch", "verification_needed": true},
+      {"cause": "Physical pole / fixture damage", "reason": "Accidental damage, storm damage, or vandalism", "verification_needed": true}
+    ],
+    "Drinking Water Quality": [
+      {"cause": "Source water mineral / chemical leaching", "reason": "Dissolved metallic ions (iron, manganese, zinc) or industrial seepage", "verification_needed": true},
+      {"cause": "Pipeline corrosion or break", "reason": "Rusted or cracked supply pipes allowing soil or dirty water ingress", "verification_needed": true},
+      {"cause": "Inadequate water treatment", "reason": "Sub-optimal chlorination or filter breakdown at filtration plant", "verification_needed": true},
+      {"cause": "Nearby sewage line intrusion", "reason": "Cross-contamination between broken sewer line and drinking pipeline", "verification_needed": true}
+    ],
+    "Sanitation & Sewerage": [
+      {"cause": "Sewer line blockage or siltation", "reason": "Accumulation of solid waste, sludge, or tree roots obstructing sewer flow", "verification_needed": true},
+      {"cause": "Collapsed sewer pipe segment", "reason": "Structural failure of underground hume pipe causing sewage backflow", "verification_needed": true},
+      {"cause": "Missing or broken drain cover", "reason": "Vandalism, heavy vehicle impact, or missing cast-iron slab", "verification_needed": true},
+      {"cause": "Lack of water supply at public facility", "reason": "Faulty pump or disconnected water connection in public toilet", "verification_needed": true}
+    ],
+    "Groundwater": [
+      {"cause": "Aquifer mineral leaching", "reason": "High natural iron, fluoride, or heavy mineral concentration in groundwater", "verification_needed": true},
+      {"cause": "Borewell casing damage", "reason": "Cracked casing allowing surface runoff into well", "verification_needed": true},
+      {"cause": "Industrial effluent seepage", "reason": "Untreated factory discharge percolating into local aquifer", "verification_needed": true}
+    ],
+    "Roads & Potholes": [
+      {"cause": "Sub-grade water damage", "reason": "Poor sub-base drainage leading to asphalt cracking under vehicle loads", "verification_needed": true},
+      {"cause": "Substandard paving material", "reason": "Low-bitumen aggregate mix degrading rapidly under heavy traffic", "verification_needed": true},
+      {"cause": "Slippery surface / binder bleeding", "reason": "Excess bitumen bleeding or oil spill creating slippery road surface", "verification_needed": true},
+      {"cause": "Uncoordinated utility trenching", "reason": "Unsealed utility road cuts made for pipe or cable laying", "verification_needed": true}
+    ],
+    "Public Drainage": [
+      {"cause": "Solid waste / silt blockage", "reason": "Accumulation of plastic waste, silt, and garbage in drain channel", "verification_needed": true},
+      {"cause": "Undersized drain capacity", "reason": "Drain dimensions insufficient for storm monsoon runoff volume", "verification_needed": true},
+      {"cause": "Structural collapse of culvert", "reason": "Broken concrete slabs or collapsed sidewalls obstructing flow", "verification_needed": true}
+    ],
+    "Building Maintenance": [
+      {"cause": "Lack of exhaust / passive air vents", "reason": "Inadequate windows or non-functional exhaust fans restricting airflow", "verification_needed": true},
+      {"cause": "Roof waterproofing membrane breakdown", "reason": "Aged concrete tarring or structural cracks allowing rainwater seepage", "verification_needed": true},
+      {"cause": "Building structural degradation", "reason": "Long-term weathering and unaddressed wall dampness", "verification_needed": true}
+    ],
+    "Traffic Management": [
+      {"cause": "Signal controller / timer unit failure", "reason": "Burnt relay circuit or corrupted signal timing logic", "verification_needed": true},
+      {"cause": "Power supply outage / UPS failure", "reason": "Grid outage coupled with depleted backup battery UPS", "verification_needed": true},
+      {"cause": "LED module burnout", "reason": "Individual red/yellow/green signal LED lamp failure", "verification_needed": true}
+    ],
+    "Digital & Connectivity": [
+      {"cause": "Cellular tower distance / coverage shadow", "reason": "Inadequate cell tower density or physical terrain blockage", "verification_needed": true},
+      {"cause": "Fibre backhaul damage", "reason": "Cut underground optical fibre cable or backhaul congestion", "verification_needed": true}
+    ],
+    "Urban Accessibility": [
+      {"cause": "Non-compliant infrastructure design", "reason": "Bus stop built without ramp or tactile paving for universal access", "verification_needed": true},
+      {"cause": "Encroachment of pathway", "reason": "Vendor stalls or parked vehicles blocking accessible pedestrian route", "verification_needed": true}
+    ],
+    "School Infrastructure": [
+      {"cause": "Waterproofing barrier degradation", "reason": "Aged roof tarring or cracked terrace concrete allowing rainwater seepage", "verification_needed": true},
+      {"cause": "Clogged terrace rainwater outlets", "reason": "Debris accumulation preventing roof drainage during heavy rain", "verification_needed": true},
+      {"cause": "Lack of dedicated drinking water filtration", "reason": "Disconnected overhead tank or missing water filter unit", "verification_needed": true}
+    ],
+    "Hospital Services": [
+      {"cause": "Outpatient department capacity bottleneck", "reason": "High patient volume exceeding available doctor duty slots", "verification_needed": true},
+      {"cause": "Supply chain delay in pharmacy", "reason": "Central medical store procurement or distribution delay", "verification_needed": true},
+      {"cause": "Triage & registration queue delay", "reason": "Manual registration counter slowdowns creating crowding", "verification_needed": true}
+    ],
+    "Solid Waste Management": [
+      {"cause": "Collection schedule disruption", "reason": "Unserviceable garbage compaction trucks or route skips", "verification_needed": true},
+      {"cause": "Lack of localized secondary bins", "reason": "Insufficient community bins leading to open dumping and stray animal attraction", "verification_needed": true}
+    ],
+    "Air Pollution": [
+      {"cause": "Unfiltered factory stack emissions", "reason": "Non-functional industrial scrubber or particulate baghouse filter", "verification_needed": true},
+      {"cause": "Open burning of waste or biomass", "reason": "Illegal burning of municipal waste or crop residue nearby", "verification_needed": true}
+    ],
+    "Power Grid & Transformers": [
+      {"cause": "Transformer overload", "reason": "Peak summer load exceeding transformer kVA rating", "verification_needed": true},
+      {"cause": "Insulator breakdown / short circuit", "reason": "Weathering or bird strike causing high-voltage line trip and fuse blow", "verification_needed": true}
+    ],
+    "Irrigation Systems": [
+      {"cause": "Canal siltation or breach", "reason": "Silt accumulation or unmaintained canal bank obstructing water flow to tail-end fields", "verification_needed": true},
+      {"cause": "Sub-station pump mechanical failure", "reason": "Burnout of lift-irrigation motor or intake valve blockage", "verification_needed": true}
+    ],
+    "Generic": [
+      {"cause": "Operational maintenance breakdown", "reason": "Delayed routine maintenance or unaddressed wear and tear", "verification_needed": true},
+      {"cause": "Capacity & resource constraint", "reason": "Demand exceeding current infrastructure design limits", "verification_needed": true},
+      {"cause": "External environmental stress", "reason": "Weather extremes or unforeseen physical damage", "verification_needed": true}
+    ]
+  }
+}

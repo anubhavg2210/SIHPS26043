@@ -1,0 +1,164 @@
+{
+  "verification_patterns": {
+    "Street Lighting": {
+      "field_work_required": true,
+      "tasks": [
+        "Conduct night-time site visit and visual audit",
+        "Count failed lights and record specific pole ID tags",
+        "Perform electrical voltage test at feeder pillar and pole junction box",
+        "Inspect fixture wiring, timer switch, and LED driver status",
+        "Capture geotagged photos and video evidence of dark stretches",
+        "Verify accident-prone segment history with traffic/police data"
+      ],
+      "required_evidence": ["Geotagged photos of non-functional fixtures", "Electrical voltage test log", "Failed light count report"],
+      "measurements": ["Voltage at junction box (V)", "Lux light level at street surface (lux)", "Count of unlit poles"],
+      "documents_or_data": ["Street light asset register", "Ward maintenance log"]
+    },
+    "Sanitation & Sewerage": {
+      "field_work_required": true,
+      "tasks": [
+        "Inspect sewer manholes and drainage channels for blockages or missing covers",
+        "Measure sewage overflow level and standing wastewater depth",
+        "Inspect public toilet water pump, flush tanks, and cleanliness state",
+        "Capture geotagged photos of open sewage or missing drain covers"
+      ],
+      "required_evidence": ["Sewer blockage photos", "Public toilet inspection log"],
+      "measurements": ["Standing sewage depth (cm)", "Water supply flow rate (L/min)"],
+      "documents_or_data": ["Sewer network map", "Public toilet maintenance contract"]
+    },
+    "Drinking Water Quality": {
+      "field_work_required": true,
+      "tasks": [
+        "Collect water samples in sterile containers from affected tap/well/handpump",
+        "Conduct field test for pH, turbidity, TDS, metallic taste, and residual chlorine",
+        "Send water samples to NABL-accredited laboratory for chemical & heavy metal test",
+        "Inspect surrounding drainage and potential contamination sources within 50m radius",
+        "Interview residents regarding onset of odor/color changes and health symptoms"
+      ],
+      "required_evidence": ["NABL laboratory water test report", "Geotagged sample collection photos", "Sanitary inspection report"],
+      "measurements": ["TDS (ppm)", "Iron / Heavy Metal concentration (mg/L)", "Turbidity (NTU)", "pH level"],
+      "documents_or_data": ["Water pipeline map", "Local health sub-centre sickness logs"]
+    },
+    "Building Maintenance": {
+      "field_work_required": true,
+      "tasks": [
+        "Inspect building roof slab, walls, and ceiling for moisture/structural damage",
+        "Measure indoor air exchange rate and check ventilation opening dimensions",
+        "Capture geotagged photos of damaged roof or ceiling seepage"
+      ],
+      "required_evidence": ["Building survey report", "Structural inspection photos"],
+      "measurements": ["Air exchange rate (ACH)", "Damaged roof area (sq m)"],
+      "documents_or_data": ["Building construction records"]
+    },
+    "Traffic Management": {
+      "field_work_required": true,
+      "tasks": [
+        "Audit traffic signal controller unit and junction wiring",
+        "Record peak traffic congestion time and queue length",
+        "Verify signal lamp illumination and timer cycle logic"
+      ],
+      "required_evidence": ["Signal controller audit log", "Junction video recording"],
+      "measurements": ["Traffic queue length (m)", "Signal cycle time (sec)"],
+      "documents_or_data": ["Traffic police junction log"]
+    },
+    "Digital & Connectivity": {
+      "field_work_required": true,
+      "tasks": [
+        "Conduct RF signal strength survey (RSRP/RSSI) across village location",
+        "Perform mobile network data speed tests",
+        "Locate nearest cellular tower and check backhaul status"
+      ],
+      "required_evidence": ["RF signal map log", "Data speed test screenshots"],
+      "measurements": ["Signal strength RSRP (dBm)", "Download speed (Mbps)"],
+      "documents_or_data": ["Telecom operator coverage map"]
+    },
+    "Urban Accessibility": {
+      "field_work_required": true,
+      "tasks": [
+        "Conduct accessibility audit at bus stop/public facility",
+        "Measure ramp slope angle and kerb height for wheelchair access",
+        "Inspect path for footway encroachments or missing handrails"
+      ],
+      "required_evidence": ["Accessibility audit report", "Geotagged ramp photos"],
+      "measurements": ["Ramp slope gradient (%)", "Kerb height (cm)"],
+      "documents_or_data": ["Harmonised Accessibility Guidelines"]
+    },
+    "Irrigation Systems": {
+      "field_work_required": true,
+      "tasks": [
+        "Inspect canal channel for siltation, weeds, or bank breaches",
+        "Measure canal water discharge flow rate at tail-end outlets",
+        "Audit lift-irrigation pump operational hours"
+      ],
+      "required_evidence": ["Canal discharge measurement log", "Siltation photos"],
+      "measurements": ["Flow discharge rate (cusecs)", "Silt thickness (cm)"],
+      "documents_or_data": ["Irrigation department canal schedule"]
+    },
+    "Groundwater": {
+      "field_work_required": true,
+      "tasks": [
+        "Collect groundwater sample from borewell/handpump outlet",
+        "Inspect borewell casing and surface apron for physical cracks or seepage",
+        "Conduct lab analysis for heavy minerals (iron, fluoride, arsenic, nitrate)"
+      ],
+      "required_evidence": ["Lab test certificate", "Borewell condition photos"],
+      "measurements": ["Fluoride / Iron concentration (mg/L)", "Static water level (m)"],
+      "documents_or_data": ["Groundwater hydrogeology report"]
+    },
+    "Roads & Potholes": {
+      "field_work_required": true,
+      "tasks": [
+        "Perform physical site survey and measure pavement damage dimensions (length, width, depth)",
+        "Document surface distress (potholes, rutting, slippery surface) with geotagged photos",
+        "Observe roadside drainage channels to verify if water logging is causing pavement erosion"
+      ],
+      "required_evidence": ["Pothole dimension log and photos", "Road condition survey sheet"],
+      "measurements": ["Pothole depth (cm)", "Damaged area surface size (sq m)", "Average daily traffic"],
+      "documents_or_data": ["Pavement construction history", "Road asset inventory"]
+    },
+    "Public Drainage": {
+      "field_work_required": true,
+      "tasks": [
+        "Inspect drain channel to identify exact blockage locations and silt accumulation depth",
+        "Check culvert outfalls and storm water discharge points",
+        "Measure water overflow levels during peak rainfall"
+      ],
+      "required_evidence": ["Blockage inspection photos", "Silt depth measurement log"],
+      "measurements": ["Silt depth (cm)", "Freeboard height (cm)", "Waterlogging duration (hours)"],
+      "documents_or_data": ["Drainage master plan", "Ward flood history"]
+    },
+    "School Infrastructure": {
+      "field_work_required": true,
+      "tasks": [
+        "Conduct building structural inspection of roof slab and ceiling",
+        "Check terrace water outlets and waterproof membrane integrity",
+        "Inspect drinking water filter and supply point in school premises"
+      ],
+      "required_evidence": ["Structural survey report", "Seepage location photos"],
+      "measurements": ["Moisture level (%)", "Affected roof surface area (sq m)"],
+      "documents_or_data": ["School building construction records"]
+    },
+    "Hospital Services": {
+      "field_work_required": true,
+      "tasks": [
+        "Audit OPD registration queues and average wait times",
+        "Inspect pharmacy inventory logs for essential drug stockouts",
+        "Record doctor duty attendance and bed occupancy rate"
+      ],
+      "required_evidence": ["Queue audit log", "Stockout verification report"],
+      "measurements": ["Average wait time (minutes)", "Stockout count of essential medicines"],
+      "documents_or_data": ["Hospital daily register", "District drug stock portal"]
+    },
+    "Generic": {
+      "field_work_required": true,
+      "tasks": [
+        "Conduct physical site inspection of reported problem location",
+        "Capture geotagged photo/video evidence of observed symptoms",
+        "Interview affected community members to document problem frequency"
+      ],
+      "required_evidence": ["Geotagged site photos", "Field verification summary report"],
+      "measurements": ["Symptom severity observation scale"],
+      "documents_or_data": ["Local ward complaints register"]
+    }
+  }
+}

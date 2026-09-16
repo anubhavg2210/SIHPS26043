@@ -4,6 +4,7 @@ import { Button } from "../../components/common/Button";
 import { Card } from "../../components/common/Cards";
 import { Icon } from "../../components/common/Icons";
 import { AIAnalysisView } from "../../components/problems/AIAnalysisView.jsx";
+import { ChallengeDossierView } from "../../components/problems/ChallengeDossierView.jsx";
 import { ExpertiseMatchingView } from "../../components/problems/ExpertiseMatchingView.jsx";
 import { problemApi, challengeApi, matchingApi } from "../../services/api.js";
 import { useToast } from "../../context/useToast.js";
@@ -90,9 +91,13 @@ export function ReportProblemPage() {
       };
 
       let problemRes;
+      let activeProblem = null;
+      let activeAiAnalysis = null;
 
       try {
         problemRes = await problemApi.createProblem(payload);
+        activeProblem = problemRes.problem;
+        activeAiAnalysis = problemRes.ai_analysis;
         setCreatedProblem(problemRes.problem);
         setAiAnalysis(problemRes.ai_analysis);
         setDuplicateCheck(problemRes.duplicate_check);
@@ -106,33 +111,29 @@ export function ReportProblemPage() {
           district: payload.district,
           affected_people: payload.affected_people,
         });
-        setCreatedProblem(chalRes.challenge);
-        setAiAnalysis(chalRes.ai_analysis);
+        activeProblem = chalRes.problem || chalRes.challenge;
+        activeAiAnalysis = chalRes.ai_analysis;
+        setCreatedProblem(activeProblem);
+        setAiAnalysis(activeAiAnalysis);
         if (chalRes.recommended_institutions) {
           setInstitutions(chalRes.recommended_institutions);
         }
       }
 
-      toast.success("Problem registered & analyzed by rule-based NLP engine!");
+      toast.success("Problem registered & analyzed by AI Dossier Engine!");
 
       // 2. Fetch Real Matching Entities for this problem
-      const probId = problemRes?.problem?.id;
+      const probId = activeProblem?.id;
       if (probId) {
         setMatchingLoading(true);
 
         // Fetch institutions, faculty, students, researchers, startups, MSMEs in parallel
-        const [facRes, stuRes, resRes, staRes, msmRes, chalRes] = await Promise.allSettled([
+        const [facRes, stuRes, resRes, staRes, msmRes] = await Promise.allSettled([
           matchingApi.getFacultyMatches(probId),
           matchingApi.getStudentMatches(probId),
           matchingApi.getResearcherMatches(probId),
           matchingApi.getStartupMatches(probId),
           matchingApi.getMsmeMatches(probId),
-          challengeApi.createChallenge({
-            title: payload.title,
-            description: payload.description,
-            district: payload.district,
-            affected_people: payload.affected_people,
-          }),
         ]);
 
         if (facRes.status === "fulfilled" && facRes.value?.matches) {
@@ -149,9 +150,6 @@ export function ReportProblemPage() {
         }
         if (msmRes.status === "fulfilled" && msmRes.value?.matches) {
           setMsmes(msmRes.value.matches);
-        }
-        if (chalRes.status === "fulfilled" && chalRes.value?.recommended_institutions) {
-          setInstitutions(chalRes.value.recommended_institutions);
         }
 
         setMatchingLoading(false);
@@ -433,10 +431,16 @@ export function ReportProblemPage() {
             </div>
           </div>
 
-          {/* 1. AI Challenge Intelligence */}
+          {/* 1. Actionable Challenge Dossier */}
+          <ChallengeDossierView
+            dossier={aiAnalysis?.dossier || createdProblem?.dossier || createdProblem?.ai_analysis?.dossier}
+            legacyAnalysis={aiAnalysis || createdProblem?.ai_analysis}
+          />
+
+          {/* 2. AI Challenge Intelligence */}
           <AIAnalysisView
             analysis={aiAnalysis}
-            priorityScore={createdProblem.priority_score}
+            priorityScore={createdProblem?.priority_score}
             duplicateCheck={duplicateCheck}
             clusterCheck={clusterCheck}
           />

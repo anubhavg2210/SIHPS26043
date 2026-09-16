@@ -4,11 +4,9 @@ from app.schemas.challenge import (
     ChallengeInput,
     ChallengeAnalysis
 )
-
-from app.services.classifier import (
-    analyze_challenge
+from app.services.dossier_engine import (
+    generate_challenge_dossier
 )
-
 
 router = APIRouter()
 
@@ -20,5 +18,7 @@ router = APIRouter()
 async def analyze(
     challenge: ChallengeInput
 ):
-
-    return analyze_challenge(challenge)
+    """
+    Transforms a natural-language citizen challenge into an Actionable Challenge Dossier.
+    """
+    return generate_challenge_dossier(challenge)

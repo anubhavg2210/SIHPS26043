@@ -1,0 +1,51 @@
+{
+  "work_package_patterns": {
+    "default_packages": [
+      {
+        "id": "WP-01",
+        "name": "Field Verification & Evidence Collection",
+        "objective": "Verify citizen report facts on-site and collect geotagged evidence",
+        "tasks": ["Perform site visit", "Inspect physical condition", "Collect photos/samples", "Log GPS coordinates"],
+        "dependencies": ["Site Access"],
+        "deliverables": ["Field Verification Report", "Geotagged Media Assets"],
+        "verification_status": "pending"
+      },
+      {
+        "id": "WP-02",
+        "name": "Technical Diagnosis & Cause Validation",
+        "objective": "Diagnose root cause hypothesis and test engineering parameters",
+        "tasks": ["Conduct diagnostic measurements", "Test electrical/chemical/structural parameters", "Analyze failure mode"],
+        "dependencies": ["WP-01"],
+        "deliverables": ["Technical Diagnostic Report", "Root Cause Confirmation"],
+        "verification_status": "pending"
+      },
+      {
+        "id": "WP-03",
+        "name": "Solution Design & Resource Planning",
+        "objective": "Formulate technical solution specification and estimate bill of quantities",
+        "tasks": ["Prepare engineering schematic", "Select replacement components", "Obtain cost estimate/quotation"],
+        "dependencies": ["WP-02"],
+        "deliverables": ["Detailed Project Report (DPR)", "Material Specification"],
+        "verification_status": "pending"
+      },
+      {
+        "id": "WP-04",
+        "name": "Pilot / Implementation Execution",
+        "objective": "Deploy technical solution on field and replace unserviceable units",
+        "tasks": ["Execute repair/installation", "Conduct quality check", "Commission operational system"],
+        "dependencies": ["WP-03", "Procurement Approval"],
+        "deliverables": ["Completion Certificate", "Commissioning Log"],
+        "verification_status": "pending"
+      },
+      {
+        "id": "WP-05",
+        "name": "Impact Validation & Post-Audit Monitoring",
+        "objective": "Measure post-implementation KPI improvement and audit sustainability",
+        "tasks": ["Measure post-repair KPI parameters", "Conduct community feedback audit", "Log impact passport entry"],
+        "dependencies": ["WP-04"],
+        "deliverables": ["Verified Impact Passport Entry", "Post-Audit Report"],
+        "verification_status": "pending"
+      }
+    ]
+  }
+}
