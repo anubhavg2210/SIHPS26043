@@ -60,6 +60,12 @@ export const problemApi = {
       params,
     }),
 
+  uploadEvidence: (payload) =>
+    apiRequest("/problems/upload", {
+      method: "POST",
+      body: payload,
+    }),
+
   getMyProblems: () =>
     apiRequest("/problems/mine", {
       method: "GET",
@@ -722,4 +728,28 @@ export const analyticsApi = {
       method: "GET",
     }),
 };
+
+// ============================================================================
+// STUDENT WORKFLOW & MATCHING APIs (backend/src/routes/studentRoutes.js)
+// ============================================================================
+export const studentApi = {
+  getProfile: () =>
+    apiRequest("/students/me/profile", {
+      method: "GET",
+    }),
+
+  updateSkills: (skills) =>
+    apiRequest("/students/me/skills", {
+      method: "PUT",
+      body: { skills },
+    }),
+
+  getMatchedProblems: (params = {}) =>
+    apiRequest("/students/me/matches", {
+      method: "GET",
+      params,
+    }),
+};
+
+
 

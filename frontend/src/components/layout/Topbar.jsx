@@ -2,30 +2,33 @@ import { useState, useRef, useEffect } from "react";
 import { Icon } from "../common/Icons";
 import { useAuth } from "../../context/useAuth.js";
 import { useNotification } from "../../context/useNotification.js";
-import { useToast } from "../../context/useToast.js";
 import { Link } from "../../context/RouterContext.jsx";
 import { useRouter } from "../../context/useRouter.js";
-import { StatusBadge, DemoBadge } from "../common/Badges";
+import { StatusBadge } from "../common/Badges";
+import { useTranslation } from "../../context/useTranslation.js";
+import { problemApi } from "../../services/api.js";
 
 export function Topbar() {
-  const { user, role, logout, demoSwitchRole, demoAccounts } = useAuth();
+  const { user, role, logout } = useAuth();
   const { unreadCount } = useNotification();
-  const toast = useToast();
   const { navigate } = useRouter();
+  const { t, language, setLanguage } = useTranslation();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [switchingRole, setSwitchingRole] = useState(false);
-  const [demoMenuOpen, setDemoMenuOpen] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchError, setSearchError] = useState("");
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
 
-  const demoRef = useRef(null);
+  const searchRef = useRef(null);
   const profileRef = useRef(null);
 
   // Close menus on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (demoRef.current && !demoRef.current.contains(e.target)) {
-        setDemoMenuOpen(false);
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setSearchOpen(false);
       }
       if (profileRef.current && !profileRef.current.contains(e.target)) {
         setProfileMenuOpen(false);
@@ -35,25 +38,51 @@ export function Topbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Live Debounced Search against Backend Database
+  useEffect(() => {
+    const query = searchQuery.trim();
+
+    const timer = setTimeout(async () => {
+      if (!query) {
+        setSearchResults([]);
+        setSearchLoading(false);
+        setSearchError("");
+        return;
+      }
+
+      setSearchLoading(true);
+      setSearchError("");
+      try {
+        const res = await problemApi.getProblems({ search: query, limit: 6 });
+        setSearchResults(res.problems || []);
+      } catch (err) {
+        console.error("Live search failed:", err);
+        setSearchError(err.message || "Search failed");
+      } finally {
+        setSearchLoading(false);
+      }
+    }, query ? 250 : 0);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
+      setSearchOpen(false);
       navigate(`/explore?search=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 
-  const handleRoleSwitch = async (targetRole) => {
-    setDemoMenuOpen(false);
-    setSwitchingRole(true);
-    try {
-      const loggedUser = await demoSwitchRole(targetRole);
-      toast.success(`Switched role to ${loggedUser.role} (${loggedUser.name}) via real backend login.`);
-      navigate("/dashboard");
-    } catch (err) {
-      toast.error(`Demo login failed: ${err.message}`);
-    } finally {
-      setSwitchingRole(false);
-    }
+  const handleSelectProblem = (id) => {
+    setSearchOpen(false);
+    navigate(`/problems/${id}`);
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    setSearchResults([]);
+    setSearchOpen(false);
   };
 
   return (
@@ -72,154 +101,255 @@ export function Topbar() {
         boxShadow: "0 1px 2px rgba(0, 0, 0, 0.02)",
       }}
     >
-      {/* Global Search Bar */}
-      <form
-        onSubmit={handleSearchSubmit}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          backgroundColor: "var(--bg-muted)",
-          borderRadius: "var(--radius-md)",
-          padding: "0.45rem 0.85rem",
-          width: "min(380px, 100%)",
-          border: "1px solid transparent",
-          transition: "border-color var(--transition-fast)",
-        }}
-      >
-        <Icon name="search" size={16} color="var(--text-muted)" />
-        <input
-          type="text"
-          placeholder="Search problems, domains, districts..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+      {/* Functional Global Search Bar & Live Dropdown */}
+      <div ref={searchRef} style={{ position: "relative", width: "min(400px, 100%)" }}>
+        <form
+          onSubmit={handleSearchSubmit}
           style={{
-            border: "none",
-            background: "none",
-            outline: "none",
-            marginLeft: "0.5rem",
-            fontSize: "0.85rem",
-            color: "var(--text-primary)",
+            display: "flex",
+            alignItems: "center",
+            backgroundColor: "var(--bg-muted)",
+            borderRadius: "var(--radius-md)",
+            padding: "0.45rem 0.85rem",
             width: "100%",
+            border: searchOpen ? "1px solid var(--color-primary)" : "1px solid transparent",
+            transition: "border-color var(--transition-fast)",
           }}
-        />
-      </form>
-
-      {/* Action Zone: Demo Switcher, Notification, User Profile */}
-      <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-        {/* Genuine Backend Demo Role Switcher */}
-        <div ref={demoRef} style={{ position: "relative" }}>
-          <button
-            type="button"
-            disabled={switchingRole}
-            onClick={() => setDemoMenuOpen(!demoMenuOpen)}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.45rem",
-              padding: "0.4rem 0.85rem",
-              backgroundColor: "#fef3c7",
-              border: "1px solid #fde68a",
-              color: "#92400e",
-              borderRadius: "var(--radius-full)",
-              fontSize: "0.78rem",
-              fontWeight: 600,
-              cursor: "pointer",
+        >
+          <Icon name="search" size={16} color="var(--text-muted)" />
+          <input
+            type="text"
+            placeholder={t("header.searchPlaceholder")}
+            value={searchQuery}
+            onFocus={() => {
+              if (searchQuery.trim()) setSearchOpen(true);
             }}
-            title="Perform legitimate backend login using seeded demonstration accounts"
-          >
-            {switchingRole ? (
-              <Icon name="spinner" size={14} color="#92400e" />
-            ) : (
-              <Icon name="users" size={14} color="#92400e" />
-            )}
-            <span>Demo Quick-Switch</span>
-            <Icon name="chevron-down" size={12} color="#92400e" />
-          </button>
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              if (!searchOpen) setSearchOpen(true);
+            }}
+            style={{
+              border: "none",
+              background: "none",
+              outline: "none",
+              marginLeft: "0.5rem",
+              fontSize: "0.85rem",
+              color: "var(--text-primary)",
+              width: "100%",
+            }}
+            aria-label={t("header.searchPlaceholder")}
+          />
 
-          {demoMenuOpen && (
+          {/* Search Loading Indicator or Clear Button */}
+          {searchLoading ? (
+            <Icon name="spinner" size={14} color="var(--color-primary)" />
+          ) : searchQuery ? (
+            <button
+              type="button"
+              onClick={handleClearSearch}
+              style={{
+                border: "none",
+                background: "none",
+                padding: 0,
+                cursor: "pointer",
+                color: "var(--text-muted)",
+                display: "flex",
+                alignItems: "center",
+              }}
+              title={t("header.clearSearch")}
+              aria-label={t("header.clearSearch")}
+            >
+              <Icon name="x" size={14} />
+            </button>
+          ) : null}
+        </form>
+
+        {/* Live Search Results Popover */}
+        {searchOpen && searchQuery.trim() && (
+          <div
+            style={{
+              position: "absolute",
+              top: "calc(100% + 6px)",
+              left: 0,
+              width: "100%",
+              backgroundColor: "#ffffff",
+              border: "1px solid var(--border-color)",
+              borderRadius: "var(--radius-md)",
+              boxShadow: "var(--shadow-lg)",
+              zIndex: 100,
+              overflow: "hidden",
+              maxHeight: "420px",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
             <div
               style={{
-                position: "absolute",
-                top: "120%",
-                right: 0,
-                width: "290px",
-                backgroundColor: "#ffffff",
-                border: "1px solid var(--border-color)",
-                borderRadius: "var(--radius-md)",
-                boxShadow: "var(--shadow-lg)",
-                padding: "0.5rem 0",
-                zIndex: 100,
+                padding: "0.6rem 0.85rem",
+                fontSize: "0.75rem",
+                fontWeight: 700,
+                color: "var(--text-muted)",
+                borderBottom: "1px solid var(--border-color)",
+                textTransform: "uppercase",
+                letterSpacing: "0.03em",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
               }}
             >
+              <span>{t("header.searchResults")}</span>
+              {searchResults.length > 0 && (
+                <span>
+                  {searchResults.length} {language === "hi" ? "परिणाम" : "found"}
+                </span>
+              )}
+            </div>
+
+            <div style={{ overflowY: "auto", flex: 1 }}>
+              {searchLoading ? (
+                <div style={{ padding: "1.5rem", textAlign: "center", color: "var(--text-muted)", fontSize: "0.85rem" }}>
+                  <Icon name="spinner" size={20} color="var(--color-primary)" />
+                  <div style={{ marginTop: "0.5rem" }}>{t("header.searching")}</div>
+                </div>
+              ) : searchError ? (
+                <div style={{ padding: "1rem", color: "var(--color-danger)", fontSize: "0.85rem", textAlign: "center" }}>
+                  {searchError}
+                </div>
+              ) : searchResults.length === 0 ? (
+                <div style={{ padding: "1.5rem 1rem", textAlign: "center", color: "var(--text-muted)", fontSize: "0.85rem" }}>
+                  <Icon name="search" size={24} color="var(--border-color)" />
+                  <div style={{ marginTop: "0.5rem", fontWeight: 500 }}>{t("header.noResults")}</div>
+                </div>
+              ) : (
+                searchResults.map((problem) => (
+                  <button
+                    key={problem.id}
+                    type="button"
+                    onClick={() => handleSelectProblem(problem.id)}
+                    style={{
+                      width: "100%",
+                      textAlign: "left",
+                      padding: "0.65rem 0.85rem",
+                      border: "none",
+                      borderBottom: "1px solid var(--border-color)",
+                      backgroundColor: "transparent",
+                      cursor: "pointer",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "0.3rem",
+                      transition: "background-color var(--transition-fast)",
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--bg-muted)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "0.5rem" }}>
+                      <span
+                        style={{
+                          fontSize: "0.85rem",
+                          fontWeight: 600,
+                          color: "var(--text-primary)",
+                          lineHeight: 1.3,
+                        }}
+                      >
+                        {problem.title}
+                      </span>
+                      <StatusBadge status={problem.status} />
+                    </div>
+
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", fontSize: "0.75rem", color: "var(--text-secondary)" }}>
+                      <span
+                        style={{
+                          backgroundColor: "var(--color-primary-subtle)",
+                          color: "var(--color-primary)",
+                          padding: "0.1rem 0.4rem",
+                          borderRadius: "var(--radius-sm)",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {problem.category}
+                      </span>
+                      {problem.district && <span>📍 {problem.district}</span>}
+                      <span style={{ color: "var(--text-muted)" }}>ID: #{problem.id}</span>
+                    </div>
+                  </button>
+                ))
+              )}
+            </div>
+
+            {searchQuery.trim() && (
               <div
+                onClick={handleSearchSubmit}
                 style={{
-                  padding: "0.5rem 1rem 0.35rem",
-                  borderBottom: "1px solid var(--border-color)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
+                  padding: "0.55rem 0.85rem",
+                  backgroundColor: "var(--bg-muted)",
+                  borderTop: "1px solid var(--border-color)",
+                  textAlign: "center",
+                  fontSize: "0.78rem",
+                  fontWeight: 600,
+                  color: "var(--color-primary)",
+                  cursor: "pointer",
                 }}
               >
-                <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--text-muted)" }}>
-                  AUTHENTICATED DEMO ROLES
-                </span>
-                <DemoBadge />
+                {t("header.viewAllResults")} →
               </div>
+            )}
+          </div>
+        )}
+      </div>
 
-              <div style={{ maxHeight: "320px", overflowY: "auto" }}>
-                {demoAccounts.map((acc) => {
-                  const isCurrent = acc.role === role;
-
-                  return (
-                    <button
-                      key={acc.role}
-                      type="button"
-                      onClick={() => handleRoleSwitch(acc.role)}
-                      style={{
-                        width: "100%",
-                        textAlign: "left",
-                        padding: "0.6rem 1rem",
-                        border: "none",
-                        background: isCurrent ? "var(--color-primary-subtle)" : "transparent",
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        transition: "background var(--transition-fast)",
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!isCurrent) e.currentTarget.style.backgroundColor = "var(--bg-muted)";
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isCurrent) e.currentTarget.style.backgroundColor = "transparent";
-                      }}
-                    >
-                      <div>
-                        <div
-                          style={{
-                            fontSize: "0.85rem",
-                            fontWeight: 600,
-                            color: isCurrent ? "var(--color-primary)" : "var(--text-primary)",
-                          }}
-                        >
-                          {acc.label}
-                        </div>
-                        <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
-                          {acc.name}
-                        </div>
-                      </div>
-
-                      {isCurrent ? (
-                        <Icon name="check" size={16} color="var(--color-primary)" />
-                      ) : (
-                        <StatusBadge status={acc.role} />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+      {/* Right Action Zone: Language Selector, Notifications, User Profile */}
+      <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+        {/* Language Selector (EN | हिन्दी) */}
+        <div
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            backgroundColor: "var(--bg-muted)",
+            borderRadius: "var(--radius-md)",
+            padding: "0.2rem 0.25rem",
+            border: "1px solid var(--border-color)",
+          }}
+          role="group"
+          aria-label={t("header.language")}
+        >
+          <button
+            type="button"
+            onClick={() => setLanguage("en")}
+            style={{
+              border: "none",
+              background: language === "en" ? "#ffffff" : "transparent",
+              color: language === "en" ? "var(--color-primary)" : "var(--text-muted)",
+              fontWeight: language === "en" ? 700 : 500,
+              fontSize: "0.78rem",
+              padding: "0.25rem 0.55rem",
+              borderRadius: "var(--radius-sm)",
+              cursor: "pointer",
+              boxShadow: language === "en" ? "0 1px 2px rgba(0,0,0,0.06)" : "none",
+              transition: "all var(--transition-fast)",
+            }}
+            aria-pressed={language === "en"}
+          >
+            English
+          </button>
+          <button
+            type="button"
+            onClick={() => setLanguage("hi")}
+            style={{
+              border: "none",
+              background: language === "hi" ? "#ffffff" : "transparent",
+              color: language === "hi" ? "var(--color-primary)" : "var(--text-muted)",
+              fontWeight: language === "hi" ? 700 : 500,
+              fontSize: "0.78rem",
+              padding: "0.25rem 0.55rem",
+              borderRadius: "var(--radius-sm)",
+              cursor: "pointer",
+              boxShadow: language === "hi" ? "0 1px 2px rgba(0,0,0,0.06)" : "none",
+              transition: "all var(--transition-fast)",
+            }}
+            aria-pressed={language === "hi"}
+          >
+            हिन्दी
+          </button>
         </div>
 
         {/* Notifications Bell */}
@@ -234,7 +364,7 @@ export function Topbar() {
             alignItems: "center",
             textDecoration: "none",
           }}
-          title="View Notifications"
+          title={t("nav.notifications")}
         >
           <Icon name="bell" size={20} />
           {unreadCount > 0 && (
@@ -338,7 +468,7 @@ export function Topbar() {
                 }}
               >
                 <Icon name="shield-check" size={16} />
-                <span>My Profile</span>
+                <span>{t("nav.profile")}</span>
               </Link>
 
               <Link
@@ -355,7 +485,7 @@ export function Topbar() {
                 }}
               >
                 <Icon name="award" size={16} />
-                <span>Reputation & Badges</span>
+                <span>{t("nav.reputation")}</span>
               </Link>
 
               <Link
@@ -372,7 +502,7 @@ export function Topbar() {
                 }}
               >
                 <Icon name="trending-up" size={16} />
-                <span>State Leaderboards</span>
+                <span>{t("nav.leaderboards")}</span>
               </Link>
 
               <div style={{ borderTop: "1px solid var(--border-color)", margin: "0.25rem 0" }} />
@@ -399,7 +529,7 @@ export function Topbar() {
                 }}
               >
                 <Icon name="log-out" size={16} color="#ef4444" />
-                <span>Sign Out</span>
+                <span>{t("nav.logout")}</span>
               </button>
             </div>
           )}

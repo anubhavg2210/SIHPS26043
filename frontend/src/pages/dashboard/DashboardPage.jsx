@@ -2,6 +2,7 @@ import { useAuth } from "../../context/useAuth";
 import { useRouter } from "../../context/useRouter";
 import { StatusBadge } from "../../components/common/Badges";
 import { Button } from "../../components/common/Button";
+import { useTranslation } from "../../context/useTranslation";
 
 // Role-specific sections
 import { CitizenSection } from "../../components/dashboard/CitizenSection";
@@ -15,6 +16,7 @@ import { AdminSection } from "../../components/dashboard/AdminSection";
 export function DashboardPage() {
   const { user, role } = useAuth();
   const { navigate } = useRouter();
+  const { t } = useTranslation();
 
   const getRoleDescription = () => {
     switch (role) {
@@ -76,15 +78,17 @@ export function DashboardPage() {
         }}
       >
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.35rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: role === "CITIZEN" ? 0 : "0.35rem" }}>
             <h1 style={{ margin: 0, fontSize: "1.75rem", fontWeight: 800, letterSpacing: "-0.02em" }}>
-              Welcome, {user?.name || "Civic Leader"}
+              {t("dashboard.welcome")}, {user?.name || "Civic Leader"}
             </h1>
             <StatusBadge status={role} />
           </div>
-          <p style={{ margin: 0, color: "var(--text-muted)", fontSize: "0.9rem" }}>
-            {getRoleDescription()} &bull; SIH 2026 CivicSync Network
-          </p>
+          {role !== "CITIZEN" && (
+            <p style={{ margin: 0, color: "var(--text-muted)", fontSize: "0.9rem" }}>
+              {getRoleDescription()} &bull; SIH 2026 CivicSync Network
+            </p>
+          )}
         </div>
 
         <div style={{ display: "flex", gap: "0.75rem" }}>
@@ -94,7 +98,7 @@ export function DashboardPage() {
               icon="plus-circle"
               onClick={() => navigate("/report")}
             >
-              Report Problem
+              {t("dashboard.reportProblemBtn")}
             </Button>
           )}
 
@@ -103,7 +107,7 @@ export function DashboardPage() {
             icon="search"
             onClick={() => navigate("/explore")}
           >
-            Explore Problems
+            {t("dashboard.exploreBtn")}
           </Button>
         </div>
       </div>

@@ -1,11 +1,16 @@
 import { StatusBadge, PriorityBadge } from "../common/Badges";
 import { Button } from "../common/Button";
 import { useRouter } from "../../context/useRouter.js";
+import { useAuth } from "../../context/useAuth.js";
 
 export function ProblemCard({ problem, onSelect }) {
   const { navigate } = useRouter();
+  const { role } = useAuth();
 
   if (!problem) return null;
+
+  const isAuthorityOrAdmin = role === "AUTHORITY" || role === "ADMIN";
+  const isSolver = ["STUDENT", "FACULTY", "RESEARCHER", "STARTUP", "MSME"].includes(role);
 
   const priority = problem.priority_score ?? (
     (problem.severity || 0) * 5 + (problem.urgency || 0) * 5
@@ -31,6 +36,9 @@ export function ProblemCard({ problem, onSelect }) {
       : priority >= 60
       ? "var(--color-warning)"
       : "var(--color-primary)";
+
+  const hasEvidence = !!problem.evidence_url;
+  const isVideo = problem.evidence_type?.includes("video") || problem.evidence_url?.endsWith(".mp4");
 
   return (
     <div
@@ -72,12 +80,12 @@ export function ProblemCard({ problem, onSelect }) {
         >
           <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", flexWrap: "wrap" }}>
             <StatusBadge status={problem.status || "REPORTED"} />
-            <PriorityBadge priority={priority} />
+            {isAuthorityOrAdmin && <PriorityBadge priority={priority} />}
           </div>
 
           <span
             style={{
-              fontSize: "0.7rem",
+              fontSize: "0.75rem",
               color: "var(--text-muted)",
               fontWeight: 500,
             }}
@@ -87,20 +95,38 @@ export function ProblemCard({ problem, onSelect }) {
         </div>
 
         {/* Category & Subcategory Tag */}
-        <div style={{ marginBottom: "0.5rem" }}>
-          <span
-            style={{
-              fontSize: "0.72rem",
-              fontWeight: 600,
-              padding: "0.15rem 0.5rem",
-              borderRadius: "var(--radius-sm)",
-              backgroundColor: "var(--color-primary-subtle)",
-              color: "var(--color-primary)",
-              border: "1px solid var(--color-primary-border)",
-            }}
-          >
-            {problem.category} {problem.subcategory ? `&bull; ${problem.subcategory}` : ""}
-          </span>
+        <div style={{ marginBottom: "0.5rem", display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+          {problem.category && (
+            <span
+              style={{
+                fontSize: "0.72rem",
+                fontWeight: 600,
+                padding: "0.15rem 0.5rem",
+                borderRadius: "var(--radius-sm)",
+                backgroundColor: "var(--color-primary-subtle)",
+                color: "var(--color-primary)",
+                border: "1px solid var(--color-primary-border)",
+              }}
+            >
+              {problem.category} {problem.subcategory ? `&bull; ${problem.subcategory}` : ""}
+            </span>
+          )}
+
+          {hasEvidence && (
+            <span
+              style={{
+                fontSize: "0.7rem",
+                fontWeight: 600,
+                color: "var(--color-primary)",
+                backgroundColor: "var(--bg-muted)",
+                padding: "0.15rem 0.45rem",
+                borderRadius: "var(--radius-sm)",
+                border: "1px solid var(--border-color)",
+              }}
+            >
+              {isVideo ? "🎥 Video Evidence" : "📷 Photo Evidence"}
+            </span>
+          )}
         </div>
 
         {/* Problem Title */}
@@ -157,44 +183,46 @@ export function ProblemCard({ problem, onSelect }) {
           )}
         </div>
 
-        {/* Priority Graphical Indicator */}
-        <div style={{ marginBottom: "1rem" }}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              fontSize: "0.72rem",
-              fontWeight: 600,
-              color: "var(--text-muted)",
-              marginBottom: "0.25rem",
-            }}
-          >
-            <span>CIVIC PRIORITY</span>
-            <span style={{ color: priorityColor, fontWeight: 700 }}>
-              {priority} / 100
-            </span>
-          </div>
-          <div
-            style={{
-              height: "6px",
-              borderRadius: "var(--radius-full)",
-              backgroundColor: "var(--bg-muted)",
-              overflow: "hidden",
-            }}
-          >
+        {/* Priority Graphical Indicator (Visible to AUTHORITY/ADMIN only) */}
+        {isAuthorityOrAdmin && (
+          <div style={{ marginBottom: "1rem" }}>
             <div
               style={{
-                height: "100%",
-                width: `${Math.min(100, Math.max(0, priority))}%`,
-                backgroundColor: priorityColor,
-                transition: "width var(--transition-normal)",
+                display: "flex",
+                justifyContent: "space-between",
+                fontSize: "0.72rem",
+                fontWeight: 600,
+                color: "var(--text-muted)",
+                marginBottom: "0.25rem",
               }}
-            />
+            >
+              <span>CIVIC PRIORITY</span>
+              <span style={{ color: priorityColor, fontWeight: 700 }}>
+                {priority} / 100
+              </span>
+            </div>
+            <div
+              style={{
+                height: "6px",
+                borderRadius: "var(--radius-full)",
+                backgroundColor: "var(--bg-muted)",
+                overflow: "hidden",
+              }}
+            >
+              <div
+                style={{
+                  height: "100%",
+                  width: `${Math.min(100, Math.max(0, priority))}%`,
+                  backgroundColor: priorityColor,
+                  transition: "width var(--transition-normal)",
+                }}
+              />
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Required Expertise Chips */}
-        {skills.length > 0 && (
+        {/* Required Expertise Chips (Visible to AUTHORITY, ADMIN and SOLVERS only) */}
+        {(isAuthorityOrAdmin || isSolver) && skills.length > 0 && (
           <div style={{ marginBottom: "1rem" }}>
             <div
               style={{
@@ -252,7 +280,11 @@ export function ProblemCard({ problem, onSelect }) {
         }}
       >
         <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: 500 }}>
-          {problem.report_count ? `${problem.report_count} reports merged` : "Civic Case Record"}
+          {isAuthorityOrAdmin
+            ? problem.report_count
+              ? `${problem.report_count} reports merged`
+              : "Civic Case Record"
+            : problem.address || "Community Report"}
         </span>
 
         <Button

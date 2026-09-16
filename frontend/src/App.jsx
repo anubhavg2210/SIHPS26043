@@ -4,6 +4,7 @@ import { AuthProvider } from "./context/AuthContext.jsx";
 import { useAuth } from "./context/useAuth.js";
 import { ToastProvider } from "./context/ToastContext.jsx";
 import { NotificationProvider } from "./context/NotificationContext.jsx";
+import { LanguageProvider } from "./context/LanguageContext.jsx";
 import { AppLayout } from "./components/layout/AppLayout.jsx";
 import { LandingPage } from "./pages/LandingPage.jsx";
 import { LoginPage } from "./pages/auth/LoginPage.jsx";
@@ -12,8 +13,10 @@ import { Card } from "./components/common/Cards";
 import { Button } from "./components/common/Button";
 import { Icon } from "./components/common/Icons";
 import { ReportProblemPage } from "./pages/problems/ReportProblemPage.jsx";
+import { MyReportsPage } from "./pages/problems/MyReportsPage.jsx";
 import { ProblemDetailPage } from "./pages/problems/ProblemDetailPage.jsx";
 import { ExplorePage } from "./pages/explore/ExplorePage.jsx";
+import { MatchingSkillsPage } from "./pages/matching/MatchingSkillsPage.jsx";
 import NotificationsPage from "./pages/notifications/NotificationsPage.jsx";
 import ReputationPage from "./pages/reputation/ReputationPage.jsx";
 import RankingsPage from "./pages/rankings/RankingsPage.jsx";
@@ -79,8 +82,14 @@ function AppContent() {
       {/* Route: /dashboard/analytics */}
       {path === "/dashboard/analytics" && <AnalyticsDashboardPage />}
 
-      {/* Route: /explore, /matches, /my-reports */}
-      {(path === "/explore" || path === "/matches" || path === "/my-reports") && <ExplorePage />}
+      {/* Route: /explore */}
+      {path === "/explore" && <ExplorePage />}
+
+      {/* Route: /matches */}
+      {path === "/matches" && <MatchingSkillsPage />}
+
+      {/* Route: /my-reports */}
+      {path === "/my-reports" && <MyReportsPage />}
 
       {/* Route: /report */}
       {path === "/report" && <ReportProblemPage />}
@@ -89,7 +98,13 @@ function AppContent() {
       {isProblemDetail && !segments[2] && <ProblemDetailPage id={problemId} />}
 
       {/* Route: /problems/:id/impact-passport */}
-      {isProblemDetail && segments[2] === "impact-passport" && <ImpactPassportPage />}
+      {isProblemDetail && segments[2] === "impact-passport" && (
+        role === "AUTHORITY" || role === "ADMIN" ? (
+          <ImpactPassportPage />
+        ) : (
+          <ProblemDetailPage id={problemId} />
+        )
+      )}
 
       {/* Route: /notifications */}
       {path === "/notifications" && <NotificationsPage />}
@@ -142,13 +157,15 @@ function AppContent() {
 export default function App() {
   return (
     <RouterProvider>
-      <AuthProvider>
-        <ToastProvider>
-          <NotificationProvider>
-            <AppContent />
-          </NotificationProvider>
-        </ToastProvider>
-      </AuthProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <NotificationProvider>
+              <AppContent />
+            </NotificationProvider>
+          </ToastProvider>
+        </AuthProvider>
+      </LanguageProvider>
     </RouterProvider>
   );
 }

@@ -10,6 +10,9 @@
 
 const {
     findStudentMatches,
+    getStudentProfile,
+    updateStudentSkills,
+    findMatchingProblemsForStudent,
     parseIntParam
 } = require("../services/studentMatchingService");
 
@@ -54,6 +57,63 @@ async function getStudentMatches(req, res) {
     }
 }
 
+// ---------------------------------------------------------------------------
+// GET /api/students/me/profile
+// ---------------------------------------------------------------------------
+
+async function getStudentProfileHandler(req, res) {
+    try {
+        const profile = await getStudentProfile(req.user.id);
+        if (!profile) {
+            return res.status(404).json({ message: "Student profile not found" });
+        }
+        res.json({ profile });
+    } catch (error) {
+        console.error("Fetch student profile error:", error);
+        res.status(500).json({ message: "Failed to fetch student profile" });
+    }
+}
+
+// ---------------------------------------------------------------------------
+// PUT /api/students/me/skills
+// ---------------------------------------------------------------------------
+
+async function updateStudentSkillsHandler(req, res) {
+    try {
+        const { skills } = req.body;
+        if (!Array.isArray(skills)) {
+            return res.status(400).json({ message: "Skills must be an array of strings" });
+        }
+        const updatedSkills = await updateStudentSkills(req.user.id, skills);
+        res.json({
+            message: "Student skills updated successfully",
+            skills: updatedSkills
+        });
+    } catch (error) {
+        console.error("Update student skills error:", error);
+        res.status(500).json({ message: "Failed to update student skills" });
+    }
+}
+
+// ---------------------------------------------------------------------------
+// GET /api/students/me/matches
+// ---------------------------------------------------------------------------
+
+async function getStudentMatchedProblemsHandler(req, res) {
+    try {
+        const sort = req.query.sort || "best_match";
+        const result = await findMatchingProblemsForStudent(req.user.id, { sort });
+        res.json(result);
+    } catch (error) {
+        console.error("Student matched problems error:", error);
+        res.status(500).json({ message: "Failed to find matching problems" });
+    }
+}
+
 module.exports = {
-    getStudentMatches
+    getStudentMatches,
+    getStudentProfileHandler,
+    updateStudentSkillsHandler,
+    getStudentMatchedProblemsHandler
 };
+

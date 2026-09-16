@@ -1,23 +1,17 @@
 import { useState, useEffect } from "react";
-import { problemApi, matchingApi, solutionApi, reputationApi } from "../../services/api";
+import { studentApi, solutionApi, reputationApi } from "../../services/api";
 import { Card, StatCard } from "../common/Cards";
 import { Button } from "../common/Button";
 import { MatchScoreIndicator } from "../common/ProgressBar";
 import { EmptyState, LoadingSkeleton } from "../common/Feedback";
 import { useRouter } from "../../context/useRouter";
 
-// Student's confirmed skills (derived from student_profiles in backend for Arjun Sharma)
-const STUDENT_SKILLS = [
-  "Groundwater",
-  "Water Quality",
-  "Environmental Engineering",
-  "GIS",
-];
-
 export function StudentSection({ user }) {
   const { navigate } = useRouter();
 
   const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState(null);
+  const [skills, setSkills] = useState([]);
   const [matchedProblems, setMatchedProblems] = useState([]);
   const [mySolutions, setMySolutions] = useState([]);
   const [reputation, setReputation] = useState(null);
@@ -28,79 +22,41 @@ export function StudentSection({ user }) {
     async function loadStudentData() {
       setError("");
       try {
-        // 1. Fetch available problems
-        const [probRes, repRes] = await Promise.allSettled([
-          problemApi.getProblems({ limit: 15 }),
+        const [profRes, repRes, matchRes] = await Promise.allSettled([
+          studentApi.getProfile(),
           reputationApi.getMyReputation(),
+          studentApi.getMatchedProblems({ sort: "best_match" }),
         ]);
 
         if (ignore) return;
+
+        if (profRes.status === "fulfilled") {
+          const currentProf = profRes.value?.profile;
+          setProfile(currentProf);
+          setSkills(currentProf?.skills || []);
+        }
 
         if (repRes.status === "fulfilled") {
           setReputation(repRes.value);
         }
 
-        const candidateProblems = probRes.status === "fulfilled" ? probRes.value?.problems || [] : [];
+        if (matchRes.status === "fulfilled") {
+          const rawMatches = matchRes.value?.matches || [];
+          setMatchedProblems(rawMatches);
+        }
 
-        // 2. Query real matching endpoint for each candidate problem that has required expertise
-        const matchingResults = [];
+        // Check user active solutions
         const userSolutionsList = [];
-
-        for (const prob of candidateProblems.slice(0, 8)) {
-          if (ignore) break;
-          try {
-            // Check student matches from backend endpoint
-            const matchRes = await matchingApi.getStudentMatches(prob.id).catch(() => null);
-            if (matchRes && matchRes.matches) {
-              const myMatch = matchRes.matches.find(
-                (m) => Number(m.user_id || m.id) === Number(user?.id)
-              );
-
-              if (myMatch) {
-                matchingResults.push({
-                  problem: prob,
-                  matchScore: myMatch.match_score,
-                  matchedSkills: myMatch.matched_skills || [],
-                  requiredSkills: matchRes.required_expertise || [],
-                  reason: myMatch.reason || `Matched ${myMatch.matched_expertise} skills`,
-                });
-              } else if (Array.isArray(prob.required_expertise) && prob.required_expertise.length > 0) {
-                // Fallback deterministic match calculation against STUDENT_SKILLS
-                const normalizedStudent = STUDENT_SKILLS.map((s) => s.toLowerCase());
-                const matched = prob.required_expertise.filter((req) =>
-                  normalizedStudent.includes(req.toLowerCase())
-                );
-                if (matched.length > 0) {
-                  const score = Math.round((matched.length / prob.required_expertise.length) * 100);
-                  matchingResults.push({
-                    problem: prob,
-                    matchScore: score,
-                    matchedSkills: matched,
-                    requiredSkills: prob.required_expertise,
-                    reason: `Matched ${matched.length} of ${prob.required_expertise.length} required expertise areas`,
-                  });
-                }
-              }
-            }
-
-            // Check solutions
-            const solRes = await solutionApi.getSolutionsForProblem(prob.id).catch(() => ({ solutions: [] }));
-            const userSols = (solRes?.solutions || []).filter(
-              (s) => Number(s.submitted_by) === Number(user?.id)
-            );
-            userSolutionsList.push(...userSols);
-          } catch {
-            // Non-fatal per-problem boundary
-          }
+        try {
+          const solRes = await solutionApi.getSolutions().catch(() => ({ solutions: [] }));
+          const allSols = solRes?.solutions || [];
+          const userSols = allSols.filter((s) => Number(s.submitted_by) === Number(user?.id));
+          userSolutionsList.push(...userSols);
+        } catch {
+          // non-fatal
         }
-
-        if (!ignore) {
-          // Sort matched problems by matchScore desc
-          matchingResults.sort((a, b) => b.matchScore - a.matchScore);
-          setMatchedProblems(matchingResults);
-          setMySolutions(userSolutionsList);
-          setLoading(false);
-        }
+        setMySolutions(userSolutionsList);
+        setLoading(false);
       } catch (err) {
         if (!ignore) {
           console.error(err);
@@ -157,7 +113,7 @@ export function StudentSection({ user }) {
         />
         <StatCard
           title="Registered Skills"
-          value={String(STUDENT_SKILLS.length)}
+          value={loading ? "..." : String(skills.length)}
           subtitle="Validated student competencies"
           icon="graduation-cap"
           iconColor="var(--color-success)"
@@ -167,50 +123,69 @@ export function StudentSection({ user }) {
       {/* Student Skill Profile Card */}
       <Card
         title="Your Student Competency Profile"
-        subtitle="Skills registered in your academic profile used for civic opportunity matching"
+        subtitle={profile ? `${profile.course || "Student"} • ${profile.institution_name || "Academic Institution"}` : "Skills registered in your academic profile"}
         actions={
           <div style={{ display: "flex", gap: "0.5rem" }}>
-            <Button variant="outline" size="sm" onClick={() => navigate("/reputation")}>
-              View Reputation →
+            <Button variant="primary" size="sm" icon="target" onClick={() => navigate("/matches")}>
+              Matching Skills Page →
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => navigate("/rankings")}>
-              View Rankings →
+            <Button variant="outline" size="sm" onClick={() => navigate("/reputation")}>
+              Reputation
             </Button>
           </div>
         }
       >
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-          {STUDENT_SKILLS.map((skill) => (
-            <span
-              key={skill}
-              style={{
-                fontSize: "0.85rem",
-                fontWeight: 600,
-                padding: "0.3rem 0.75rem",
-                borderRadius: "var(--radius-full)",
-                backgroundColor: "var(--color-primary-subtle)",
-                color: "var(--color-primary)",
-                border: "1px solid var(--color-primary-border)",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.35rem",
-              }}
+        {skills.length === 0 ? (
+          <div style={{ padding: "0.5rem 0", color: "var(--text-muted)", fontSize: "0.85rem" }}>
+            No skills registered yet.{" "}
+            <button
+              type="button"
+              onClick={() => navigate("/matches")}
+              style={{ color: "var(--color-primary)", textDecoration: "underline", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}
             >
-              ✓ {skill}
-            </span>
-          ))}
-        </div>
+              Add skills here
+            </button>{" "}
+            to start discovering relevant civic problems.
+          </div>
+        ) : (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+            {skills.map((skill) => (
+              <span
+                key={skill}
+                style={{
+                  fontSize: "0.85rem",
+                  fontWeight: 600,
+                  padding: "0.3rem 0.75rem",
+                  borderRadius: "var(--radius-full)",
+                  backgroundColor: "var(--color-primary-subtle)",
+                  color: "var(--color-primary)",
+                  border: "1px solid var(--color-primary-border)",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.35rem",
+                }}
+              >
+                ✓ {skill}
+              </span>
+            ))}
+          </div>
+        )}
       </Card>
 
       {/* Core Student Matching Value Proposition */}
       <div>
-        <div style={{ marginBottom: "1rem" }}>
-          <h3 style={{ margin: "0 0 0.25rem", fontSize: "1.2rem", fontWeight: 700 }}>
-            Problems Matching Your Skills
-          </h3>
-          <p style={{ margin: 0, fontSize: "0.85rem", color: "var(--text-muted)" }}>
-            Contribute specialized knowledge to real societal problems in collaboration with universities and municipal authorities
-          </p>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem", flexWrap: "wrap", gap: "0.5rem" }}>
+          <div>
+            <h3 style={{ margin: "0 0 0.25rem", fontSize: "1.2rem", fontWeight: 700 }}>
+              Problems Matching Your Skills
+            </h3>
+            <p style={{ margin: 0, fontSize: "0.85rem", color: "var(--text-muted)" }}>
+              Contribute specialized knowledge to real societal problems matching your competencies
+            </p>
+          </div>
+          <Button variant="outline" size="sm" icon="arrow-right" onClick={() => navigate("/matches")}>
+            View All Matches ({matchedProblems.length})
+          </Button>
         </div>
 
         {loading ? (
@@ -224,15 +199,15 @@ export function StudentSection({ user }) {
           <EmptyState
             icon="target"
             title="No direct skill matches found right now"
-            description="Explore the problem catalog to discover challenges across other districts or submit a collaborative solution."
-            actionLabel="Explore All Problems"
-            onAction={() => navigate("/explore")}
+            description="Add or update skills on the Matching Skills page to discover tailored civic challenges."
+            actionLabel="Manage Matching Skills"
+            onAction={() => navigate("/matches")}
           />
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            {matchedProblems.map(({ problem, matchScore, matchedSkills, requiredSkills, reason }) => (
+            {matchedProblems.slice(0, 4).map((prob) => (
               <div
-                key={problem.id}
+                key={prob.id}
                 style={{
                   backgroundColor: "#ffffff",
                   border: "1px solid var(--border-color)",
@@ -255,19 +230,19 @@ export function StudentSection({ user }) {
                           color: "var(--color-primary)",
                         }}
                       >
-                        {problem.category}
+                        {prob.category}
                       </span>
                       <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
-                        #{problem.id} &bull; 📍 {problem.district || "District"}
+                        #{prob.id} &bull; 📍 {prob.district || "District"} {prob.city ? `(${prob.city})` : ""}
                       </span>
                     </div>
 
                     <h4 style={{ margin: 0, fontSize: "1.05rem", fontWeight: 700 }}>
-                      {problem.title}
+                      {prob.title}
                     </h4>
                   </div>
 
-                  <MatchScoreIndicator score={matchScore} />
+                  <MatchScoreIndicator score={prob.match_score} />
                 </div>
 
                 {/* The 4-Step Student Journey Pipeline Box */}
@@ -289,7 +264,7 @@ export function StudentSection({ user }) {
                       1. Required Expertise
                     </div>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: "0.25rem", marginTop: "0.35rem" }}>
-                      {requiredSkills.map((s) => (
+                      {prob.required_expertise?.map((s) => (
                         <span key={s} style={{ fontSize: "0.72rem", padding: "0.1rem 0.4rem", borderRadius: "var(--radius-sm)", backgroundColor: "#ffffff", border: "1px solid var(--border-color)" }}>
                           {s}
                         </span>
@@ -303,7 +278,7 @@ export function StudentSection({ user }) {
                       2. Your Matching Skills
                     </div>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: "0.25rem", marginTop: "0.35rem" }}>
-                      {matchedSkills.map((s) => (
+                      {prob.matched_skills?.map((s) => (
                         <span key={s} style={{ fontSize: "0.72rem", fontWeight: 600, padding: "0.1rem 0.4rem", borderRadius: "var(--radius-sm)", backgroundColor: "var(--color-primary-subtle)", color: "var(--color-primary)" }}>
                           ✓ {s}
                         </span>
@@ -311,13 +286,13 @@ export function StudentSection({ user }) {
                     </div>
                   </div>
 
-                  {/* Step 3: Possible Contribution Area */}
+                  {/* Step 3: Contribution Area */}
                   <div>
                     <div style={{ fontSize: "0.7rem", fontWeight: 700, color: "var(--color-success)", textTransform: "uppercase" }}>
-                      3. Potential Contribution
+                      3. Match Evaluation
                     </div>
                     <p style={{ margin: "0.35rem 0 0", fontSize: "0.8rem", color: "var(--text-secondary)", lineHeight: 1.4 }}>
-                      {getContributionArea(matchedSkills)}
+                      <strong>{prob.match_tier}</strong> ({prob.match_score}%) &bull; {getContributionArea(prob.matched_skills || [])}
                     </p>
                   </div>
                 </div>
@@ -325,7 +300,7 @@ export function StudentSection({ user }) {
                 {/* Explanation & Action Footer */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.75rem" }}>
                   <span style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>
-                    💡 {reason}
+                    💡 {prob.match_reason}
                   </span>
 
                   <div style={{ display: "flex", gap: "0.5rem" }}>
@@ -333,7 +308,7 @@ export function StudentSection({ user }) {
                       variant="outline"
                       size="sm"
                       icon="arrow-right"
-                      onClick={() => navigate(`/problems/${problem.id}`)}
+                      onClick={() => navigate(`/problems/${prob.id}`)}
                     >
                       View Problem
                     </Button>
@@ -341,7 +316,7 @@ export function StudentSection({ user }) {
                       variant="primary"
                       size="sm"
                       icon="plus-circle"
-                      onClick={() => navigate(`/problems/${problem.id}`)}
+                      onClick={() => navigate(`/problems/${prob.id}?tab=solutions`)}
                     >
                       Contribute Solution
                     </Button>

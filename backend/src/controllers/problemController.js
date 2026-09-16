@@ -1,3 +1,5 @@
+const fs = require("fs");
+const path = require("path");
 const pool = require("../config/db");
 const { analyzeChallenge } = require("../services/aiService");
 const {
@@ -18,6 +20,7 @@ async function createProblem(req, res) {
         const {
             title,
             description,
+            category,
             district,
             city,
             address,
@@ -25,7 +28,11 @@ async function createProblem(req, res) {
             longitude,
             affected_people,
             available_from,
-            available_until
+            available_until,
+            evidence_url,
+            evidence_type,
+            evidence_name,
+            evidence_size
         } = req.body;
 
         if (!title || !description) {
@@ -72,16 +79,20 @@ console.log("🔥 PRIORITY SCORE:", priorityScore);
         severity,
         urgency,
         ai_confidence,
-        priority_score
+        priority_score,
+        evidence_url,
+        evidence_type,
+        evidence_name,
+        evidence_size
     )
     VALUES
-    ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)
+    ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24)
     RETURNING *`,
     [
         req.user.id,
         title,
         description,
-        ai.domain,
+        ai.domain || category || null,
         ai.subdomain,
         district || null,
         city || null,
@@ -97,7 +108,11 @@ console.log("🔥 PRIORITY SCORE:", priorityScore);
         ai.severity,
         ai.urgency,
         ai.confidence,
-        priorityScore
+        priorityScore,
+        evidence_url || null,
+        evidence_type || null,
+        evidence_name || null,
+        evidence_size ? parseInt(evidence_size, 10) : null
     ]
 );
                
@@ -173,7 +188,11 @@ async function getProblems(req, res) {
         const {
             category,
             district,
-            status
+            status,
+            search,
+            q,
+            limit,
+            mine
         } = req.query;
 
         let query = `
@@ -188,22 +207,78 @@ async function getProblems(req, res) {
 
         const values = [];
 
-        if (category) {
+        if ((mine === "true" || mine === true) && req.user?.id) {
+            values.push(req.user.id);
+            query += ` AND p.reporter_id = $${values.length}`;
+        }
+
+        if (category && category !== "ALL") {
             values.push(category);
             query += ` AND p.category = $${values.length}`;
         }
 
-        if (district) {
+        if (district && district !== "ALL") {
             values.push(district);
             query += ` AND p.district = $${values.length}`;
         }
 
-        if (status) {
+        if (status && status !== "ALL") {
             values.push(status);
             query += ` AND p.status = $${values.length}`;
         }
 
+        const rawSearch = (search || q || "").trim();
+        if (rawSearch) {
+            values.push(`%${rawSearch}%`);
+            const paramIdx = values.length;
+
+            // Check if user entered an ID or PRB-xxx
+            let idMatch = null;
+            if (/^\d+$/.test(rawSearch)) {
+                idMatch = parseInt(rawSearch, 10);
+            } else {
+                const prbMatch = rawSearch.match(/^prb-?0*(\d+)$/i);
+                if (prbMatch) {
+                    idMatch = parseInt(prbMatch[1], 10);
+                }
+            }
+
+            if (idMatch !== null) {
+                values.push(idMatch);
+                const idParamIdx = values.length;
+                query += ` AND (
+                    p.title ILIKE $${paramIdx}
+                    OR p.description ILIKE $${paramIdx}
+                    OR p.category ILIKE $${paramIdx}
+                    OR p.subcategory ILIKE $${paramIdx}
+                    OR p.district ILIKE $${paramIdx}
+                    OR p.city ILIKE $${paramIdx}
+                    OR p.address ILIKE $${paramIdx}
+                    OR array_to_string(p.ai_keywords, ' ') ILIKE $${paramIdx}
+                    OR array_to_string(p.required_expertise, ' ') ILIKE $${paramIdx}
+                    OR p.id = $${idParamIdx}
+                )`;
+            } else {
+                query += ` AND (
+                    p.title ILIKE $${paramIdx}
+                    OR p.description ILIKE $${paramIdx}
+                    OR p.category ILIKE $${paramIdx}
+                    OR p.subcategory ILIKE $${paramIdx}
+                    OR p.district ILIKE $${paramIdx}
+                    OR p.city ILIKE $${paramIdx}
+                    OR p.address ILIKE $${paramIdx}
+                    OR array_to_string(p.ai_keywords, ' ') ILIKE $${paramIdx}
+                    OR array_to_string(p.required_expertise, ' ') ILIKE $${paramIdx}
+                )`;
+            }
+        }
+
         query += " ORDER BY p.created_at DESC";
+
+        if (limit && !isNaN(parseInt(limit, 10))) {
+            values.push(parseInt(limit, 10));
+            query += ` LIMIT $${values.length}`;
+        }
 
         const result = await pool.query(query, values);
 
@@ -425,6 +500,71 @@ async function getDuplicates(req, res) {
     }
 }
 
+async function uploadEvidence(req, res) {
+    try {
+        const { fileName, fileType, fileData } = req.body;
+
+        if (!fileName || !fileData) {
+            return res.status(400).json({ message: "File name and file data are required" });
+        }
+
+        const ext = path.extname(fileName).toLowerCase();
+        const allowedExts = [".jpg", ".jpeg", ".png", ".webp", ".mp4", ".webm", ".mov"];
+        const allowedTypes = [
+            "image/jpeg", "image/jpg", "image/png", "image/webp",
+            "video/mp4", "video/webm", "video/quicktime"
+        ];
+
+        const isAllowedExt = allowedExts.includes(ext);
+        const isAllowedType = fileType && allowedTypes.includes(fileType.toLowerCase());
+
+        if (!isAllowedExt && !isAllowedType) {
+            return res.status(400).json({
+                message: `Unsupported file format. Supported formats: JPG, JPEG, PNG, WEBP, MP4, WEBM, MOV.`
+            });
+        }
+
+        let base64String = fileData;
+        if (fileData.includes(",")) {
+            base64String = fileData.split(",")[1];
+        }
+
+        const buffer = Buffer.from(base64String, "base64");
+        
+        // 25MB max size
+        const MAX_SIZE = 25 * 1024 * 1024;
+        if (buffer.length > MAX_SIZE) {
+            return res.status(400).json({
+                message: `File size exceeds the 25MB limit. Selected file is ${(buffer.length / (1024 * 1024)).toFixed(1)}MB.`
+            });
+        }
+
+        const uploadsDir = path.join(__dirname, "../../uploads");
+        if (!fs.existsSync(uploadsDir)) {
+            fs.mkdirSync(uploadsDir, { recursive: true });
+        }
+
+        const safeExt = ext || (fileType && fileType.includes("video") ? ".mp4" : ".jpg");
+        const uniqueFileName = `evidence-${Date.now()}-${Math.random().toString(36).substring(2, 8)}${safeExt}`;
+        const filePath = path.join(uploadsDir, uniqueFileName);
+
+        await fs.promises.writeFile(filePath, buffer);
+
+        const fileUrl = `/uploads/${uniqueFileName}`;
+
+        return res.status(201).json({
+            success: true,
+            file_url: fileUrl,
+            file_name: fileName,
+            file_type: fileType || (fileUrl.endsWith(".mp4") ? "video/mp4" : "image/jpeg"),
+            file_size: buffer.length
+        });
+    } catch (err) {
+        console.error("Evidence upload error:", err);
+        return res.status(500).json({ message: "Failed to upload evidence", error: err.message });
+    }
+}
+
 module.exports = {
     createProblem,
     getProblems,
@@ -432,5 +572,6 @@ module.exports = {
     getMyProblems,
     updateProblemStatus,
     getProblemStatusHistory,
-    getDuplicates
+    getDuplicates,
+    uploadEvidence
 };

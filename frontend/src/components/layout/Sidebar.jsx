@@ -4,10 +4,12 @@ import { useAuth } from "../../context/useAuth.js";
 import { Link } from "../../context/RouterContext.jsx";
 import { useRouter } from "../../context/useRouter.js";
 import { StatusBadge } from "../common/Badges";
+import { useTranslation } from "../../context/useTranslation.js";
 
 export function Sidebar() {
   const { user, role, logout } = useAuth();
   const { path } = useRouter();
+  const { t } = useTranslation();
   const [collapsed, setCollapsed] = useState(false);
 
   // Helper to determine active state
@@ -21,8 +23,8 @@ export function Sidebar() {
   // Role-filtered navigation definitions
   const getNavItems = () => {
     const commonItems = [
-      { path: "/dashboard", label: "Dashboard", icon: "dashboard" },
-      { path: "/explore", label: "Explore Problems", icon: "search" },
+      { path: "/dashboard", label: t("nav.dashboard"), icon: "dashboard" },
+      { path: "/explore", label: t("nav.explore"), icon: "search" },
     ];
 
     let roleItems;
@@ -30,8 +32,8 @@ export function Sidebar() {
     switch (role) {
       case "CITIZEN":
         roleItems = [
-          { path: "/report", label: "Report Problem", icon: "plus-circle" },
-          { path: "/my-reports", label: "My Reports", icon: "layers" },
+          { path: "/report", label: t("nav.report"), icon: "plus-circle" },
+          { path: "/my-reports", label: t("nav.myReports"), icon: "layers" },
         ];
         break;
 
@@ -71,7 +73,7 @@ export function Sidebar() {
 
       case "AUTHORITY":
         roleItems = [
-          { path: "/report", label: "Report Problem", icon: "plus-circle" },
+          { path: "/report", label: t("nav.report"), icon: "plus-circle" },
           { path: "/explore", label: "Priority Problems", icon: "alert-triangle" },
           { path: "/solutions", label: "Solution Review", icon: "cpu" },
           { path: "/impact", label: "Implementation & Pilot", icon: "activity" },
@@ -82,7 +84,7 @@ export function Sidebar() {
 
       case "ADMIN":
         roleItems = [
-          { path: "/report", label: "Report Problem", icon: "plus-circle" },
+          { path: "/report", label: t("nav.report"), icon: "plus-circle" },
           { path: "/solutions", label: "Solution Review", icon: "cpu" },
           { path: "/impact", label: "Impact & Pilots", icon: "activity" },
           { path: "/dashboard/analytics", label: "Analytics Dashboard", icon: "activity" },
@@ -91,14 +93,14 @@ export function Sidebar() {
         break;
 
       default:
-        roleItems = [{ path: "/report", label: "Report Problem", icon: "plus-circle" }];
+        roleItems = [{ path: "/report", label: t("nav.report"), icon: "plus-circle" }];
     }
 
     const trailingItems = [
-      { path: "/notifications", label: "Notifications", icon: "bell" },
-      { path: "/reputation", label: "Reputation & Badges", icon: "award" },
-      { path: "/rankings", label: "Leaderboards", icon: "trending-up" },
-      { path: "/profile", label: "My Profile", icon: "shield-check" },
+      { path: "/notifications", label: t("nav.notifications"), icon: "bell" },
+      { path: "/reputation", label: t("nav.reputation"), icon: "award" },
+      { path: "/rankings", label: t("nav.leaderboards"), icon: "trending-up" },
+      { path: "/profile", label: t("nav.profile"), icon: "shield-check" },
     ];
 
     return [...commonItems, ...roleItems, ...trailingItems];
@@ -335,7 +337,7 @@ export function Sidebar() {
           title="Log out"
         >
           <Icon name="log-out" size={17} />
-          {!collapsed && <span>Sign Out</span>}
+          {!collapsed && <span>{t("nav.logout")}</span>}
         </button>
       </div>
     </aside>
