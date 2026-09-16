@@ -1,0 +1,117 @@
+{
+  "impact_patterns": {
+    "Street Lighting": {
+      "baseline": ["Verified count of non-functional poles / dark stretches", "Current zero surface lux at night"],
+      "target": ["100% operational functional street light coverage on target stretch", "Minimum surface illuminance of 15 lux"],
+      "kpis": [
+        "Functional Street Light Count",
+        "Night Road Illumination Level (lux)",
+        "Mean Time To Repair (MTTR in hours)",
+        "Night-time Traffic Safety Indicator"
+      ],
+      "measurement_methods": ["Photometric lux meter measurement", "Night visual audit", "Maintenance dispatch log"],
+      "evidence_sources": ["Field Inspection Report", "Geotagged Post-Repair Photos", "Ward Maintenance Portal"]
+    },
+    "Sanitation & Sewerage": {
+      "baseline": ["Verified length of overflowing sewer lines and count of missing covers"],
+      "target": ["Zero standing sewage overflow and 100% covered manhole network"],
+      "kpis": [
+        "Sewer Overflow Clearance (%)",
+        "Manhole Cover Replacement Count",
+        "Public Toilet Water Uptime (%)"
+      ],
+      "measurement_methods": ["Visual sanitation inspection", "Water pressure flow meter"],
+      "evidence_sources": ["Sewer Clearance Completion Certificate", "Public Toilet Audit Log"]
+    },
+    "Drinking Water Quality": {
+      "baseline": ["High TDS / turbidity / metallic taste lab values prior to intervention"],
+      "target": ["BIS 10500 compliant potable drinking water quality"],
+      "kpis": [
+        "TDS Level (ppm)",
+        "Iron / Metallic Concentration (mg/L)",
+        "Turbidity (NTU)",
+        "Beneficiary Household Count"
+      ],
+      "measurement_methods": ["NABL laboratory water testing", "Field digital water meter probe"],
+      "evidence_sources": ["Laboratory Test Certificate", "Sanitary Audit Report"]
+    },
+    "Building Maintenance": {
+      "baseline": ["Indoor air turnover rate and roof leakage surface area"],
+      "target": ["Healthy indoor air exchange rate and 100% leak-free roof slab"],
+      "kpis": [
+        "Indoor Air Exchange Rate (ACH)",
+        "Waterproofing Seepage Reduction (%)",
+        "Building Occupant Comfort Index (%)"
+      ],
+      "measurement_methods": ["Anemometer air flow audit", "Roof moisture meter test"],
+      "evidence_sources": ["Building Maintenance Completion Certificate"]
+    },
+    "Traffic Management": {
+      "baseline": ["Signal downtime hours and intersection vehicle delay"],
+      "target": ["99% signal operational uptime and reduced traffic queue length"],
+      "kpis": [
+        "Traffic Signal Uptime (%)",
+        "Average Intersection Delay (sec)",
+        "Junction Accident Count Reduction"
+      ],
+      "measurement_methods": ["Automated signal log audit", "Traffic camera delay measurement"],
+      "evidence_sources": ["Traffic Police Junction Log"]
+    },
+    "Digital & Connectivity": {
+      "baseline": ["Weak signal strength (-110 dBm) and frequent call drops"],
+      "target": ["Strong 4G/5G signal coverage (>-85 dBm) across target village"],
+      "kpis": [
+        "Signal Strength RSRP (dBm)",
+        "Mobile Data Download Speed (Mbps)",
+        "Network Availability (%)"
+      ],
+      "measurement_methods": ["Drive test RF signal measurement", "Data speed test"],
+      "evidence_sources": ["Telecom Operator Audit Report"]
+    },
+    "Urban Accessibility": {
+      "baseline": ["Zero barrier-free access ramps at public bus stop"],
+      "target": ["Fully accessible bus stop compliant with Harmonised Guidelines"],
+      "kpis": [
+        "Wheelchair Access Ramp Compliance Rate (%)",
+        "Tactile Paving Coverage (meters)",
+        "Accessibility Satisfaction Index"
+      ],
+      "measurement_methods": ["Accessibility audit survey"],
+      "evidence_sources": ["Accessibility Compliance Certificate"]
+    },
+    "Irrigation Systems": {
+      "baseline": ["Zero water flow reaching tail-end agricultural fields"],
+      "target": ["Design water discharge velocity delivered to 100% of cultivated command area"],
+      "kpis": [
+        "Canal Tail-End Discharge Flow (cusecs)",
+        "Irrigated Cropland Area (hectares)",
+        "Canal Water Transit Time (hours)"
+      ],
+      "measurement_methods": ["Gauge discharge measurement", "Satellite crop greenness Index"],
+      "evidence_sources": ["Irrigation Department Discharge Certificate"]
+    },
+    "Roads & Potholes": {
+      "baseline": ["Total damaged pavement area (sq m) and pothole count"],
+      "target": ["Zero hazardous potholes and smooth International Roughness Index (IRI) surface"],
+      "kpis": [
+        "Repaired Pavement Surface Area (sq m)",
+        "Pothole Count Reduction",
+        "Pavement Roughness Index (IRI)",
+        "Skid Resistance Index"
+      ],
+      "measurement_methods": ["Pavement condition index survey", "Roughness meter audit"],
+      "evidence_sources": ["Post-Construction Completion Certificate", "Geotagged Road Photos"]
+    },
+    "Generic": {
+      "baseline": ["Verified pre-intervention symptom state and complaint counts"],
+      "target": ["Full functional restoration of reported civic service"],
+      "kpis": [
+        "Service Uptime (%)",
+        "Complaint Resolution Time (days)",
+        "Beneficiary Satisfaction Index (%)"
+      ],
+      "measurement_methods": ["Post-repair site audit", "Citizen survey feedback"],
+      "evidence_sources": ["Completion Verification Audit", "User Feedback Logs"]
+    }
+  }
+}

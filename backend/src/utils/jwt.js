@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken");
 
+const JWT_SECRET = process.env.JWT_SECRET || "civicsync_sih2026_super_secret_key_998877";
+
 function generateToken(user) {
     return jwt.sign(
         {
@@ -7,7 +9,7 @@ function generateToken(user) {
             role: user.role,
             email: user.email
         },
-        process.env.JWT_SECRET,
+        JWT_SECRET,
         {
             expiresIn: "7d"
         }
@@ -17,7 +19,7 @@ function generateToken(user) {
 function verifyToken(token) {
     return jwt.verify(
         token,
-        process.env.JWT_SECRET
+        JWT_SECRET
     );
 }
 

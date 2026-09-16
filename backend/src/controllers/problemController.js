@@ -119,6 +119,34 @@ console.log("🔥 PRIORITY SCORE:", priorityScore);
         const problem = result.rows[0];
 
         // ------------------------------------------------------------------
+        // Persist Challenge Dossier into PostgreSQL (if dossier table exists)
+        // ------------------------------------------------------------------
+        if (ai.dossier) {
+            try {
+                await pool.query(
+                    `INSERT INTO challenge_dossiers
+                    (problem_id, domain, subdomain, problem_type, summary, severity, urgency_label, urgency_score, dossier_data, overall_confidence, requires_human_review)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+                    [
+                        problem.id,
+                        ai.domain,
+                        ai.subdomain,
+                        ai.problem_type,
+                        ai.summary,
+                        ai.severity,
+                        ai.dossier.assessment?.urgency || 'Medium',
+                        ai.urgency,
+                        JSON.stringify(ai.dossier),
+                        ai.confidence,
+                        ai.dossier.quality?.requires_human_review || false
+                    ]
+                );
+            } catch (dossierErr) {
+                console.warn("⚠️ Challenge dossier table persistence (non-fatal):", dossierErr.message);
+            }
+        }
+
+        // ------------------------------------------------------------------
         // Duplicate detection — runs after insert so the new problem is
         // already in the DB. Errors are caught and logged; they must never
         // cause problem creation to fail.
