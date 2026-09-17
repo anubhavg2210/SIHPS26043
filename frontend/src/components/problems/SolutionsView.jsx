@@ -5,7 +5,7 @@ import { Card } from "../common/Cards";
 import { StatusBadge } from "../common/Badges";
 import { Modal } from "../common/Modal";
 import { MatchScoreIndicator } from "../common/ProgressBar";
-import { solutionApi } from "../../services/api";
+import { solutionApi, problemApi } from "../../services/api";
 import { useAuth } from "../../context/useAuth.js";
 import { useToast } from "../../context/useToast.js";
 
@@ -22,7 +22,7 @@ const EVALUATION_DIMENSIONS = [
 ];
 
 export function SolutionsView({ problemId }) {
-  const { role } = useAuth();
+  const { role, user } = useAuth();
   const toast = useToast();
 
   const [activeTab, setActiveTab] = useState("all"); // "all" | "ranked"
@@ -47,6 +47,30 @@ export function SolutionsView({ problemId }) {
     evidence: "",
   });
   const [submitting, setSubmitting] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+      setSelectedFile(null);
+      return;
+    }
+    
+    // Check size (25MB max)
+    if (file.size > 25 * 1024 * 1024) {
+      toast.error("File size exceeds 25MB limit");
+      return;
+    }
+    
+    const allowedTypes = ["application/pdf", "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.presentationml.presentation"];
+    if (!allowedTypes.includes(file.type) && !file.name.endsWith(".pdf") && !file.name.endsWith(".ppt") && !file.name.endsWith(".pptx")) {
+      toast.error("Only PDF, PPT, and PPTX files are supported");
+      return;
+    }
+    
+    setSelectedFile(file);
+  };
 
   // Evaluate Modal (Authority / Admin)
   const [evaluateModalOpen, setEvaluateModalOpen] = useState(false);
@@ -137,15 +161,42 @@ export function SolutionsView({ problemId }) {
     });
   };
 
-  // Submit Solution
   const handleSubmitSolution = async (e) => {
     e.preventDefault();
     if (!solutionForm.title.trim() || !solutionForm.description.trim()) {
       toast.error("Title and description are required");
       return;
     }
+    if (role === "STUDENT" && !selectedFile) {
+      toast.error("Please upload a solution document (PDF/PPT/PPTX)");
+      return;
+    }
     setSubmitting(true);
     try {
+      let uploadedUrl = solutionForm.evidence;
+
+      if (selectedFile) {
+        setUploadProgress(10);
+        const reader = new FileReader();
+        const base64Promise = new Promise((resolve, reject) => {
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = (err) => reject(err);
+          reader.readAsDataURL(selectedFile);
+        });
+        
+        const base64Data = await base64Promise;
+        setUploadProgress(50);
+        
+        const uploadRes = await problemApi.uploadEvidence({
+          fileName: selectedFile.name,
+          fileType: selectedFile.type,
+          fileData: base64Data
+        });
+        
+        uploadedUrl = uploadRes.file_url;
+        setUploadProgress(100);
+      }
+
       await solutionApi.createSolution(problemId, {
         title: solutionForm.title.trim(),
         description: solutionForm.description.trim(),
@@ -157,7 +208,7 @@ export function SolutionsView({ problemId }) {
         scalability: solutionForm.scalability.trim() || undefined,
         required_resources: solutionForm.required_resources.trim() || undefined,
         risks: solutionForm.risks.trim() || undefined,
-        evidence: solutionForm.evidence.trim() || undefined,
+        evidence: uploadedUrl || undefined,
       });
       toast.success("Solution submitted successfully for municipal evaluation");
       setSubmitModalOpen(false);
@@ -174,6 +225,8 @@ export function SolutionsView({ problemId }) {
         risks: "",
         evidence: "",
       });
+      setSelectedFile(null);
+      setUploadProgress(0);
       refreshData();
     } catch (err) {
       toast.error(err.message || "Failed to submit solution");
@@ -263,7 +316,10 @@ export function SolutionsView({ problemId }) {
     }
   };
 
-  const displayList = activeTab === "ranked" ? rankedSolutions : solutions;
+  let displayList = activeTab === "ranked" ? rankedSolutions : solutions;
+  if (role === "STUDENT" && user) {
+    displayList = displayList.filter(sol => Number(sol.submitter_id || sol.submitted_by) === Number(user.id));
+  }
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
@@ -418,12 +474,14 @@ export function SolutionsView({ problemId }) {
           <h4 style={{ margin: "0 0 0.35rem", fontSize: "1.1rem" }}>
             {activeTab === "ranked"
               ? "No Evaluated Solutions Yet"
-              : "No Solutions Submitted Yet"}
+              : (role === "STUDENT" ? "You haven't submitted any solutions yet" : "No Solutions Submitted Yet")}
           </h4>
           <p style={{ margin: "0 0 1.25rem", fontSize: "0.875rem", color: "var(--text-muted)", maxWidth: "420px" }}>
             {activeTab === "ranked"
               ? "Municipal authorities evaluate submitted solutions across the 6 normalized dimensions to generate deterministic composite rankings."
-              : "Registered universities, research labs, student teams, and startups can submit technical proposals to solve this civic challenge."}
+              : (role === "STUDENT" 
+                  ? "Propose your solution idea by uploading a document (PDF/PPT/PPTX). You don't need to provide a complete business plan." 
+                  : "Registered universities, research labs, student teams, and startups can submit technical proposals to solve this civic challenge.")}
           </p>
           {canSubmit && (
             <Button
@@ -550,66 +608,95 @@ export function SolutionsView({ problemId }) {
                   {sol.description}
                 </p>
 
-                {/* Specs Grid */}
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-                    gap: "0.75rem",
-                    padding: "0.85rem",
-                    backgroundColor: "var(--bg-muted)",
-                    borderRadius: "var(--radius-md)",
-                    fontSize: "0.8rem",
-                  }}
-                >
-                  {sol.technology && (
-                    <div>
-                      <div style={{ color: "var(--text-muted)", fontWeight: 600 }}>TECHNOLOGY</div>
-                      <div style={{ fontWeight: 700, color: "var(--text-primary)", marginTop: "0.15rem" }}>
-                        {sol.technology}
+                {/* Specs Grid (Hidden for Students) */}
+                {role !== "STUDENT" && (
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+                      gap: "0.75rem",
+                      padding: "0.85rem",
+                      backgroundColor: "var(--bg-muted)",
+                      borderRadius: "var(--radius-md)",
+                      fontSize: "0.8rem",
+                    }}
+                  >
+                    {sol.technology && (
+                      <div>
+                        <div style={{ color: "var(--text-muted)", fontWeight: 600 }}>TECHNOLOGY</div>
+                        <div style={{ fontWeight: 700, color: "var(--text-primary)", marginTop: "0.15rem" }}>
+                          {sol.technology}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {sol.estimated_cost !== null && sol.estimated_cost !== undefined && (
-                    <div>
-                      <div style={{ color: "var(--text-muted)", fontWeight: 600 }}>ESTIMATED COST</div>
-                      <div style={{ fontWeight: 700, color: "var(--color-primary)", marginTop: "0.15rem" }}>
-                        ₹{Number(sol.estimated_cost).toLocaleString("en-IN")}
+                    {sol.estimated_cost !== null && sol.estimated_cost !== undefined && (
+                      <div>
+                        <div style={{ color: "var(--text-muted)", fontWeight: 600 }}>ESTIMATED COST</div>
+                        <div style={{ fontWeight: 700, color: "var(--color-primary)", marginTop: "0.15rem" }}>
+                          ₹{Number(sol.estimated_cost).toLocaleString("en-IN")}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {sol.implementation_time && (
-                    <div>
-                      <div style={{ color: "var(--text-muted)", fontWeight: 600 }}>TIMELINE</div>
-                      <div style={{ fontWeight: 700, color: "var(--text-primary)", marginTop: "0.15rem" }}>
-                        {sol.implementation_time}
+                    {sol.implementation_time && (
+                      <div>
+                        <div style={{ color: "var(--text-muted)", fontWeight: 600 }}>TIMELINE</div>
+                        <div style={{ fontWeight: 700, color: "var(--text-primary)", marginTop: "0.15rem" }}>
+                          {sol.implementation_time}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {sol.scalability && (
-                    <div>
-                      <div style={{ color: "var(--text-muted)", fontWeight: 600 }}>SCALABILITY</div>
-                      <div style={{ fontWeight: 700, color: "var(--text-primary)", marginTop: "0.15rem" }}>
-                        {sol.scalability}
+                    {sol.scalability && (
+                      <div>
+                        <div style={{ color: "var(--text-muted)", fontWeight: 600 }}>SCALABILITY</div>
+                        <div style={{ fontWeight: 700, color: "var(--text-primary)", marginTop: "0.15rem" }}>
+                          {sol.scalability}
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
+                    )}
+                  </div>
+                )}
 
-                {/* Methodology Details if available */}
-                {sol.methodology && (
+                {/* Methodology Details if available (Hidden for Students) */}
+                {role !== "STUDENT" && sol.methodology && (
                   <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>
                     <strong>Methodology:</strong> {sol.methodology}
                   </div>
                 )}
 
-                {/* Expected Impact */}
-                {sol.expected_impact && (
+                {/* Expected Impact (Hidden for Students) */}
+                {role !== "STUDENT" && sol.expected_impact && (
                   <div style={{ fontSize: "0.85rem", color: "var(--color-success)" }}>
                     <strong>Expected Impact:</strong> {sol.expected_impact}
+                  </div>
+                )}
+
+                {/* Uploaded Document / Evidence */}
+                {sol.evidence && (
+                  <div style={{ marginTop: "0.5rem" }}>
+                    <a
+                      href={sol.evidence.startsWith("http") ? sol.evidence : `http://localhost:5000${sol.evidence.startsWith("/") ? "" : "/"}${sol.evidence}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "0.4rem",
+                        padding: "0.5rem 0.8rem",
+                        backgroundColor: "var(--color-primary-subtle)",
+                        color: "var(--color-primary)",
+                        borderRadius: "var(--radius-sm)",
+                        fontSize: "0.85rem",
+                        fontWeight: 600,
+                        textDecoration: "none",
+                        border: "1px solid var(--color-primary-border)",
+                      }}
+                    >
+                      <Icon name="file-text" size={16} />
+                      View Uploaded Document
+                    </a>
                   </div>
                 )}
 
@@ -735,7 +822,7 @@ export function SolutionsView({ problemId }) {
             <input
               type="text"
               className="cs-input"
-              placeholder="e.g., Solar-Powered Hydro-Filtration & Biochar Remediation"
+              placeholder="e.g., Low-cost IoT-based water quality monitoring system"
               value={solutionForm.title}
               onChange={(e) => setSolutionForm({ ...solutionForm, title: e.target.value })}
               required
@@ -744,88 +831,126 @@ export function SolutionsView({ problemId }) {
 
           <div className="cs-form-group">
             <label className="cs-label">
-              Problem Solving Description <span className="required">*</span>
+              Solution Description <span className="required">*</span>
             </label>
             <textarea
               className="cs-textarea"
-              rows={3}
-              placeholder="Describe the solution architecture and how it solves the specific civic challenge..."
+              rows={4}
+              placeholder="Explain your proposed solution, how it addresses the problem, and the main idea behind how it would work..."
               value={solutionForm.description}
               onChange={(e) => setSolutionForm({ ...solutionForm, description: e.target.value })}
               required
             />
           </div>
-
-          <div className="cs-grid-2">
-            <div className="cs-form-group">
-              <label className="cs-label">Technology & Tools</label>
-              <input
-                type="text"
-                className="cs-input"
-                placeholder="e.g., Activated Biochar, IoT Turbidity Sensors, UV"
-                value={solutionForm.technology}
-                onChange={(e) => setSolutionForm({ ...solutionForm, technology: e.target.value })}
-              />
-            </div>
-
-            <div className="cs-form-group">
-              <label className="cs-label">Estimated Budget (INR)</label>
-              <input
-                type="number"
-                className="cs-input"
-                placeholder="250000"
-                min="0"
-                value={solutionForm.estimated_cost}
-                onChange={(e) => setSolutionForm({ ...solutionForm, estimated_cost: e.target.value })}
-              />
-            </div>
-          </div>
-
-          <div className="cs-grid-2">
-            <div className="cs-form-group">
-              <label className="cs-label">Execution Timeline</label>
-              <input
-                type="text"
-                className="cs-input"
-                placeholder="e.g., 45 Days"
-                value={solutionForm.implementation_time}
-                onChange={(e) => setSolutionForm({ ...solutionForm, implementation_time: e.target.value })}
-              />
-            </div>
-
-            <div className="cs-form-group">
-              <label className="cs-label">Scalability Potential</label>
-              <input
-                type="text"
-                className="cs-input"
-                placeholder="e.g., Modular containerized skid"
-                value={solutionForm.scalability}
-                onChange={(e) => setSolutionForm({ ...solutionForm, scalability: e.target.value })}
-              />
-            </div>
-          </div>
-
+          
           <div className="cs-form-group">
-            <label className="cs-label">Technical Methodology</label>
-            <textarea
-              className="cs-textarea"
-              rows={2}
-              placeholder="Step-by-step technical implementation stages..."
-              value={solutionForm.methodology}
-              onChange={(e) => setSolutionForm({ ...solutionForm, methodology: e.target.value })}
-            />
-          </div>
-
-          <div className="cs-form-group">
-            <label className="cs-label">Expected Civic Impact</label>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.25rem" }}>
+              <label className="cs-label" style={{ margin: 0 }}>
+                Solution Document <span className="required">*</span>
+              </label>
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  alert("Slide 1: Title\nSlide 2: Problem Understanding\nSlide 3: Proposed Solution\nSlide 4: How It Works\nSlide 5: Expected Benefits\nSlide 6: Team & Skills");
+                }}
+                style={{ fontSize: "0.75rem", color: "var(--color-primary)", textDecoration: "underline" }}
+              >
+                Need a format? View Solution Template
+              </a>
+            </div>
+            <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginBottom: "0.5rem" }}>
+              Upload your solution presentation or PDF. Accepted: PDF, PPT, PPTX (Max 25MB)
+            </div>
+            
             <input
-              type="text"
-              className="cs-input"
-              placeholder="e.g., Supplies potable drinking water to 500+ residents; reduces TDS to <250ppm"
-              value={solutionForm.expected_impact}
-              onChange={(e) => setSolutionForm({ ...solutionForm, expected_impact: e.target.value })}
+              type="file"
+              accept=".pdf,.ppt,.pptx"
+              onChange={handleFileChange}
+              style={{ display: "block", marginBottom: "0.5rem" }}
+              required={role === "STUDENT"}
             />
+            {selectedFile && (
+              <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+                Selected: <strong>{selectedFile.name}</strong> ({(selectedFile.size / (1024 * 1024)).toFixed(2)} MB)
+              </div>
+            )}
           </div>
+
+          {role !== "STUDENT" && (
+            <>
+              <div className="cs-grid-2">
+                <div className="cs-form-group">
+                  <label className="cs-label">Technology & Tools</label>
+                  <input
+                    type="text"
+                    className="cs-input"
+                    placeholder="e.g., Activated Biochar, IoT Turbidity Sensors, UV"
+                    value={solutionForm.technology}
+                    onChange={(e) => setSolutionForm({ ...solutionForm, technology: e.target.value })}
+                  />
+                </div>
+
+                <div className="cs-form-group">
+                  <label className="cs-label">Estimated Budget (INR)</label>
+                  <input
+                    type="number"
+                    className="cs-input"
+                    placeholder="250000"
+                    min="0"
+                    value={solutionForm.estimated_cost}
+                    onChange={(e) => setSolutionForm({ ...solutionForm, estimated_cost: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="cs-grid-2">
+                <div className="cs-form-group">
+                  <label className="cs-label">Execution Timeline</label>
+                  <input
+                    type="text"
+                    className="cs-input"
+                    placeholder="e.g., 45 Days"
+                    value={solutionForm.implementation_time}
+                    onChange={(e) => setSolutionForm({ ...solutionForm, implementation_time: e.target.value })}
+                  />
+                </div>
+
+                <div className="cs-form-group">
+                  <label className="cs-label">Scalability Potential</label>
+                  <input
+                    type="text"
+                    className="cs-input"
+                    placeholder="e.g., Modular containerized skid"
+                    value={solutionForm.scalability}
+                    onChange={(e) => setSolutionForm({ ...solutionForm, scalability: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="cs-form-group">
+                <label className="cs-label">Technical Methodology</label>
+                <textarea
+                  className="cs-textarea"
+                  rows={2}
+                  placeholder="Step-by-step technical implementation stages..."
+                  value={solutionForm.methodology}
+                  onChange={(e) => setSolutionForm({ ...solutionForm, methodology: e.target.value })}
+                />
+              </div>
+
+              <div className="cs-form-group">
+                <label className="cs-label">Expected Civic Impact</label>
+                <input
+                  type="text"
+                  className="cs-input"
+                  placeholder="e.g., Supplies potable drinking water to 500+ residents; reduces TDS to <250ppm"
+                  value={solutionForm.expected_impact}
+                  onChange={(e) => setSolutionForm({ ...solutionForm, expected_impact: e.target.value })}
+                />
+              </div>
+            </>
+          )}
 
           <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem", marginTop: "1rem" }}>
             <Button

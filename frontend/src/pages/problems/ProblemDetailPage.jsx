@@ -89,7 +89,8 @@ export function ProblemDetailPage({ id }) {
 
   const isCitizen = role === "CITIZEN";
   const isAuthorityOrAdmin = role === "AUTHORITY" || role === "ADMIN";
-  const isSolver = ["STUDENT", "FACULTY", "RESEARCHER", "STARTUP", "MSME"].includes(role);
+  const isSolver = ["FACULTY", "RESEARCHER", "STARTUP", "MSME"].includes(role);
+  const isStudent = role === "STUDENT";
 
   const [problem, setProblem] = useState(null);
   const [statusHistory, setStatusHistory] = useState([]);
@@ -219,8 +220,14 @@ export function ProblemDetailPage({ id }) {
       { key: "collaboration", label: "Collaboration", icon: "users" },
       { key: "history", label: "Status History", icon: "clock" },
     ];
+  } else if (isStudent) {
+    // Student sees simplified workflow
+    availableTabs = [
+      { key: "overview", label: "Overview", icon: "cpu" },
+      { key: "solutions", label: "Solutions & Tracking", icon: "check-circle" },
+    ];
   } else {
-    // Solvers (Students, Faculty, Researchers, Startups, MSMEs)
+    // Solvers (Faculty, Researchers, Startups, MSMEs)
     availableTabs = [
       { key: "overview", label: "Overview & Intelligence", icon: "cpu" },
       { key: "matching", label: "Expertise Matching", icon: "users" },
@@ -405,9 +412,9 @@ export function ProblemDetailPage({ id }) {
       </div>
 
       {/* -------------------------------------------------------------------- */}
-      {/* Lifecycle / Progress Tracker: Simple Citizen Stepper vs Timeline     */}
+      {/* Lifecycle / Progress Tracker: Simple Stepper vs Timeline     */}
       {/* -------------------------------------------------------------------- */}
-      {isCitizen ? (
+      {isCitizen || isStudent ? (
         <Card style={{ padding: "1.5rem" }}>
           <div
             style={{
@@ -430,11 +437,11 @@ export function ProblemDetailPage({ id }) {
             </span>
           </div>
 
-          {/* Clean 4-Stage Stepper for Citizens */}
+          {/* Clean Stepper for Citizens and Students */}
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
+              gridTemplateColumns: isStudent ? "repeat(auto-fit, minmax(110px, 1fr))" : "repeat(auto-fit, minmax(140px, 1fr))",
               gap: "1rem",
             }}
           >
@@ -452,7 +459,7 @@ export function ProblemDetailPage({ id }) {
             >
               <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", color: "var(--color-success)", fontWeight: 700, fontSize: "0.85rem" }}>
                 <span>✓</span>
-                <span>{language === "hi" ? "समस्या दर्ज" : "Reported"}</span>
+                <span>{language === "hi" ? "समस्या दर्ज" : (isStudent ? "Problem" : "Reported")}</span>
               </div>
               <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>
                 {new Date(problem.created_at).toLocaleDateString()}
@@ -482,7 +489,7 @@ export function ProblemDetailPage({ id }) {
                 }}
               >
                 <span>{isStage2Complete ? "✓" : "○"}</span>
-                <span>{language === "hi" ? "समीक्षाधीन" : "Under Review"}</span>
+                <span>{language === "hi" ? "समीक्षाधीन" : (isStudent ? "Understand" : "Under Review")}</span>
               </div>
               <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>
                 {isStage2Complete ? "Verified" : "Pending"}
@@ -512,7 +519,7 @@ export function ProblemDetailPage({ id }) {
                 }}
               >
                 <span>{isStage4Complete ? "✓" : isStage3Active ? "⚡" : "○"}</span>
-                <span>{language === "hi" ? "समाधान कार्य जारी" : "Being Worked On"}</span>
+                <span>{language === "hi" ? "समाधान कार्य जारी" : (isStudent ? "Forward & Implement" : "Being Worked On")}</span>
               </div>
               <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>
                 {isStage4Complete ? "Completed" : isStage3Active ? "Active" : "Awaiting team"}
@@ -542,7 +549,7 @@ export function ProblemDetailPage({ id }) {
                 }}
               >
                 <span>{isStage4Complete ? "✓" : "○"}</span>
-                <span>{language === "hi" ? "समाधान संपन्न" : "Resolved"}</span>
+                <span>{language === "hi" ? "समाधान संपन्न" : (isStudent ? "Track Outcome" : "Resolved")}</span>
               </div>
               <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>
                 {isStage4Complete ? "Community Verified" : "Final Stage"}
@@ -602,10 +609,10 @@ export function ProblemDetailPage({ id }) {
       <div>
         {/* Tab 1: Overview / Problem Details */}
         {currentTab === "overview" && (
-          <div className={isCitizen ? "cs-grid-1" : "cs-grid-2"} style={{ alignItems: "start", gap: "1.5rem" }}>
+          <div className={isCitizen || isStudent ? "cs-grid-1" : "cs-grid-2"} style={{ alignItems: "start", gap: "1.5rem" }}>
             <Card
-              title={isCitizen ? "Problem Description & Field Evidence" : "Problem Description & Ground Context"}
-              subtitle={isCitizen ? "Citizen submission details" : "Citizen reported statement"}
+              title={isCitizen || isStudent ? "Problem Description & Field Evidence" : "Problem Description & Ground Context"}
+              subtitle={isCitizen ? "Citizen submission details" : (isStudent ? "Understand the civic challenge" : "Citizen reported statement")}
             >
               <p style={{ margin: "0 0 1rem", fontSize: "0.95rem", color: "var(--text-secondary)", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
                 {problem.description}
@@ -668,8 +675,8 @@ export function ProblemDetailPage({ id }) {
               </div>
             </Card>
 
-            {/* AI Analysis View is restricted to Solvers, Authorities, and Admins */}
-            {!isCitizen && (
+            {/* AI Analysis View is restricted to Solvers, Authorities, and Admins, but hidden for students to simplify */}
+            {!isCitizen && !isStudent && (
               <AIAnalysisView aiAnalysis={aiAnalysisObj} priorityScore={problem.priority_score} />
             )}
           </div>
