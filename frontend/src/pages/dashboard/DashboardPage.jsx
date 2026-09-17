@@ -23,7 +23,7 @@ export function DashboardPage() {
       case "CITIZEN":
         return "Civic Engagement & Ground-Truth Verification Hub";
       case "STUDENT":
-        return "Academic Competency & Contribution Opportunity Hub";
+        return "Discover societal challenges and contribute solutions.";
       case "RESEARCHER":
         return "Applied Scientific Research & Root Cause Investigation Hub";
       case "UNIVERSITY":
@@ -86,7 +86,7 @@ export function DashboardPage() {
           </div>
           {role !== "CITIZEN" && (
             <p style={{ margin: 0, color: "var(--text-muted)", fontSize: "0.9rem" }}>
-              {getRoleDescription()} &bull; SIH 2026 CivicSync Network
+              {getRoleDescription()}
             </p>
           )}
         </div>

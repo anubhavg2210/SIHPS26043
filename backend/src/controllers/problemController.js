@@ -537,10 +537,11 @@ async function uploadEvidence(req, res) {
         }
 
         const ext = path.extname(fileName).toLowerCase();
-        const allowedExts = [".jpg", ".jpeg", ".png", ".webp", ".mp4", ".webm", ".mov"];
+        const allowedExts = [".jpg", ".jpeg", ".png", ".webp", ".mp4", ".webm", ".mov", ".pdf", ".ppt", ".pptx"];
         const allowedTypes = [
             "image/jpeg", "image/jpg", "image/png", "image/webp",
-            "video/mp4", "video/webm", "video/quicktime"
+            "video/mp4", "video/webm", "video/quicktime",
+            "application/pdf", "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.presentationml.presentation"
         ];
 
         const isAllowedExt = allowedExts.includes(ext);
@@ -548,7 +549,7 @@ async function uploadEvidence(req, res) {
 
         if (!isAllowedExt && !isAllowedType) {
             return res.status(400).json({
-                message: `Unsupported file format. Supported formats: JPG, JPEG, PNG, WEBP, MP4, WEBM, MOV.`
+                message: `Unsupported file format. Supported formats: JPG, PNG, MP4, PDF, PPT, PPTX.`
             });
         }
 
