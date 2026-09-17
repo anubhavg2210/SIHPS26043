@@ -88,9 +88,8 @@ export function Topbar() {
   return (
     <header
       style={{
-        height: "68px",
-        backgroundColor: "#ffffff",
-        borderBottom: "1px solid var(--border-color)",
+        height: "76px",
+        backgroundColor: "transparent",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
@@ -98,7 +97,7 @@ export function Topbar() {
         position: "sticky",
         top: 0,
         zIndex: 40,
-        boxShadow: "0 1px 2px rgba(0, 0, 0, 0.02)",
+        marginTop: "1rem",
       }}
     >
       {/* Functional Global Search Bar & Live Dropdown */}
@@ -108,12 +107,13 @@ export function Topbar() {
           style={{
             display: "flex",
             alignItems: "center",
-            backgroundColor: "var(--bg-muted)",
-            borderRadius: "var(--radius-md)",
-            padding: "0.45rem 0.85rem",
+            backgroundColor: "#ffffff",
+            borderRadius: "var(--radius-full)",
+            padding: "0.6rem 1.25rem",
             width: "100%",
-            border: searchOpen ? "1px solid var(--color-primary)" : "1px solid transparent",
-            transition: "border-color var(--transition-fast)",
+            border: searchOpen ? "1px solid var(--color-primary-border)" : "1px solid var(--border-color)",
+            boxShadow: "var(--shadow-xs)",
+            transition: "all var(--transition-fast)",
           }}
         >
           <Icon name="search" size={16} color="var(--text-muted)" />
@@ -174,13 +174,14 @@ export function Topbar() {
               width: "100%",
               backgroundColor: "#ffffff",
               border: "1px solid var(--border-color)",
-              borderRadius: "var(--radius-md)",
+              borderRadius: "var(--radius-lg)",
               boxShadow: "var(--shadow-lg)",
               zIndex: 100,
               overflow: "hidden",
               maxHeight: "420px",
               display: "flex",
               flexDirection: "column",
+              marginTop: "0.5rem",
             }}
           >
             <div
@@ -304,10 +305,11 @@ export function Topbar() {
           style={{
             display: "inline-flex",
             alignItems: "center",
-            backgroundColor: "var(--bg-muted)",
-            borderRadius: "var(--radius-md)",
-            padding: "0.2rem 0.25rem",
+            backgroundColor: "#ffffff",
+            borderRadius: "var(--radius-full)",
+            padding: "0.3rem",
             border: "1px solid var(--border-color)",
+            boxShadow: "var(--shadow-xs)",
           }}
           role="group"
           aria-label={t("header.language")}
@@ -317,14 +319,14 @@ export function Topbar() {
             onClick={() => setLanguage("en")}
             style={{
               border: "none",
-              background: language === "en" ? "#ffffff" : "transparent",
-              color: language === "en" ? "var(--color-primary)" : "var(--text-muted)",
+              background: language === "en" ? "var(--bg-muted)" : "transparent",
+              color: language === "en" ? "var(--text-primary)" : "var(--text-muted)",
               fontWeight: language === "en" ? 700 : 500,
               fontSize: "0.78rem",
-              padding: "0.25rem 0.55rem",
-              borderRadius: "var(--radius-sm)",
+              padding: "0.4rem 0.85rem",
+              borderRadius: "var(--radius-full)",
               cursor: "pointer",
-              boxShadow: language === "en" ? "0 1px 2px rgba(0,0,0,0.06)" : "none",
+              boxShadow: "none",
               transition: "all var(--transition-fast)",
             }}
             aria-pressed={language === "en"}
@@ -336,14 +338,14 @@ export function Topbar() {
             onClick={() => setLanguage("hi")}
             style={{
               border: "none",
-              background: language === "hi" ? "#ffffff" : "transparent",
-              color: language === "hi" ? "var(--color-primary)" : "var(--text-muted)",
+              background: language === "hi" ? "var(--bg-muted)" : "transparent",
+              color: language === "hi" ? "var(--text-primary)" : "var(--text-muted)",
               fontWeight: language === "hi" ? 700 : 500,
               fontSize: "0.78rem",
-              padding: "0.25rem 0.55rem",
-              borderRadius: "var(--radius-sm)",
+              padding: "0.4rem 0.85rem",
+              borderRadius: "var(--radius-full)",
               cursor: "pointer",
-              boxShadow: language === "hi" ? "0 1px 2px rgba(0,0,0,0.06)" : "none",
+              boxShadow: "none",
               transition: "all var(--transition-fast)",
             }}
             aria-pressed={language === "hi"}
@@ -357,12 +359,15 @@ export function Topbar() {
           to="/notifications"
           style={{
             position: "relative",
-            padding: "0.5rem",
-            color: "var(--text-secondary)",
-            borderRadius: "var(--radius-sm)",
+            padding: "0.6rem",
+            backgroundColor: "#ffffff",
+            color: "var(--text-primary)",
+            borderRadius: "var(--radius-full)",
             display: "flex",
             alignItems: "center",
             textDecoration: "none",
+            border: "1px solid var(--border-color)",
+            boxShadow: "var(--shadow-xs)",
           }}
           title={t("nav.notifications")}
         >
@@ -397,17 +402,18 @@ export function Topbar() {
               display: "flex",
               alignItems: "center",
               gap: "0.65rem",
-              background: "none",
-              border: "none",
+              backgroundColor: "#ffffff",
+              border: "1px solid var(--border-color)",
+              boxShadow: "var(--shadow-xs)",
               cursor: "pointer",
-              padding: "0.25rem 0.5rem",
-              borderRadius: "var(--radius-md)",
+              padding: "0.3rem 0.75rem 0.3rem 0.3rem",
+              borderRadius: "var(--radius-full)",
             }}
           >
             <div
               style={{
-                width: "36px",
-                height: "36px",
+                width: "40px",
+                height: "40px",
                 borderRadius: "var(--radius-full)",
                 backgroundColor: "var(--color-primary-subtle)",
                 color: "var(--color-primary)",
@@ -416,7 +422,7 @@ export function Topbar() {
                 alignItems: "center",
                 justifyContent: "center",
                 fontWeight: 700,
-                fontSize: "0.9rem",
+                fontSize: "0.95rem",
               }}
             >
               {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
@@ -440,13 +446,14 @@ export function Topbar() {
                 position: "absolute",
                 top: "120%",
                 right: 0,
-                width: "210px",
+                width: "240px",
                 backgroundColor: "#ffffff",
                 border: "1px solid var(--border-color)",
-                borderRadius: "var(--radius-md)",
+                borderRadius: "var(--radius-lg)",
                 boxShadow: "var(--shadow-lg)",
-                padding: "0.4rem 0",
+                padding: "0.5rem 0",
                 zIndex: 100,
+                marginTop: "0.5rem",
               }}
             >
               <div style={{ padding: "0.5rem 1rem", borderBottom: "1px solid var(--border-color)" }}>

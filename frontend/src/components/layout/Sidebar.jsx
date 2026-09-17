@@ -114,13 +114,13 @@ export function Sidebar() {
         width: collapsed ? "78px" : "260px",
         minHeight: "100vh",
         backgroundColor: "var(--bg-sidebar)",
-        color: "#f8fafc",
+        color: "var(--text-primary)",
         display: "flex",
         flexDirection: "column",
         transition: "width var(--transition-normal)",
         flexShrink: 0,
         zIndex: 50,
-        borderRight: "1px solid #1e293b",
+        borderRight: "1px solid var(--border-color)",
       }}
     >
       {/* Brand Header */}
@@ -130,7 +130,7 @@ export function Sidebar() {
           display: "flex",
           alignItems: "center",
           justifyContent: collapsed ? "center" : "space-between",
-          borderBottom: "1px solid #1e293b",
+          borderBottom: "1px solid var(--border-color)",
         }}
       >
         <Link
@@ -140,7 +140,7 @@ export function Sidebar() {
             alignItems: "center",
             gap: "0.75rem",
             textDecoration: "none",
-            color: "#ffffff",
+            color: "var(--text-primary)",
           }}
         >
           <div
@@ -153,7 +153,7 @@ export function Sidebar() {
               alignItems: "center",
               justifyContent: "center",
               color: "#ffffff",
-              boxShadow: "0 0 15px rgba(37, 99, 235, 0.4)",
+              boxShadow: "0 4px 14px rgba(59, 130, 246, 0.3)",
               flexShrink: 0,
             }}
           >
@@ -195,14 +195,14 @@ export function Sidebar() {
         <div
           style={{
             padding: "0.75rem 1.25rem",
-            backgroundColor: "#162032",
-            borderBottom: "1px solid #1e293b",
+            backgroundColor: "var(--bg-muted)",
+            borderBottom: "1px solid var(--border-color)",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
           }}
         >
-          <span style={{ fontSize: "0.75rem", color: "#94a3b8", fontWeight: 500 }}>Logged as:</span>
+          <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: 500 }}>Logged as:</span>
           <StatusBadge status={role} />
         </div>
       )}
@@ -214,7 +214,7 @@ export function Sidebar() {
           padding: "1rem 0.75rem",
           display: "flex",
           flexDirection: "column",
-          gap: "0.35rem",
+          gap: "0.5rem",
           overflowY: "auto",
         }}
       >
@@ -231,18 +231,18 @@ export function Sidebar() {
                 gap: "0.85rem",
                 padding: collapsed ? "0.75rem" : "0.75rem 1rem",
                 justifyContent: collapsed ? "center" : "flex-start",
-                borderRadius: "var(--radius-md)",
-                color: active ? "#ffffff" : "#94a3b8",
-                backgroundColor: active ? "var(--color-primary)" : "transparent",
-                fontWeight: active ? 600 : 500,
+                borderRadius: "var(--radius-lg)",
+                color: active ? "var(--color-primary-dark)" : "var(--text-secondary)",
+                backgroundColor: active ? "var(--color-primary-subtle)" : "transparent",
+                fontWeight: active ? 700 : 500,
                 fontSize: "0.875rem",
                 textDecoration: "none",
                 transition: "all var(--transition-fast)",
               }}
               title={collapsed ? item.label : undefined}
             >
-              <div style={{ color: active ? "#ffffff" : "#94a3b8", display: "flex" }}>
-                <Icon name={item.icon} size={19} />
+              <div style={{ color: active ? "var(--color-primary)" : "var(--text-muted)", display: "flex" }}>
+                <Icon name={item.icon} size={20} />
               </div>
               {!collapsed && <span>{item.label}</span>}
             </Link>
@@ -254,7 +254,7 @@ export function Sidebar() {
       <div
         style={{
           padding: "1rem 0.75rem",
-          borderTop: "1px solid #1e293b",
+          borderTop: "1px solid var(--border-color)",
           display: "flex",
           flexDirection: "column",
           gap: "0.5rem",
@@ -266,24 +266,24 @@ export function Sidebar() {
               display: "flex",
               alignItems: "center",
               gap: "0.75rem",
-              padding: "0.5rem",
-              borderRadius: "var(--radius-md)",
-              backgroundColor: "#162032",
+              padding: "0.6rem",
+              borderRadius: "var(--radius-lg)",
+              backgroundColor: "var(--bg-muted)",
             }}
           >
             <div
               style={{
-                width: "34px",
-                height: "34px",
+                width: "36px",
+                height: "36px",
                 borderRadius: "var(--radius-full)",
-                backgroundColor: "var(--color-primary-dark)",
-                color: "#ffffff",
+                backgroundColor: "var(--color-primary-subtle)",
+                color: "var(--color-primary)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 fontWeight: 700,
                 fontSize: "0.875rem",
-                border: "1px solid #3b82f6",
+                border: "1px solid var(--color-primary-border)",
               }}
             >
               {user.name ? user.name.charAt(0).toUpperCase() : "U"}
@@ -293,7 +293,7 @@ export function Sidebar() {
                 style={{
                   fontSize: "0.825rem",
                   fontWeight: 600,
-                  color: "#ffffff",
+                  color: "var(--text-primary)",
                   whiteSpace: "nowrap",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
@@ -304,7 +304,7 @@ export function Sidebar() {
               <div
                 style={{
                   fontSize: "0.7rem",
-                  color: "#94a3b8",
+                  color: "var(--text-muted)",
                   whiteSpace: "nowrap",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
@@ -328,7 +328,7 @@ export function Sidebar() {
             borderRadius: "var(--radius-md)",
             border: "none",
             backgroundColor: "transparent",
-            color: "#ef4444",
+            color: "var(--color-danger)",
             cursor: "pointer",
             fontSize: "0.85rem",
             fontWeight: 600,

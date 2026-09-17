@@ -29,8 +29,8 @@ export function AppLayout({ children }) {
         <main
           style={{
             flex: 1,
-            padding: "2rem",
-            maxWidth: "1400px",
+            padding: "2.5rem",
+            maxWidth: "1440px",
             width: "100%",
             margin: "0 auto",
           }}
