@@ -26,6 +26,7 @@ const {
 const trustRoutes = require("./routes/trustRoutes");
 const analyticsRoutes = require("./routes/analyticsRoutes");
 const studentRoutes = require("./routes/studentRoutes");
+const universityRoutes = require("./routes/universityRoutes");
 
 const path = require("path");
 const app = express();
@@ -38,6 +39,7 @@ app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/api/auth", authRoutes);
 app.use("/api/problems", problemRoutes);
 app.use("/api/students", studentRoutes);
+app.use("/api/university", universityRoutes);
 app.use("/api/challenges", challengeRoutes);
 app.use("/api/clusters", clusterRoutes);
 app.use("/api/authority/dashboard", authorityDashboardRoutes);

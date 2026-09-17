@@ -3,7 +3,6 @@ import { Input, Textarea, Select } from "../../components/common/FormControls";
 import { Button } from "../../components/common/Button";
 import { Card } from "../../components/common/Cards";
 import { Icon } from "../../components/common/Icons";
-import { problemApi } from "../../services/api.js";
 import { AIAnalysisView } from "../../components/problems/AIAnalysisView.jsx";
 import { ChallengeDossierView } from "../../components/problems/ChallengeDossierView.jsx";
 import { ExpertiseMatchingView } from "../../components/problems/ExpertiseMatchingView.jsx";

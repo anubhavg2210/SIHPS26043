@@ -56,7 +56,7 @@ export function Sidebar() {
       case "UNIVERSITY":
         roleItems = [
           { path: "/matches", label: "Matched Problems", icon: "building" },
-          { path: "/collaborations", label: "Faculty & Students", icon: "graduation-cap" },
+          { path: "/faculty-students", label: "Faculty & Students", icon: "graduation-cap" },
           { path: "/solutions", label: "Solutions", icon: "cpu" },
           { path: "/impact", label: "Institutional Impact", icon: "activity" },
         ];
