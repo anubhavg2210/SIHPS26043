@@ -3,7 +3,6 @@ import { Input, Textarea, Select } from "../../components/common/FormControls";
 import { Button } from "../../components/common/Button";
 import { Card } from "../../components/common/Cards";
 import { Icon } from "../../components/common/Icons";
-import { problemApi } from "../../services/api.js";
 import { AIAnalysisView } from "../../components/problems/AIAnalysisView.jsx";
 import { ChallengeDossierView } from "../../components/problems/ChallengeDossierView.jsx";
 import { ExpertiseMatchingView } from "../../components/problems/ExpertiseMatchingView.jsx";
@@ -1223,94 +1222,98 @@ export function ReportProblemPage() {
 
           {/* AI Problem Analysis Card (Real AI Analysis from Backend) */}
           {aiAnalysis && (
-            <Card
-              title={t("report.aiAnalysisTitle")}
-              subtitle={`Automated NLP intelligence for PRB-${String(createdProblem.id).padStart(4, "0")}`}
-            >
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1.25rem" }}>
-                {/* Domain & Subdomain */}
-                <div style={{ padding: "0.85rem", backgroundColor: "var(--bg-muted)", borderRadius: "var(--radius-md)" }}>
-                  <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 600 }}>
-                    {t("report.domainLabel")} / {t("report.subdomainLabel")}
-                  </div>
-                  <div style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text-primary)", marginTop: "0.25rem" }}>
-                    {aiAnalysis.domain || createdProblem.category || "General Civic"}
-                  </div>
-                  {aiAnalysis.subdomain && (
-                    <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginTop: "0.15rem" }}>
-                      {aiAnalysis.subdomain}
+            <>
+              <ChallengeDossierView dossier={aiAnalysis.dossier} legacyAnalysis={aiAnalysis} />
+
+              <Card
+                title={t("report.aiAnalysisTitle")}
+                subtitle={`Automated NLP intelligence for PRB-${String(createdProblem.id).padStart(4, "0")}`}
+              >
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1.25rem" }}>
+                  {/* Domain & Subdomain */}
+                  <div style={{ padding: "0.85rem", backgroundColor: "var(--bg-muted)", borderRadius: "var(--radius-md)" }}>
+                    <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 600 }}>
+                      {t("report.domainLabel")} / {t("report.subdomainLabel")}
                     </div>
-                  )}
+                    <div style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text-primary)", marginTop: "0.25rem" }}>
+                      {aiAnalysis.domain || createdProblem.category || "General Civic"}
+                    </div>
+                    {aiAnalysis.subdomain && (
+                      <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginTop: "0.15rem" }}>
+                        {aiAnalysis.subdomain}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Severity & Urgency */}
+                  <div style={{ padding: "0.85rem", backgroundColor: "var(--bg-muted)", borderRadius: "var(--radius-md)" }}>
+                    <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 600 }}>
+                      {t("report.severityLabel")} &bull; {t("report.urgencyLabel")}
+                    </div>
+                    <div style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text-primary)", marginTop: "0.25rem" }}>
+                      {aiAnalysis.severity || "MEDIUM"} &bull; {aiAnalysis.urgency || "MEDIUM"}
+                    </div>
+                    <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginTop: "0.15rem" }}>
+                      Confidence: {Math.round((aiAnalysis.confidence || 0.85) * 100)}%
+                    </div>
+                  </div>
+
+                  {/* Priority Score */}
+                  <div style={{ padding: "0.85rem", backgroundColor: "var(--bg-muted)", borderRadius: "var(--radius-md)" }}>
+                    <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 600 }}>
+                      {t("report.priorityScoreLabel")}
+                    </div>
+                    <div style={{ fontSize: "1.35rem", fontWeight: 800, color: "var(--color-primary)", marginTop: "0.2rem" }}>
+                      {createdProblem.priority_score ? Number(createdProblem.priority_score).toFixed(1) : "50.0"}
+                    </div>
+                    <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+                      District: {createdProblem.district || form.district}
+                    </div>
+                  </div>
+
+                  {/* Related Problems */}
+                  <div style={{ padding: "0.85rem", backgroundColor: "var(--bg-muted)", borderRadius: "var(--radius-md)" }}>
+                    <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 600 }}>
+                      {t("report.relatedProblemsLabel")}
+                    </div>
+                    <div style={{ fontSize: "1.35rem", fontWeight: 800, color: "var(--color-secondary)", marginTop: "0.2rem" }}>
+                      {duplicateCheck?.duplicates_found ?? 0}
+                    </div>
+                    <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+                      Potential matches evaluated
+                    </div>
+                  </div>
                 </div>
 
-                {/* Severity & Urgency */}
-                <div style={{ padding: "0.85rem", backgroundColor: "var(--bg-muted)", borderRadius: "var(--radius-md)" }}>
-                  <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 600 }}>
-                    {t("report.severityLabel")} &bull; {t("report.urgencyLabel")}
+                {/* Required Expertise Tags */}
+                {Array.isArray(aiAnalysis.required_expertise) && aiAnalysis.required_expertise.length > 0 && (
+                  <div style={{ marginTop: "1.25rem", paddingTop: "1rem", borderTop: "1px solid var(--border-color)" }}>
+                    <div style={{ fontSize: "0.825rem", fontWeight: 600, color: "var(--text-muted)", marginBottom: "0.5rem" }}>
+                      {t("report.requiredExpertiseLabel")}:
+                    </div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+                      {aiAnalysis.required_expertise.map((exp, idx) => (
+                        <span
+                          key={idx}
+                          style={{
+                            display: "inline-block",
+                            padding: "0.25rem 0.65rem",
+                            backgroundColor: "var(--color-primary-subtle)",
+                            border: "1px solid var(--color-primary-border)",
+                            borderRadius: "var(--radius-full)",
+                            fontSize: "0.8rem",
+                            fontWeight: 600,
+                            color: "var(--color-primary)",
+                          }}
+                        >
+                          {exp}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                  <div style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text-primary)", marginTop: "0.25rem" }}>
-                    {aiAnalysis.severity || "MEDIUM"} &bull; {aiAnalysis.urgency || "MEDIUM"}
-                  </div>
-                  <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginTop: "0.15rem" }}>
-                    Confidence: {Math.round((aiAnalysis.confidence || 0.85) * 100)}%
-                  </div>
-                </div>
-
-                {/* Priority Score */}
-                <div style={{ padding: "0.85rem", backgroundColor: "var(--bg-muted)", borderRadius: "var(--radius-md)" }}>
-                  <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 600 }}>
-                    {t("report.priorityScoreLabel")}
-                  </div>
-                  <div style={{ fontSize: "1.35rem", fontWeight: 800, color: "var(--color-primary)", marginTop: "0.2rem" }}>
-                    {createdProblem.priority_score ? Number(createdProblem.priority_score).toFixed(1) : "50.0"}
-                  </div>
-                  <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
-                    District: {createdProblem.district || form.district}
-                  </div>
-                </div>
-
-                {/* Related Problems */}
-                <div style={{ padding: "0.85rem", backgroundColor: "var(--bg-muted)", borderRadius: "var(--radius-md)" }}>
-                  <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 600 }}>
-                    {t("report.relatedProblemsLabel")}
-                  </div>
-                  <div style={{ fontSize: "1.35rem", fontWeight: 800, color: "var(--color-secondary)", marginTop: "0.2rem" }}>
-                    {duplicateCheck?.duplicates_found ?? 0}
-                  </div>
-                  <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
-                    Potential matches evaluated
-                  </div>
-                </div>
-              </div>
-
-              {/* Required Expertise Tags */}
-              {Array.isArray(aiAnalysis.required_expertise) && aiAnalysis.required_expertise.length > 0 && (
-                <div style={{ marginTop: "1.25rem", paddingTop: "1rem", borderTop: "1px solid var(--border-color)" }}>
-                  <div style={{ fontSize: "0.825rem", fontWeight: 600, color: "var(--text-muted)", marginBottom: "0.5rem" }}>
-                    {t("report.requiredExpertiseLabel")}:
-                  </div>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-                    {aiAnalysis.required_expertise.map((exp, idx) => (
-                      <span
-                        key={idx}
-                        style={{
-                          display: "inline-block",
-                          padding: "0.25rem 0.65rem",
-                          backgroundColor: "var(--color-primary-subtle)",
-                          border: "1px solid var(--color-primary-border)",
-                          borderRadius: "var(--radius-full)",
-                          fontSize: "0.8rem",
-                          fontWeight: 600,
-                          color: "var(--color-primary)",
-                        }}
-                      >
-                        {exp}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </Card>
+                )}
+              </Card>
+            </>
           )}
         </div>
       )}
