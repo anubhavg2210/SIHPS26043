@@ -25,6 +25,7 @@ import { DashboardPage } from "./pages/dashboard/DashboardPage.jsx";
 import ImpactPassportPage from "./pages/impactPassport/ImpactPassportPage.jsx";
 import TrustDashboardPage from "./pages/dashboard/TrustDashboardPage.jsx";
 import AnalyticsDashboardPage from "./pages/dashboard/AnalyticsDashboardPage.jsx";
+import { FacultyStudentsPage } from "./pages/university/FacultyStudentsPage.jsx";
 
 /**
  * Main Application View Routing Switcher
@@ -118,6 +119,9 @@ function AppContent() {
       {/* Route: /profile */}
       {path === "/profile" && <ProfilePage />}
 
+      {/* Route: /faculty-students */}
+      {path === "/faculty-students" && role === "UNIVERSITY" && <FacultyStudentsPage />}
+
       {/* Other routes placeholder */}
       {path !== "/dashboard" &&
         path !== "/dashboard/trust" &&
@@ -130,6 +134,7 @@ function AppContent() {
         path !== "/reputation" &&
         path !== "/rankings" &&
         path !== "/profile" &&
+        path !== "/faculty-students" &&
         !isProblemDetail && (
           <Card
             title={`Section: ${path.replace("/", "").toUpperCase()}`}

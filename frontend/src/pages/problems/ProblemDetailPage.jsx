@@ -226,6 +226,14 @@ export function ProblemDetailPage({ id }) {
       { key: "overview", label: "Overview", icon: "cpu" },
       { key: "solutions", label: "Solutions & Tracking", icon: "check-circle" },
     ];
+  } else if (role === "UNIVERSITY") {
+    // University sees matched problems but skips deep dive modules
+    availableTabs = [
+      { key: "overview", label: "Overview", icon: "cpu" },
+      { key: "matching", label: "Expertise Matching", icon: "users" },
+      { key: "solutions", label: "Solutions & Evaluation", icon: "check-circle" },
+      { key: "collaboration", label: "Collaboration", icon: "users" },
+    ];
   } else {
     // Solvers (Faculty, Researchers, Startups, MSMEs)
     availableTabs = [
@@ -296,11 +304,25 @@ export function ProblemDetailPage({ id }) {
         style={{
           backgroundColor: "#ffffff",
           border: "1px solid var(--border-color)",
-          borderRadius: "var(--radius-lg)",
-          padding: "1.75rem",
-          boxShadow: "var(--shadow-xs)",
+          borderRadius: "var(--radius-xl)",
+          padding: "2rem",
+          boxShadow: "var(--shadow-md)",
+          position: "relative",
+          overflow: "hidden",
         }}
       >
+        <div style={{
+            position: "absolute",
+            top: "-20%",
+            right: "-10%",
+            width: "300px",
+            height: "300px",
+            background: "radial-gradient(circle, var(--color-primary-subtle) 0%, transparent 70%)",
+            opacity: 0.5,
+            zIndex: 0,
+            pointerEvents: "none"
+        }} />
+        <div style={{ position: "relative", zIndex: 1 }}>
         <div
           style={{
             display: "flex",
@@ -338,15 +360,15 @@ export function ProblemDetailPage({ id }) {
               {problem.title}
             </h1>
 
-            <div style={{ display: "flex", alignItems: "center", gap: "1.25rem", flexWrap: "wrap", fontSize: "0.85rem", color: "var(--text-secondary)" }}>
-              <span>
-                📍 <strong>{problem.district || "District"}</strong>
+            <div style={{ display: "flex", alignItems: "center", gap: "1.25rem", flexWrap: "wrap", fontSize: "0.95rem", color: "var(--text-secondary)" }}>
+              <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                <Icon name="map-pin" size={16} /> <strong>{problem.district || "District"}</strong>
                 {problem.city && `, ${problem.city}`}
                 {problem.address && ` (${problem.address})`}
               </span>
               {problem.affected_people && (
-                <span>
-                  👥 <strong>{Number(problem.affected_people).toLocaleString()}</strong> people affected
+                <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                  <Icon name="users" size={16} /> <strong>{Number(problem.affected_people).toLocaleString()}</strong> people affected
                 </span>
               )}
             </div>
@@ -365,10 +387,10 @@ export function ProblemDetailPage({ id }) {
               {/* Priority Score Widget (Authority Only) */}
               <div
                 style={{
-                  padding: "0.85rem 1.25rem",
-                  backgroundColor: "var(--bg-muted)",
-                  borderRadius: "var(--radius-md)",
-                  border: "1px solid var(--border-color)",
+                  padding: "1rem 1.5rem",
+                  backgroundColor: "var(--color-primary-subtle)",
+                  borderRadius: "var(--radius-xl)",
+                  border: "1px solid var(--color-primary-border)",
                   textAlign: "center",
                   minWidth: "120px",
                 }}
@@ -409,12 +431,13 @@ export function ProblemDetailPage({ id }) {
             ))}
           </div>
         )}
+        </div>
       </div>
 
       {/* -------------------------------------------------------------------- */}
       {/* Lifecycle / Progress Tracker: Simple Stepper vs Timeline     */}
       {/* -------------------------------------------------------------------- */}
-      {isCitizen || isStudent ? (
+      {isCitizen || isStudent || role === "UNIVERSITY" ? (
         <Card style={{ padding: "1.5rem" }}>
           <div
             style={{

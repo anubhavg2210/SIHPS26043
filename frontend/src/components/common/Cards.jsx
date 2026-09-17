@@ -13,7 +13,7 @@ export function Card({
   return (
     <div
       className={`cs-card ${hover ? "cs-card-hover" : ""} ${className}`}
-      style={{ padding }}
+      style={{ padding, border: "none", boxShadow: "var(--shadow-sm)" }}
       {...props}
     >
       {(title || subtitle || actions) && (
@@ -21,7 +21,7 @@ export function Card({
           style={{
             display: "flex",
             justifyContent: "space-between",
-            alignItems: "flex-start",
+            alignItems: "center",
             marginBottom: "1.25rem",
             paddingBottom: "0.75rem",
             borderBottom: "1px solid var(--border-color)",
@@ -29,7 +29,7 @@ export function Card({
         >
           <div>
             {title && (
-              <h3 style={{ margin: 0, fontSize: "1.15rem", color: "var(--text-primary)" }}>
+              <h3 style={{ margin: 0, fontSize: "1.2rem", fontWeight: 800, letterSpacing: "-0.01em", color: "var(--text-primary)" }}>
                 {title}
               </h3>
             )}
@@ -71,24 +71,27 @@ export function StatCard({
         cursor: onClick ? "pointer" : "default",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "space-between",
+        justifyContent: "center",
+        border: "1px solid var(--border-color)",
+        boxShadow: "var(--shadow-xs)",
+        backgroundColor: "#ffffff",
       }}
     >
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
         <div>
-          <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+          <div style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "0.25rem" }}>
             {title}
           </div>
-          <div style={{ fontSize: "1.85rem", fontWeight: 700, color: "var(--text-primary)", margin: "0.35rem 0" }}>
+          <div style={{ fontSize: "2rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.03em" }}>
             {value ?? "0"}
           </div>
         </div>
         {icon && (
           <div
             style={{
-              padding: "0.65rem",
-              borderRadius: "var(--radius-md)",
-              backgroundColor: "var(--bg-muted)",
+              padding: "0.75rem",
+              borderRadius: "var(--radius-full)",
+              backgroundColor: "var(--color-primary-subtle)",
               color: iconColor,
               display: "flex",
               alignItems: "center",
