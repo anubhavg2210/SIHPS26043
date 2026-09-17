@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { universityApi } from "../../services/api";
 import { Card } from "../../components/common/Cards";
 import { LoadingSkeleton, EmptyState } from "../../components/common/Feedback";
+import { Button } from "../../components/common/Button";
 
 export function FacultyStudentsPage() {
   const [loading, setLoading] = useState(true);
@@ -34,16 +35,17 @@ export function FacultyStudentsPage() {
   }, []);
 
   const renderChips = (skills) => {
-    if (!skills || skills.length === 0) return <span style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>Skills not added yet</span>;
+    if (!skills || skills.length === 0) return null;
     return (
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "1rem" }}>
         {skills.map((skill, index) => (
           <span
             key={index}
             style={{
-              fontSize: "0.75rem",
-              padding: "0.2rem 0.5rem",
-              borderRadius: "var(--radius-sm)",
+              fontSize: "0.72rem",
+              fontWeight: 600,
+              padding: "0.3rem 0.6rem",
+              borderRadius: "var(--radius-full)",
               backgroundColor: "var(--color-primary-subtle)",
               color: "var(--color-primary)",
               border: "1px solid var(--color-primary-border)",
@@ -56,14 +58,35 @@ export function FacultyStudentsPage() {
     );
   };
 
+  const renderAvatar = (name) => {
+    return (
+      <div style={{
+        width: "56px",
+        height: "56px",
+        borderRadius: "var(--radius-full)",
+        backgroundColor: "var(--bg-muted)",
+        border: "1px solid var(--border-color)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: "1.25rem",
+        fontWeight: 700,
+        color: "var(--text-secondary)",
+        flexShrink: 0
+      }}>
+        {name ? name.charAt(0).toUpperCase() : "U"}
+      </div>
+    );
+  };
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
       <div>
-        <h1 style={{ margin: "0 0 0.5rem", fontSize: "1.75rem", fontWeight: 800 }}>
-          Faculty & Students
+        <h1 style={{ margin: "0 0 0.5rem", fontSize: "2rem", fontWeight: 800, letterSpacing: "-0.02em" }}>
+          Faculty &amp; Students
         </h1>
-        <p style={{ margin: 0, color: "var(--text-muted)", fontSize: "0.95rem" }}>
-          Explore academic expertise available within your institution.
+        <p style={{ margin: 0, color: "var(--text-secondary)", fontSize: "1.05rem" }}>
+          Explore academic expertise available within your institution for collaborative problem-solving.
         </p>
       </div>
 
@@ -73,30 +96,34 @@ export function FacultyStudentsPage() {
           style={{
             background: "none",
             border: "none",
-            padding: "0.5rem 1rem",
-            fontSize: "1rem",
+            padding: "0.5rem 1.5rem",
+            fontSize: "0.95rem",
             fontWeight: activeTab === "faculty" ? 700 : 500,
             color: activeTab === "faculty" ? "var(--color-primary)" : "var(--text-secondary)",
             borderBottom: activeTab === "faculty" ? "2px solid var(--color-primary)" : "none",
             cursor: "pointer",
+            transition: "all var(--transition-fast)",
+            marginBottom: "-0.5rem"
           }}
         >
-          Faculty
+          Faculty Members ({data.faculty.length})
         </button>
         <button
           onClick={() => setActiveTab("students")}
           style={{
             background: "none",
             border: "none",
-            padding: "0.5rem 1rem",
-            fontSize: "1rem",
+            padding: "0.5rem 1.5rem",
+            fontSize: "0.95rem",
             fontWeight: activeTab === "students" ? 700 : 500,
             color: activeTab === "students" ? "var(--color-primary)" : "var(--text-secondary)",
             borderBottom: activeTab === "students" ? "2px solid var(--color-primary)" : "none",
             cursor: "pointer",
+            transition: "all var(--transition-fast)",
+            marginBottom: "-0.5rem"
           }}
         >
-          Students
+          Students ({data.students.length})
         </button>
       </div>
 
@@ -108,20 +135,25 @@ export function FacultyStudentsPage() {
         data.faculty.length === 0 ? (
           <EmptyState title="No faculty records found for this institution." />
         ) : (
-          <div className="cs-grid-2">
+          <div className="cs-grid-3">
             {data.faculty.map((f) => (
-              <Card key={f.id} title={f.name}>
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                  <div style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>
-                    <strong>Department:</strong> {f.department || "Unknown"}
+              <Card key={f.id} hover style={{ display: "flex", flexDirection: "column" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1rem" }}>
+                  {renderAvatar(f.name)}
+                  <div>
+                    <h3 style={{ margin: "0 0 0.2rem", fontSize: "1.1rem", fontWeight: 700, color: "var(--text-primary)" }}>
+                      {f.name}
+                    </h3>
+                    <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>
+                      {f.designation || "Professor"} &bull; {f.department || "Department"}
+                    </div>
                   </div>
-                  <div style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>
-                    <strong>Designation:</strong> {f.designation || "Faculty"}
-                  </div>
-                  <div style={{ marginTop: "0.5rem" }}>
-                    <strong style={{ fontSize: "0.9rem" }}>Expertise:</strong>
-                    <div style={{ marginTop: "0.3rem" }}>{renderChips(f.skills)}</div>
-                  </div>
+                </div>
+                {renderChips(f.skills)}
+                <div style={{ marginTop: "1.5rem", borderTop: "1px solid var(--border-color)", paddingTop: "1rem" }}>
+                   <Button variant="ghost" style={{ width: "100%", justifyContent: "center" }}>
+                     View Profile
+                   </Button>
                 </div>
               </Card>
             ))}
@@ -131,20 +163,25 @@ export function FacultyStudentsPage() {
         data.students.length === 0 ? (
           <EmptyState title="No student records found for this institution." />
         ) : (
-          <div className="cs-grid-2">
+          <div className="cs-grid-3">
             {data.students.map((s) => (
-              <Card key={s.id} title={s.name}>
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                  <div style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>
-                    {s.course || "Degree not specified"}
+              <Card key={s.id} hover style={{ display: "flex", flexDirection: "column" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1rem" }}>
+                  {renderAvatar(s.name)}
+                  <div>
+                    <h3 style={{ margin: "0 0 0.2rem", fontSize: "1.1rem", fontWeight: 700, color: "var(--text-primary)" }}>
+                      {s.name}
+                    </h3>
+                    <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>
+                      {s.course || "B.Tech"} &bull; {s.graduation_year ? `${s.graduation_year} Batch` : "Student"}
+                    </div>
                   </div>
-                  <div style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>
-                    {s.graduation_year ? `${s.graduation_year} Batch` : "Year not specified"}
-                  </div>
-                  <div style={{ marginTop: "0.5rem" }}>
-                    <strong style={{ fontSize: "0.9rem" }}>Skills:</strong>
-                    <div style={{ marginTop: "0.3rem" }}>{renderChips(s.skills)}</div>
-                  </div>
+                </div>
+                {renderChips(s.skills)}
+                <div style={{ marginTop: "1.5rem", borderTop: "1px solid var(--border-color)", paddingTop: "1rem" }}>
+                   <Button variant="ghost" style={{ width: "100%", justifyContent: "center" }}>
+                     View Profile
+                   </Button>
                 </div>
               </Card>
             ))}

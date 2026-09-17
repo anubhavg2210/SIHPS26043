@@ -450,9 +450,13 @@ export function SolutionsView({ problemId }) {
         <Card
           style={{
             textAlign: "center",
-            padding: "3.5rem 1.5rem",
+            padding: "4rem 2rem",
             backgroundColor: "var(--bg-muted)",
-            borderStyle: "dashed",
+            border: "1px dashed var(--border-color)",
+            borderRadius: "var(--radius-xl)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
         >
           <div
@@ -510,12 +514,21 @@ export function SolutionsView({ problemId }) {
                 style={{
                   backgroundColor: "#ffffff",
                   border: "1px solid var(--border-color)",
-                  borderRadius: "var(--radius-lg)",
-                  padding: "1.5rem",
-                  boxShadow: "var(--shadow-xs)",
+                  borderRadius: "var(--radius-xl)",
+                  padding: "2rem",
+                  boxShadow: "var(--shadow-sm)",
                   display: "flex",
                   flexDirection: "column",
-                  gap: "1rem",
+                  gap: "1.25rem",
+                  transition: "all var(--transition-fast)",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "var(--color-primary-border)";
+                  e.currentTarget.style.boxShadow = "var(--shadow-md)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "var(--border-color)";
+                  e.currentTarget.style.boxShadow = "var(--shadow-sm)";
                 }}
               >
                 {/* Solution Header */}
@@ -560,7 +573,7 @@ export function SolutionsView({ problemId }) {
                       </span>
                     </div>
 
-                    <h4 style={{ margin: 0, fontSize: "1.15rem", fontWeight: 700 }}>
+                    <h4 style={{ margin: "0.25rem 0 0", fontSize: "1.25rem", fontWeight: 800, letterSpacing: "-0.01em" }}>
                       {sol.title}
                     </h4>
                   </div>
@@ -604,7 +617,7 @@ export function SolutionsView({ problemId }) {
                 </div>
 
                 {/* Description */}
-                <p style={{ margin: 0, fontSize: "0.9rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
+                <p style={{ margin: 0, fontSize: "0.95rem", color: "var(--text-secondary)", lineHeight: 1.6 }}>
                   {sol.description}
                 </p>
 

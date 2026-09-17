@@ -116,494 +116,518 @@ export function MatchingSkillsPage() {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1.75rem", maxWidth: "1100px", margin: "0 auto", paddingBottom: "3rem" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "2rem", paddingBottom: "3rem" }}>
       {/* Page Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "1rem" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "1rem" }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: "1.75rem", fontWeight: 800, letterSpacing: "-0.02em" }}>
+          <h1 style={{ margin: "0 0 0.5rem", fontSize: "2rem", fontWeight: 800, letterSpacing: "-0.02em" }}>
             Problems Matching Your Skills
           </h1>
-          <p style={{ margin: "0.25rem 0 0", color: "var(--text-muted)", fontSize: "0.9rem" }}>
-            Explainable matching engine connecting your technical competencies with active civic challenges
+          <p style={{ margin: 0, color: "var(--text-secondary)", fontSize: "1.05rem", maxWidth: "600px" }}>
+            Our explainable matching engine connects your technical competencies directly with active regional challenges where you can make a measurable difference.
           </p>
         </div>
 
-        <div style={{ display: "flex", gap: "0.5rem" }}>
-          <Button variant="outline" size="sm" icon="search" onClick={() => navigate("/explore")}>
-            Explore All Problems
+        <div style={{ display: "flex", gap: "0.75rem" }}>
+          <Button variant="outline" icon="search" onClick={() => navigate("/explore")} style={{ backgroundColor: "#ffffff" }}>
+            Explore Catalog
           </Button>
-          <Button variant="ghost" size="sm" icon="award" onClick={() => navigate("/reputation")}>
-            Your Reputation
+          <Button variant="outline" icon="award" onClick={() => navigate("/reputation")} style={{ backgroundColor: "#ffffff" }}>
+            Your Impact
           </Button>
         </div>
       </div>
 
-      {/* Top Card: Student Skills Profile */}
-      <Card
-        title="Your Skills Profile"
-        subtitle={profile ? `${profile.name || user?.name} • ${profile.course || "Student Contributor"} (${profile.institution_name || "Institution"})` : "Student Competencies"}
-        actions={
-          !isEditingSkills && role !== "UNIVERSITY" && (
-            <Button
-              variant="outline"
-              size="sm"
-              icon="plus-circle"
-              onClick={() => {
-                setEditingSkillsList(skills);
-                setIsEditingSkills(true);
-              }}
-            >
-              {skills.length > 0 ? "Edit Skills" : "Add Skills"}
-            </Button>
-          )
-        }
-      >
-        {loading ? (
-          <LoadingSkeleton lines={2} />
-        ) : isEditingSkills ? (
-          /* Interactive Skills Editor */
-          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>
-              Add or remove your technical competencies to discover problems where your skills can make a measurable difference:
-            </div>
+      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 3fr) minmax(0, 7fr)", gap: "2rem", alignItems: "start" }}>
+        
+        {/* Left Column: Skills Profile (Sticky) */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", position: "sticky", top: "100px" }}>
+          <Card
+            title="Your Competencies"
+            subtitle={profile ? `${profile.name || user?.name} • ${profile.course || "Contributor"}` : "Profile Skills"}
+            actions={
+              !isEditingSkills && role !== "UNIVERSITY" && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  icon="edit-2"
+                  onClick={() => {
+                    setEditingSkillsList(skills);
+                    setIsEditingSkills(true);
+                  }}
+                >
+                  Edit
+                </Button>
+              )
+            }
+          >
+            {loading ? (
+              <LoadingSkeleton lines={2} />
+            ) : isEditingSkills ? (
+              /* Interactive Skills Editor */
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>
+                  Add your technical skills to discover relevant problems:
+                </div>
 
-            {/* Currently selected skills */}
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.45rem", minHeight: "36px", padding: "0.5rem", borderRadius: "var(--radius-md)", backgroundColor: "var(--bg-muted)", border: "1px solid var(--border-color)" }}>
-              {editingSkillsList.length === 0 ? (
-                <span style={{ fontSize: "0.825rem", color: "var(--text-muted)", fontStyle: "italic", alignSelf: "center" }}>
-                  No skills selected yet. Click from suggestions below or type your own.
-                </span>
-              ) : (
-                editingSkillsList.map((skill) => (
+                {/* Currently selected skills */}
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.45rem", minHeight: "44px", padding: "0.75rem", borderRadius: "var(--radius-md)", backgroundColor: "var(--bg-muted)", border: "1px solid var(--border-color)" }}>
+                  {editingSkillsList.length === 0 ? (
+                    <span style={{ fontSize: "0.825rem", color: "var(--text-muted)", fontStyle: "italic", alignSelf: "center" }}>
+                      No skills selected yet.
+                    </span>
+                  ) : (
+                    editingSkillsList.map((skill) => (
+                      <span
+                        key={skill}
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "0.35rem",
+                          fontSize: "0.8rem",
+                          fontWeight: 600,
+                          padding: "0.3rem 0.75rem",
+                          borderRadius: "var(--radius-full)",
+                          backgroundColor: "var(--color-primary-subtle)",
+                          color: "var(--color-primary)",
+                          border: "1px solid var(--color-primary-border)",
+                        }}
+                      >
+                        ✓ {skill}
+                        <button
+                          type="button"
+                          onClick={() => removeSkillFromEditing(skill)}
+                          style={{
+                            background: "none",
+                            border: "none",
+                            color: "var(--color-primary)",
+                            cursor: "pointer",
+                            fontWeight: 800,
+                            fontSize: "1rem",
+                            lineHeight: 1,
+                            padding: 0,
+                            marginLeft: "0.2rem"
+                          }}
+                          title={`Remove ${skill}`}
+                        >
+                          &times;
+                        </button>
+                      </span>
+                    ))
+                  )}
+                </div>
+
+                {/* Custom skill input */}
+                <div style={{ display: "flex", gap: "0.5rem" }}>
+                  <input
+                    type="text"
+                    placeholder="Type a skill..."
+                    value={customSkillInput}
+                    onChange={(e) => setCustomSkillInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        addSkillToEditing(customSkillInput);
+                      }
+                    }}
+                    style={{
+                      flex: 1,
+                      padding: "0.6rem 0.75rem",
+                      fontSize: "0.85rem",
+                      border: "1px solid var(--border-color)",
+                      borderRadius: "var(--radius-md)",
+                      outline: "none",
+                    }}
+                  />
+                  <Button
+                    variant="secondary"
+                    onClick={() => addSkillToEditing(customSkillInput)}
+                    disabled={!customSkillInput.trim()}
+                  >
+                    Add
+                  </Button>
+                </div>
+
+                {/* Quick Suggestions Chips */}
+                <div>
+                  <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", marginBottom: "0.6rem" }}>
+                    Suggested:
+                  </div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem" }}>
+                    {SKILL_SUGGESTIONS.filter((s) => !editingSkillsList.includes(s)).map((suggestion) => (
+                      <button
+                        key={suggestion}
+                        type="button"
+                        onClick={() => addSkillToEditing(suggestion)}
+                        style={{
+                          fontSize: "0.75rem",
+                          fontWeight: 500,
+                          padding: "0.25rem 0.6rem",
+                          borderRadius: "var(--radius-full)",
+                          border: "1px dashed var(--border-color)",
+                          backgroundColor: "#ffffff",
+                          color: "var(--text-secondary)",
+                          cursor: "pointer",
+                          transition: "all var(--transition-fast)",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.borderColor = "var(--color-primary)";
+                          e.currentTarget.style.color = "var(--color-primary)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.borderColor = "var(--border-color)";
+                          e.currentTarget.style.color = "var(--text-secondary)";
+                        }}
+                      >
+                        + {suggestion}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Action buttons */}
+                <div style={{ display: "flex", gap: "0.75rem", marginTop: "1rem", paddingTop: "1rem", borderTop: "1px solid var(--border-color)" }}>
+                  <Button
+                    variant="primary"
+                    style={{ flex: 1, justifyContent: "center" }}
+                    onClick={handleSaveSkills}
+                    disabled={savingSkills}
+                  >
+                    {savingSkills ? "Saving..." : "Save & Find Matches"}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      setEditingSkillsList(skills);
+                      setIsEditingSkills(false);
+                    }}
+                    disabled={savingSkills}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            ) : skills.length === 0 ? (
+              <div style={{ padding: "1rem 0", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" }}>
+                <div style={{ width: "48px", height: "48px", borderRadius: "var(--radius-full)", backgroundColor: "var(--bg-muted)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-muted)" }}>
+                   <Icon name="code" size={24} />
+                </div>
+                <p style={{ margin: 0, fontSize: "0.9rem", color: "var(--text-secondary)" }}>
+                  No skills registered yet.
+                </p>
+                {role !== "UNIVERSITY" && (
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    icon="plus-circle"
+                    onClick={() => {
+                      setEditingSkillsList([]);
+                      setIsEditingSkills(true);
+                    }}
+                  >
+                    Add Skills
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+                {skills.map((skill) => (
                   <span
                     key={skill}
                     style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "0.35rem",
-                      fontSize: "0.825rem",
+                      fontSize: "0.85rem",
                       fontWeight: 600,
-                      padding: "0.25rem 0.6rem",
+                      padding: "0.4rem 0.85rem",
                       borderRadius: "var(--radius-full)",
                       backgroundColor: "var(--color-primary-subtle)",
                       color: "var(--color-primary)",
                       border: "1px solid var(--color-primary-border)",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "0.35rem",
                     }}
                   >
                     ✓ {skill}
-                    <button
-                      type="button"
-                      onClick={() => removeSkillFromEditing(skill)}
-                      style={{
-                        background: "none",
-                        border: "none",
-                        color: "var(--color-primary)",
-                        cursor: "pointer",
-                        fontWeight: 800,
-                        fontSize: "0.9rem",
-                        lineHeight: 1,
-                        padding: 0,
-                      }}
-                      title={`Remove ${skill}`}
-                    >
-                      ×
-                    </button>
                   </span>
-                ))
-              )}
-            </div>
-
-            {/* Custom skill input */}
-            <div style={{ display: "flex", gap: "0.5rem" }}>
-              <input
-                type="text"
-                placeholder="Type a skill (e.g. 'IoT', 'Python', 'Civil Engineering') and press Add..."
-                value={customSkillInput}
-                onChange={(e) => setCustomSkillInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    addSkillToEditing(customSkillInput);
-                  }
-                }}
-                style={{
-                  flex: 1,
-                  padding: "0.5rem 0.75rem",
-                  fontSize: "0.85rem",
-                  border: "1px solid var(--border-color)",
-                  borderRadius: "var(--radius-md)",
-                  outline: "none",
-                }}
-              />
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => addSkillToEditing(customSkillInput)}
-                disabled={!customSkillInput.trim()}
-              >
-                Add Skill
-              </Button>
-            </div>
-
-            {/* Quick Suggestions Chips */}
-            <div>
-              <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", marginBottom: "0.4rem" }}>
-                Suggested Competencies:
+                ))}
               </div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem" }}>
-                {SKILL_SUGGESTIONS.filter((s) => !editingSkillsList.includes(s)).map((suggestion) => (
-                  <button
-                    key={suggestion}
-                    type="button"
-                    onClick={() => addSkillToEditing(suggestion)}
+            )}
+          </Card>
+          
+          {/* Info Card */}
+          <Card style={{ backgroundColor: "var(--color-info-subtle)", border: "1px solid var(--color-info-border)", boxShadow: "none" }}>
+            <div style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start" }}>
+               <div style={{ color: "var(--color-info)" }}>
+                  <Icon name="info" size={20} />
+               </div>
+               <div>
+                  <h4 style={{ margin: "0 0 0.35rem", fontSize: "0.95rem", fontWeight: 700, color: "var(--color-info)" }}>How Matching Works</h4>
+                  <p style={{ margin: 0, fontSize: "0.8rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
+                     Our engine analyzes your technical stack and cross-references it with the requirements of regional problems. 
+                     Strong matches mean you have the necessary skills to immediately contribute.
+                  </p>
+               </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* Right Column: Problem Feed */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+          {/* Matched Problems Section Header & Sort */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+              <h2 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 700 }}>
+                Matched Opportunities
+              </h2>
+              <span
+                style={{
+                  fontSize: "0.85rem",
+                  fontWeight: 700,
+                  padding: "0.2rem 0.75rem",
+                  borderRadius: "var(--radius-full)",
+                  backgroundColor: "var(--color-primary)",
+                  color: "#ffffff",
+                }}
+              >
+                {matchedProblems.length} Found
+              </span>
+            </div>
+
+            {/* Sort controls */}
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.85rem" }}>
+              <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>Sort by:</span>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                style={{
+                  padding: "0.5rem 0.75rem",
+                  borderRadius: "var(--radius-md)",
+                  border: "1px solid var(--border-color)",
+                  backgroundColor: "#ffffff",
+                  fontSize: "0.85rem",
+                  fontWeight: 600,
+                  color: "var(--text-primary)",
+                  cursor: "pointer",
+                }}
+              >
+                <option value="best_match">Best Skill Match</option>
+                <option value="newest">Newest</option>
+                <option value="recently_updated">Recently Updated</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Matched Problems Cards Feed */}
+          {loading || matchingLoading ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+              <Card><LoadingSkeleton lines={4} /></Card>
+              <Card><LoadingSkeleton lines={4} /></Card>
+            </div>
+          ) : error ? (
+            <p style={{ color: "var(--color-danger)" }}>{error}</p>
+          ) : matchedProblems.length === 0 ? (
+            <EmptyState
+              icon="target"
+              title="No problems currently match your skills"
+              description="Add more skills to your profile to discover more opportunities, or explore the general catalog."
+              actionLabel="Update Skills"
+              onAction={() => {
+                setEditingSkillsList(skills);
+                setIsEditingSkills(true);
+              }}
+            />
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+              {matchedProblems.map((prob) => {
+                const isStrong = prob.match_tier === "Strong Match";
+                const tierColor = isStrong ? "var(--color-success)" : "var(--color-primary)";
+
+                return (
+                  <div
+                    key={prob.id}
                     style={{
-                      fontSize: "0.75rem",
-                      fontWeight: 500,
-                      padding: "0.2rem 0.55rem",
-                      borderRadius: "var(--radius-sm)",
-                      border: "1px dashed var(--border-color)",
                       backgroundColor: "#ffffff",
-                      color: "var(--text-secondary)",
-                      cursor: "pointer",
+                      borderRadius: "var(--radius-xl)",
+                      border: "1px solid var(--border-color)",
+                      padding: "1.75rem",
+                      boxShadow: "var(--shadow-sm)",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "1.25rem",
                       transition: "all var(--transition-fast)",
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = "var(--color-primary)";
-                      e.currentTarget.style.color = "var(--color-primary)";
+                      e.currentTarget.style.borderColor = "var(--color-primary-border)";
+                      e.currentTarget.style.boxShadow = "var(--shadow-md)";
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.borderColor = "var(--border-color)";
-                      e.currentTarget.style.color = "var(--text-secondary)";
+                      e.currentTarget.style.boxShadow = "var(--shadow-sm)";
                     }}
                   >
-                    + {suggestion}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Action buttons */}
-            <div style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end", marginTop: "0.5rem" }}>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setEditingSkillsList(skills);
-                  setIsEditingSkills(false);
-                }}
-                disabled={savingSkills}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="primary"
-                size="sm"
-                icon="check"
-                onClick={handleSaveSkills}
-                disabled={savingSkills}
-              >
-                {savingSkills ? "Saving..." : "Save Skills & Find Matches"}
-              </Button>
-            </div>
-          </div>
-        ) : skills.length === 0 ? (
-          <div style={{ padding: "1rem 0", textAlign: "center" }}>
-            <p style={{ margin: "0 0 1rem", fontSize: "0.9rem", color: "var(--text-muted)" }}>
-              No skills registered yet. Add your competencies to discover societal challenges you can help solve.
-            </p>
-            {role !== "UNIVERSITY" && (
-              <Button
-                variant="primary"
-                size="sm"
-                icon="plus-circle"
-                onClick={() => {
-                  setEditingSkillsList([]);
-                  setIsEditingSkills(true);
-                }}
-              >
-                Add Skills
-              </Button>
-            )}
-          </div>
-        ) : (
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", alignItems: "center" }}>
-            {skills.map((skill) => (
-              <span
-                key={skill}
-                style={{
-                  fontSize: "0.85rem",
-                  fontWeight: 600,
-                  padding: "0.3rem 0.75rem",
-                  borderRadius: "var(--radius-full)",
-                  backgroundColor: "var(--color-primary-subtle)",
-                  color: "var(--color-primary)",
-                  border: "1px solid var(--color-primary-border)",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "0.35rem",
-                }}
-              >
-                ✓ {skill}
-              </span>
-            ))}
-          </div>
-        )}
-      </Card>
-
-      {/* Matched Problems Section Header & Sort */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.75rem" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-          <h2 style={{ margin: 0, fontSize: "1.25rem", fontWeight: 700 }}>
-            Problems You Can Help Solve
-          </h2>
-          <span
-            style={{
-              fontSize: "0.8rem",
-              fontWeight: 700,
-              padding: "0.15rem 0.6rem",
-              borderRadius: "var(--radius-full)",
-              backgroundColor: "var(--color-primary-subtle)",
-              color: "var(--color-primary)",
-            }}
-          >
-            {matchedProblems.length}
-          </span>
-        </div>
-
-        {/* Sort controls */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.85rem" }}>
-          <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>Sort by:</span>
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            style={{
-              padding: "0.35rem 0.65rem",
-              borderRadius: "var(--radius-md)",
-              border: "1px solid var(--border-color)",
-              backgroundColor: "#ffffff",
-              fontSize: "0.85rem",
-              fontWeight: 600,
-              color: "var(--text-primary)",
-              cursor: "pointer",
-            }}
-          >
-            <option value="best_match">Best Skill Match</option>
-            <option value="newest">Newest</option>
-            <option value="recently_updated">Recently Updated</option>
-          </select>
-        </div>
-      </div>
-
-      {/* Matched Problems Cards Feed */}
-      {loading || matchingLoading ? (
-        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          <Card><LoadingSkeleton lines={4} /></Card>
-          <Card><LoadingSkeleton lines={4} /></Card>
-        </div>
-      ) : error ? (
-        <p style={{ color: "var(--color-danger)" }}>{error}</p>
-      ) : matchedProblems.length === 0 ? (
-        <EmptyState
-          icon="target"
-          title="No problems currently match your skills"
-          description="Add more skills to your profile to discover more opportunities, or explore the general catalog."
-          actionLabel="Update Skills"
-          onAction={() => {
-            setEditingSkillsList(skills);
-            setIsEditingSkills(true);
-          }}
-        />
-      ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-          {matchedProblems.map((prob) => {
-            const isStrong = prob.match_tier === "Strong Match";
-            const tierColor = isStrong ? "var(--color-success)" : "var(--color-primary)";
-
-            return (
-              <div
-                key={prob.id}
-                style={{
-                  backgroundColor: "#ffffff",
-                  borderRadius: "var(--radius-lg)",
-                  border: "1px solid var(--border-color)",
-                  padding: "1.5rem",
-                  boxShadow: "var(--shadow-xs)",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "1rem",
-                  transition: "all var(--transition-fast)",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "var(--color-primary)";
-                  e.currentTarget.style.boxShadow = "var(--shadow-md)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "var(--border-color)";
-                  e.currentTarget.style.boxShadow = "var(--shadow-xs)";
-                }}
-              >
-                {/* Header Row: Category, Status, Match Tier */}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "0.5rem" }}>
-                  <div>
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.35rem", flexWrap: "wrap" }}>
-                      <StatusBadge status={prob.status || "OPEN"} />
-                      {prob.category && (
-                        <span
-                          style={{
-                            fontSize: "0.75rem",
-                            fontWeight: 600,
-                            padding: "0.15rem 0.5rem",
-                            borderRadius: "var(--radius-sm)",
-                            backgroundColor: "var(--color-primary-subtle)",
-                            color: "var(--color-primary)",
-                          }}
-                        >
-                          {prob.category} {prob.subcategory ? `• ${prob.subcategory}` : ""}
-                        </span>
-                      )}
-                      <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
-                        #{prob.id} &bull; 📍 {prob.district || "District"} {prob.city ? `(${prob.city})` : ""}
-                      </span>
-                    </div>
-
-                    <h3 style={{ margin: 0, fontSize: "1.15rem", fontWeight: 700, color: "var(--text-primary)" }}>
-                      {prob.title}
-                    </h3>
-                  </div>
-
-                  {/* Match Score Indicator Badge */}
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.45rem",
-                      padding: "0.35rem 0.75rem",
-                      borderRadius: "var(--radius-full)",
-                      backgroundColor: isStrong ? "var(--color-success-subtle)" : "var(--color-primary-subtle)",
-                      border: `1px solid ${isStrong ? "var(--color-success-border)" : "var(--color-primary-border)"}`,
-                      color: tierColor,
-                    }}
-                  >
-                    <Icon name="check-circle" size={15} />
-                    <span style={{ fontSize: "0.85rem", fontWeight: 800 }}>
-                      {prob.match_tier} ({prob.match_score}%)
-                    </span>
-                  </div>
-                </div>
-
-                {/* Short Description */}
-                <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
-                  {prob.ai_summary || prob.description}
-                </p>
-
-                {/* Explainable Matching Breakdown Box */}
-                <div
-                  style={{
-                    backgroundColor: "var(--bg-muted)",
-                    borderRadius: "var(--radius-md)",
-                    padding: "1rem",
-                    border: "1px solid var(--border-color)",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "0.75rem",
-                  }}
-                >
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1rem" }}>
-                    {/* Matched Skills */}
-                    <div>
-                      <div style={{ fontSize: "0.72rem", fontWeight: 700, color: "var(--color-success)", textTransform: "uppercase", marginBottom: "0.35rem" }}>
-                        ✓ Matched Skills ({prob.matched_skills?.length || 0}):
-                      </div>
-                      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem" }}>
-                        {prob.matched_skills?.map((skill) => (
-                          <span
-                            key={skill}
-                            style={{
-                              fontSize: "0.75rem",
-                              fontWeight: 600,
-                              padding: "0.15rem 0.5rem",
-                              borderRadius: "var(--radius-sm)",
-                              backgroundColor: "var(--color-success-subtle)",
-                              color: "var(--color-success)",
-                              border: "1px solid var(--color-success-border)",
-                            }}
-                          >
-                            ✓ {skill}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Missing / Additional Required Skills */}
-                    {prob.missing_skills && prob.missing_skills.length > 0 && (
+                    {/* Header Row: Category, Status, Match Tier */}
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "1rem" }}>
                       <div>
-                        <div style={{ fontSize: "0.72rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", marginBottom: "0.35rem" }}>
-                          Missing / Other Required Skills ({prob.missing_skills.length}):
-                        </div>
-                        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem" }}>
-                          {prob.missing_skills.map((skill) => (
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem", flexWrap: "wrap" }}>
+                          <StatusBadge status={prob.status || "OPEN"} />
+                          {prob.category && (
                             <span
-                              key={skill}
                               style={{
                                 fontSize: "0.75rem",
-                                fontWeight: 500,
-                                padding: "0.15rem 0.5rem",
-                                borderRadius: "var(--radius-sm)",
-                                backgroundColor: "#ffffff",
+                                fontWeight: 700,
+                                padding: "0.2rem 0.6rem",
+                                borderRadius: "var(--radius-full)",
+                                backgroundColor: "var(--bg-muted)",
                                 color: "var(--text-secondary)",
-                                border: "1px solid var(--border-color)",
                               }}
                             >
-                              {skill}
+                              {prob.category} {prob.subcategory ? `• ${prob.subcategory}` : ""}
                             </span>
-                          ))}
+                          )}
+                          <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
+                            #{prob.id} &bull; 📍 {prob.district || "District"} {prob.city ? `(${prob.city})` : ""}
+                          </span>
                         </div>
+
+                        <h3 style={{ margin: 0, fontSize: "1.35rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.01em" }}>
+                          {prob.title}
+                        </h3>
                       </div>
-                    )}
-                  </div>
 
-                  {/* Explainable Match Reason */}
-                  <div style={{ fontSize: "0.825rem", color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: "0.4rem", paddingTop: "0.5rem", borderTop: "1px solid var(--border-color)" }}>
-                    <span style={{ color: "var(--color-primary)", fontWeight: 700 }}>💡 Match Reason:</span>
-                    <span>{prob.match_reason}</span>
-                  </div>
-                </div>
+                      {/* Match Score Indicator Badge */}
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "0.5rem",
+                          padding: "0.45rem 1rem",
+                          borderRadius: "var(--radius-full)",
+                          backgroundColor: isStrong ? "var(--color-success-subtle)" : "var(--color-primary-subtle)",
+                          border: `1px solid ${isStrong ? "var(--color-success-border)" : "var(--color-primary-border)"}`,
+                          color: tierColor,
+                        }}
+                      >
+                        <Icon name="check-circle" size={16} />
+                        <span style={{ fontSize: "0.9rem", fontWeight: 800 }}>
+                          {prob.match_tier} ({prob.match_score}%)
+                        </span>
+                      </div>
+                    </div>
 
-                {/* Footer Action Buttons */}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.75rem", paddingTop: "0.5rem" }}>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    icon="info"
-                    onClick={() => setDetailModalProblem(prob)}
-                  >
-                    View Matching Details
-                  </Button>
+                    {/* Short Description */}
+                    <p style={{ margin: 0, fontSize: "0.95rem", color: "var(--text-secondary)", lineHeight: 1.6 }}>
+                      {prob.ai_summary || prob.description}
+                    </p>
 
-                  <div style={{ display: "flex", gap: "0.5rem" }}>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      icon="arrow-right"
-                      onClick={() => navigate(`/problems/${prob.id}`)}
+                    {/* Explainable Matching Breakdown Box */}
+                    <div
+                      style={{
+                        backgroundColor: "#fafafa",
+                        borderRadius: "var(--radius-lg)",
+                        padding: "1.25rem",
+                        border: "1px solid var(--border-color)",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "1rem",
+                      }}
                     >
-                      View Problem
-                    </Button>
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      icon="cpu"
-                      onClick={() => navigate(`/problems/${prob.id}?tab=solutions`)}
-                    >
-                      Contribute Solution
-                    </Button>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.5rem" }}>
+                        {/* Matched Skills */}
+                        <div>
+                          <div style={{ fontSize: "0.75rem", fontWeight: 800, color: "var(--color-success)", textTransform: "uppercase", marginBottom: "0.5rem", letterSpacing: "0.05em" }}>
+                            ✓ Matched Expertise ({prob.matched_skills?.length || 0})
+                          </div>
+                          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
+                            {prob.matched_skills?.map((skill) => (
+                              <span
+                                key={skill}
+                                style={{
+                                  fontSize: "0.8rem",
+                                  fontWeight: 600,
+                                  padding: "0.2rem 0.6rem",
+                                  borderRadius: "var(--radius-full)",
+                                  backgroundColor: "var(--color-success-subtle)",
+                                  color: "var(--color-success)",
+                                  border: "1px solid var(--color-success-border)",
+                                }}
+                              >
+                                ✓ {skill}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Missing / Additional Required Skills */}
+                        {prob.missing_skills && prob.missing_skills.length > 0 && (
+                          <div>
+                            <div style={{ fontSize: "0.75rem", fontWeight: 800, color: "var(--text-muted)", textTransform: "uppercase", marginBottom: "0.5rem", letterSpacing: "0.05em" }}>
+                              Other Required Skills ({prob.missing_skills.length})
+                            </div>
+                            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
+                              {prob.missing_skills.map((skill) => (
+                                <span
+                                  key={skill}
+                                  style={{
+                                    fontSize: "0.8rem",
+                                    fontWeight: 500,
+                                    padding: "0.2rem 0.6rem",
+                                    borderRadius: "var(--radius-full)",
+                                    backgroundColor: "#ffffff",
+                                    color: "var(--text-secondary)",
+                                    border: "1px solid var(--border-color)",
+                                  }}
+                                >
+                                  {skill}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Explainable Match Reason */}
+                      <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", display: "flex", alignItems: "flex-start", gap: "0.6rem", paddingTop: "1rem", borderTop: "1px solid var(--border-color)" }}>
+                        <div style={{ color: "var(--color-primary)", marginTop: "2px" }}><Icon name="sparkles" size={16} /></div>
+                        <span style={{ lineHeight: 1.5 }}>
+                          <strong style={{ color: "var(--text-primary)" }}>Why this matches:</strong> {prob.match_reason}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Footer Action Buttons */}
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", paddingTop: "0.5rem" }}>
+                      <Button
+                        variant="ghost"
+                        icon="info"
+                        onClick={() => setDetailModalProblem(prob)}
+                      >
+                        View Analysis Details
+                      </Button>
+
+                      <div style={{ display: "flex", gap: "0.75rem" }}>
+                        <Button
+                          variant="outline"
+                          icon="arrow-right"
+                          onClick={() => navigate(`/problems/${prob.id}`)}
+                        >
+                          Problem Details
+                        </Button>
+                        <Button
+                          variant="primary"
+                          icon="cpu"
+                          onClick={() => navigate(`/problems/${prob.id}?tab=solutions`)}
+                        >
+                          Contribute Solution
+                        </Button>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            );
-          })}
+                );
+              })}
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
       {/* Explainable Matching Details Modal */}
       {detailModalProblem && (
@@ -627,44 +651,44 @@ export function MatchingSkillsPage() {
           <div
             style={{
               backgroundColor: "#ffffff",
-              borderRadius: "var(--radius-lg)",
+              borderRadius: "var(--radius-xl)",
               maxWidth: "600px",
               width: "100%",
-              padding: "1.75rem",
+              padding: "2rem",
               boxShadow: "var(--shadow-xl)",
               display: "flex",
               flexDirection: "column",
-              gap: "1.25rem",
+              gap: "1.5rem",
             }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
               <div>
-                <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: 600, textTransform: "uppercase" }}>
+                <div style={{ fontSize: "0.8rem", color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}>
                   Explainable Match Analysis
                 </div>
-                <h3 style={{ margin: "0.25rem 0 0", fontSize: "1.25rem", fontWeight: 800 }}>
+                <h3 style={{ margin: "0.5rem 0 0", fontSize: "1.5rem", fontWeight: 800, letterSpacing: "-0.02em" }}>
                   {detailModalProblem.title}
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setDetailModalProblem(null)}
-                style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)", fontSize: "1.25rem", fontWeight: 700 }}
+                style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)", fontSize: "1.5rem", fontWeight: 700 }}
               >
-                ×
+                &times;
               </button>
             </div>
 
             {/* Modal Body */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem", fontSize: "0.875rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", fontSize: "0.95rem" }}>
               {/* Problem Requirements */}
               <div>
-                <strong>Problem Required Expertise:</strong>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginTop: "0.35rem" }}>
+                <strong style={{ color: "var(--text-primary)" }}>Problem Required Expertise:</strong>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "0.75rem" }}>
                   {detailModalProblem.required_expertise?.map((req) => (
-                    <span key={req} style={{ padding: "0.2rem 0.5rem", borderRadius: "var(--radius-sm)", backgroundColor: "var(--bg-muted)", border: "1px solid var(--border-color)", fontSize: "0.8rem" }}>
+                    <span key={req} style={{ padding: "0.3rem 0.75rem", borderRadius: "var(--radius-full)", backgroundColor: "var(--bg-muted)", border: "1px solid var(--border-color)", fontSize: "0.85rem", fontWeight: 500 }}>
                       {req}
                     </span>
                   ))}
@@ -673,10 +697,10 @@ export function MatchingSkillsPage() {
 
               {/* Student Skills */}
               <div>
-                <strong>Your Student Skills:</strong>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginTop: "0.35rem" }}>
+                <strong style={{ color: "var(--text-primary)" }}>Your Current Competencies:</strong>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "0.75rem" }}>
                   {skills.map((sk) => (
-                    <span key={sk} style={{ padding: "0.2rem 0.5rem", borderRadius: "var(--radius-sm)", backgroundColor: "var(--color-primary-subtle)", color: "var(--color-primary)", fontSize: "0.8rem", fontWeight: 600 }}>
+                    <span key={sk} style={{ padding: "0.3rem 0.75rem", borderRadius: "var(--radius-full)", backgroundColor: "var(--color-primary-subtle)", color: "var(--color-primary)", border: "1px solid var(--color-primary-border)", fontSize: "0.85rem", fontWeight: 600 }}>
                       ✓ {sk}
                     </span>
                   ))}
@@ -684,32 +708,31 @@ export function MatchingSkillsPage() {
               </div>
 
               {/* Explainable Equation */}
-              <div style={{ padding: "0.85rem", borderRadius: "var(--radius-md)", backgroundColor: "var(--bg-muted)", border: "1px solid var(--border-color)" }}>
-                <div style={{ fontWeight: 700, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
+              <div style={{ padding: "1.25rem", borderRadius: "var(--radius-lg)", backgroundColor: "var(--bg-muted)", border: "1px solid var(--border-color)" }}>
+                <div style={{ fontWeight: 800, marginBottom: "0.5rem", color: "var(--text-primary)", fontSize: "1rem" }}>
                   Matching Breakdown:
                 </div>
-                <div style={{ color: "var(--text-secondary)", lineHeight: 1.5 }}>
+                <div style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
                   {detailModalProblem.matched_skills?.length > 0 ? (
                     <span>
                       Your skills overlap with the requirements for this problem in{" "}
-                      <strong>{detailModalProblem.matched_skills.join(", ")}</strong> (
-                      {detailModalProblem.matched_count} of {detailModalProblem.total_required} required areas matched).
+                      <strong style={{ color: "var(--color-success)" }}>{detailModalProblem.matched_skills.join(", ")}</strong>. 
+                      You have matched <strong>{detailModalProblem.matched_count}</strong> out of <strong>{detailModalProblem.total_required}</strong> required expertise areas.
                     </span>
                   ) : (
-                    <span>No direct skill match found.</span>
+                    <span>No direct skill match found based on current profile.</span>
                   )}
                 </div>
               </div>
             </div>
 
             {/* Modal Actions */}
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem", paddingTop: "0.5rem", borderTop: "1px solid var(--border-color)" }}>
-              <Button variant="ghost" size="sm" onClick={() => setDetailModalProblem(null)}>
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: "1rem", paddingTop: "1rem", borderTop: "1px solid var(--border-color)" }}>
+              <Button variant="ghost" onClick={() => setDetailModalProblem(null)}>
                 Close
               </Button>
               <Button
                 variant="primary"
-                size="sm"
                 icon="arrow-right"
                 onClick={() => {
                   setDetailModalProblem(null);
