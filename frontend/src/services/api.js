@@ -751,5 +751,16 @@ export const studentApi = {
     }),
 };
 
-
-
+// ============================================================================
+// UNIVERSITY APIs (backend/src/routes/universityRoutes.js)
+// ============================================================================
+export const universityApi = {
+  getDashboardCounts: () =>
+    apiRequest("/university/me/dashboard", {
+      method: "GET",
+    }),
+  getFacultyAndStudents: () =>
+    apiRequest("/university/me/faculty-students", {
+      method: "GET",
+    }),
+};

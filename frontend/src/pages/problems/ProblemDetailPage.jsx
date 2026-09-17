@@ -226,6 +226,14 @@ export function ProblemDetailPage({ id }) {
       { key: "overview", label: "Overview", icon: "cpu" },
       { key: "solutions", label: "Solutions & Tracking", icon: "check-circle" },
     ];
+  } else if (role === "UNIVERSITY") {
+    // University sees matched problems but skips deep dive modules
+    availableTabs = [
+      { key: "overview", label: "Overview", icon: "cpu" },
+      { key: "matching", label: "Expertise Matching", icon: "users" },
+      { key: "solutions", label: "Solutions & Evaluation", icon: "check-circle" },
+      { key: "collaboration", label: "Collaboration", icon: "users" },
+    ];
   } else {
     // Solvers (Faculty, Researchers, Startups, MSMEs)
     availableTabs = [
@@ -414,7 +422,7 @@ export function ProblemDetailPage({ id }) {
       {/* -------------------------------------------------------------------- */}
       {/* Lifecycle / Progress Tracker: Simple Stepper vs Timeline     */}
       {/* -------------------------------------------------------------------- */}
-      {isCitizen || isStudent ? (
+      {isCitizen || isStudent || role === "UNIVERSITY" ? (
         <Card style={{ padding: "1.5rem" }}>
           <div
             style={{

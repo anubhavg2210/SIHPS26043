@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { problemApi, reputationApi } from "../../services/api";
+import { problemApi, reputationApi, universityApi } from "../../services/api";
 import { Card, StatCard } from "../common/Cards";
 import { Button } from "../common/Button";
 import { PriorityBadge } from "../common/Badges";
@@ -14,6 +14,7 @@ export function UniversitySection() {
   const [problems, setProblems] = useState([]);
   const [universityRankings, setUniversityRankings] = useState([]);
   const [reputation, setReputation] = useState(null);
+  const [counts, setCounts] = useState({ facultyCount: 0, studentCount: 0 });
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -21,16 +22,20 @@ export function UniversitySection() {
     async function loadData() {
       setError("");
       try {
-        const [probRes, rankRes, repRes] = await Promise.allSettled([
+        const [probRes, rankRes, repRes, countsRes] = await Promise.allSettled([
           problemApi.getProblems({ limit: 20 }),
           reputationApi.getUniversityRankings(),
           reputationApi.getMyReputation(),
+          universityApi.getDashboardCounts().catch(() => ({ facultyCount: 0, studentCount: 0 }))
         ]);
 
         if (!ignore) {
           if (probRes.status === "fulfilled") setProblems(probRes.value?.problems || []);
           if (rankRes.status === "fulfilled") setUniversityRankings(rankRes.value?.rankings || rankRes.value || []);
           if (repRes.status === "fulfilled") setReputation(repRes.value);
+          if (countsRes.status === "fulfilled" && countsRes.value) {
+            setCounts(countsRes.value);
+          }
           setLoading(false);
         }
       } catch (err) {
@@ -72,13 +77,18 @@ export function UniversitySection() {
           icon="trending-up"
           iconColor="var(--color-secondary)"
         />
-        <StatCard
-          title="Collaboration Vectors"
-          value="Faculty & Students"
-          subtitle="Expertise-based team matching"
-          icon="users"
-          iconColor="var(--color-success)"
-        />
+        <div 
+          onClick={() => navigate('/faculty-students')} 
+          style={{ cursor: "pointer" }}
+        >
+          <StatCard
+            title="Collaboration Vectors"
+            value={loading ? "..." : `${counts.facultyCount} Faculty • ${counts.studentCount} Students`}
+            subtitle="Explore academic expertise"
+            icon="users"
+            iconColor="var(--color-success)"
+          />
+        </div>
       </div>
 
       {/* Institutional Mission Banner */}

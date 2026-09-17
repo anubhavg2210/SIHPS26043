@@ -167,7 +167,7 @@ export function SolutionsView({ problemId }) {
       toast.error("Title and description are required");
       return;
     }
-    if (role === "STUDENT" && !selectedFile) {
+    if ((role === "STUDENT" || role === "UNIVERSITY") && !selectedFile) {
       toast.error("Please upload a solution document (PDF/PPT/PPTX)");
       return;
     }
@@ -479,7 +479,7 @@ export function SolutionsView({ problemId }) {
           <p style={{ margin: "0 0 1.25rem", fontSize: "0.875rem", color: "var(--text-muted)", maxWidth: "420px" }}>
             {activeTab === "ranked"
               ? "Municipal authorities evaluate submitted solutions across the 6 normalized dimensions to generate deterministic composite rankings."
-              : (role === "STUDENT" 
+              : ((role === "STUDENT" || role === "UNIVERSITY")
                   ? "Propose your solution idea by uploading a document (PDF/PPT/PPTX). You don't need to provide a complete business plan." 
                   : "Registered universities, research labs, student teams, and startups can submit technical proposals to solve this civic challenge.")}
           </p>
@@ -608,8 +608,8 @@ export function SolutionsView({ problemId }) {
                   {sol.description}
                 </p>
 
-                {/* Specs Grid (Hidden for Students) */}
-                {role !== "STUDENT" && (
+                {/* Specs Grid (Hidden for Students and Universities) */}
+                {role !== "STUDENT" && role !== "UNIVERSITY" && (
                   <div
                     style={{
                       display: "grid",
@@ -659,15 +659,15 @@ export function SolutionsView({ problemId }) {
                   </div>
                 )}
 
-                {/* Methodology Details if available (Hidden for Students) */}
-                {role !== "STUDENT" && sol.methodology && (
+                {/* Methodology Details if available (Hidden for Students and Universities) */}
+                {role !== "STUDENT" && role !== "UNIVERSITY" && sol.methodology && (
                   <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>
                     <strong>Methodology:</strong> {sol.methodology}
                   </div>
                 )}
 
-                {/* Expected Impact (Hidden for Students) */}
-                {role !== "STUDENT" && sol.expected_impact && (
+                {/* Expected Impact (Hidden for Students and Universities) */}
+                {role !== "STUDENT" && role !== "UNIVERSITY" && sol.expected_impact && (
                   <div style={{ fontSize: "0.85rem", color: "var(--color-success)" }}>
                     <strong>Expected Impact:</strong> {sol.expected_impact}
                   </div>
@@ -868,7 +868,7 @@ export function SolutionsView({ problemId }) {
               accept=".pdf,.ppt,.pptx"
               onChange={handleFileChange}
               style={{ display: "block", marginBottom: "0.5rem" }}
-              required={role === "STUDENT"}
+              required={role === "STUDENT" || role === "UNIVERSITY"}
             />
             {selectedFile && (
               <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
@@ -877,7 +877,7 @@ export function SolutionsView({ problemId }) {
             )}
           </div>
 
-          {role !== "STUDENT" && (
+          {role !== "STUDENT" && role !== "UNIVERSITY" && (
             <>
               <div className="cs-grid-2">
                 <div className="cs-form-group">

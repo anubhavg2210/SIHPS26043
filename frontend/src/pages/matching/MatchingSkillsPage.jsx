@@ -27,7 +27,7 @@ const SKILL_SUGGESTIONS = [
 ];
 
 export function MatchingSkillsPage() {
-  const { user } = useAuth();
+  const { user, role } = useAuth();
   const { navigate } = useRouter();
 
   const [loading, setLoading] = useState(true);
@@ -143,7 +143,7 @@ export function MatchingSkillsPage() {
         title="Your Skills Profile"
         subtitle={profile ? `${profile.name || user?.name} • ${profile.course || "Student Contributor"} (${profile.institution_name || "Institution"})` : "Student Competencies"}
         actions={
-          !isEditingSkills && (
+          !isEditingSkills && role !== "UNIVERSITY" && (
             <Button
               variant="outline"
               size="sm"
@@ -311,17 +311,19 @@ export function MatchingSkillsPage() {
             <p style={{ margin: "0 0 1rem", fontSize: "0.9rem", color: "var(--text-muted)" }}>
               No skills registered yet. Add your competencies to discover societal challenges you can help solve.
             </p>
-            <Button
-              variant="primary"
-              size="sm"
-              icon="plus-circle"
-              onClick={() => {
-                setEditingSkillsList([]);
-                setIsEditingSkills(true);
-              }}
-            >
-              Add Skills
-            </Button>
+            {role !== "UNIVERSITY" && (
+              <Button
+                variant="primary"
+                size="sm"
+                icon="plus-circle"
+                onClick={() => {
+                  setEditingSkillsList([]);
+                  setIsEditingSkills(true);
+                }}
+              >
+                Add Skills
+              </Button>
+            )}
           </div>
         ) : (
           <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", alignItems: "center" }}>

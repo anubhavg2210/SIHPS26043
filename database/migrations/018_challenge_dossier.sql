@@ -4,7 +4,6 @@
 CREATE TABLE IF NOT EXISTS challenge_dossiers (
     id SERIAL PRIMARY KEY,
     problem_id INTEGER REFERENCES problems(id) ON DELETE CASCADE,
-    challenge_id INTEGER REFERENCES challenges(id) ON DELETE CASCADE,
     domain VARCHAR(100) NOT NULL,
     subdomain VARCHAR(100) NOT NULL,
     problem_type VARCHAR(150) NOT NULL,
