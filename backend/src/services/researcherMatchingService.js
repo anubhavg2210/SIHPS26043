@@ -18,6 +18,7 @@
 "use strict";
 
 const pool = require("../config/db");
+const { explainMatch } = require("./ai/aiOrchestrator");
 
 // Re-use parser from student matching
 const { parseIntParam } = require("./studentMatchingService");
@@ -127,6 +128,18 @@ matches.sort((a, b) => {
         if (b.score !== a.score) return b.score - a.score;
         return a.name.localeCompare(b.name);
     });
+
+    // Add AI Explanation for top 5 matches to avoid excessive latency
+    for (let i = 0; i < Math.min(matches.length, 5); i++) {
+        try {
+            const aiExplanation = await explainMatch(required_expertise, matches[i].matched_expertise || [], matches[i].score);
+            if (aiExplanation) {
+                matches[i].reason += "\nAI Insights: " + aiExplanation;
+            }
+        } catch (e) {
+            console.warn(`[AI] Failed to explain match for researcher ${matches[i].researcher_id}:`, e.message);
+        }
+    }
 
     return {
         required_expertise: required_expertise,
