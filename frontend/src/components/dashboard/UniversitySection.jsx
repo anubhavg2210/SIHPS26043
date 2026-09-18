@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { problemApi, reputationApi, universityApi } from "../../services/api";
 import { Card, StatCard } from "../common/Cards";
 import { Button } from "../common/Button";
-import { PriorityBadge } from "../common/Badges";
+import { StatusBadge } from "../common/Badges";
 import { Icon } from "../common/Icons";
 import { EmptyState, LoadingSkeleton } from "../common/Feedback";
 import { useRouter } from "../../context/useRouter";
@@ -198,7 +198,7 @@ export function UniversitySection() {
                           <div style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>#{prob.id} &bull; 📍 {prob.district || "District"}</div>
                         </div>
                       </div>
-                      <PriorityBadge priority={prio} />
+                      {/* PriorityBadge removed */}
                     </div>
 
                     <h4 style={{ margin: "0 0 0.5rem", fontSize: "0.95rem", fontWeight: 700, color: "var(--text-primary)" }}>

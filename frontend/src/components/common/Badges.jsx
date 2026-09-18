@@ -87,44 +87,6 @@ export function StatusBadge({ status, className = "" }) {
 }
 
 export function DemoBadge({ className = "" }) {
-  return (
-    <Badge variant="demo" className={className}>
-      DEMO DATA
-    </Badge>
-  );
+  return null;
 }
 
-export function PriorityBadge({ priority, priorityScore, priorityTier, className = "" }) {
-  const score = priority != null ? Number(priority) : (priorityScore != null ? Number(priorityScore) : null);
-  let variant = "default";
-  let label = priorityTier || "NORMAL";
-
-  if (score !== null && !isNaN(score)) {
-    if (score >= 80) {
-      variant = "danger";
-      label = `CRITICAL (${score})`;
-    } else if (score >= 60) {
-      variant = "warning";
-      label = `HIGH (${score})`;
-    } else if (score >= 40) {
-      variant = "info";
-      label = `MEDIUM (${score})`;
-    } else {
-      variant = "success";
-      label = `LOW (${score})`;
-    }
-  } else if (priorityTier) {
-    const norm = String(priorityTier).toUpperCase();
-    if (norm === "CRITICAL") variant = "danger";
-    else if (norm === "HIGH") variant = "warning";
-    else if (norm === "MEDIUM") variant = "info";
-    else variant = "success";
-    label = norm;
-  }
-
-  return (
-    <Badge variant={variant} className={className}>
-      {label}
-    </Badge>
-  );
-}

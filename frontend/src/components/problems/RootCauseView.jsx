@@ -339,8 +339,7 @@ export function RootCauseView({ problemId }) {
                 color: "var(--text-muted)",
                 border: "1px solid var(--border-color)",
               }}
-            >
-              [DEMO DATA]
+            >              
             </span>
           </div>
           <p style={{ margin: "0.25rem 0 0", fontSize: "0.85rem", color: "var(--text-muted)" }}>

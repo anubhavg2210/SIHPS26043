@@ -99,7 +99,7 @@ export function AdminSection() {
         <StatCard
           title="Critical Issues"
           value={String(summary?.critical_priority || 0)}
-          subtitle="Priority score ≥ 80"
+          subtitle="Critical cases"
           icon="alert-triangle"
           iconColor="var(--color-danger)"
         />

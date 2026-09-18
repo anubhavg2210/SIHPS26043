@@ -216,8 +216,7 @@ export function DependencyGraphView({ problemId, currentProblem }) {
                 color: "var(--text-muted)",
                 border: "1px solid var(--border-color)",
               }}
-            >
-              [DEMO DATA]
+            >              
             </span>
             {graphData?.nodes && (
               <span
