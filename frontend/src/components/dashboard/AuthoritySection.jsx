@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { authorityDashboardApi } from "../../services/api";
 import { Card, StatCard } from "../common/Cards";
 import { Button } from "../common/Button";
-import { StatusBadge, PriorityBadge } from "../common/Badges";
+import { StatusBadge } from "../common/Badges";
 import { Icon } from "../common/Icons";
 import { EmptyState, LoadingSkeleton } from "../common/Feedback";
 import { useRouter } from "../../context/useRouter";
@@ -130,7 +130,7 @@ export function AuthoritySection() {
       {/* 2. Priority Problems Queue from /api/authority/dashboard/priority */}
       <Card
         title="High-Priority Escalation Queue"
-        subtitle="Cases with priority score ≥ 60 requiring statutory verification, RCA, or solution evaluation"
+        subtitle="Cases requiring statutory verification, RCA, or solution evaluation"
         actions={
           <div style={{ display: "flex", gap: "0.5rem" }}>
             <Button variant="ghost" size="sm" icon="bell" onClick={() => navigate("/notifications")}>
@@ -180,7 +180,7 @@ export function AuthoritySection() {
                 >
                   <div style={{ flex: 1, minWidth: "260px" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
-                      <PriorityBadge priority={prio} />
+                      {/* PriorityBadge removed */}
                       <StatusBadge status={prob.status} />
                       <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
                         #{prob.id} &bull; 📍 {prob.district || "District"}

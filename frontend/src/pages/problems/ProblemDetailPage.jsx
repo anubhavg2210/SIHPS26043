@@ -374,7 +374,7 @@ export function ProblemDetailPage({ id }) {
             </div>
           </div>
 
-          {/* Authority / Admin Actions & Internal Priority Score */}
+          {/* Authority / Admin Actions */}
           {isAuthorityOrAdmin && (
             <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
               <Button
@@ -384,25 +384,6 @@ export function ProblemDetailPage({ id }) {
                 View Impact Passport
               </Button>
 
-              {/* Priority Score Widget (Authority Only) */}
-              <div
-                style={{
-                  padding: "1rem 1.5rem",
-                  backgroundColor: "var(--color-primary-subtle)",
-                  borderRadius: "var(--radius-xl)",
-                  border: "1px solid var(--color-primary-border)",
-                  textAlign: "center",
-                  minWidth: "120px",
-                }}
-              >
-                <div style={{ fontSize: "0.7rem", color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase" }}>
-                  Civic Priority Score
-                </div>
-                <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "var(--color-primary)", marginTop: "0.15rem" }}>
-                  {problem.priority_score || ((problem.severity || 5) * 5 + (problem.urgency || 5) * 5)}
-                  <span style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 500 }}> / 100</span>
-                </div>
-              </div>
             </div>
           )}
         </div>
@@ -463,14 +444,18 @@ export function ProblemDetailPage({ id }) {
           {/* Clean Stepper for Citizens and Students */}
           <div
             style={{
-              display: "grid",
-              gridTemplateColumns: isStudent ? "repeat(auto-fit, minmax(110px, 1fr))" : "repeat(auto-fit, minmax(140px, 1fr))",
-              gap: "1rem",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "0.5rem",
+              flexWrap: "wrap",
             }}
           >
             {/* Stage 1: Problem Reported */}
             <div
               style={{
+                flex: 1,
+                minWidth: "120px",
                 padding: "0.85rem 1rem",
                 borderRadius: "var(--radius-md)",
                 backgroundColor: "var(--color-success-subtle)",
@@ -489,9 +474,13 @@ export function ProblemDetailPage({ id }) {
               </div>
             </div>
 
+            <Icon name="chevron-right" size={20} color="var(--text-muted)" />
+
             {/* Stage 2: Under Review */}
             <div
               style={{
+                flex: 1,
+                minWidth: "120px",
                 padding: "0.85rem 1rem",
                 borderRadius: "var(--radius-md)",
                 backgroundColor: isStage2Complete ? "var(--color-success-subtle)" : "var(--bg-muted)",
@@ -519,9 +508,13 @@ export function ProblemDetailPage({ id }) {
               </div>
             </div>
 
+            <Icon name="chevron-right" size={20} color="var(--text-muted)" />
+
             {/* Stage 3: Being Worked On */}
             <div
               style={{
+                flex: 1,
+                minWidth: "120px",
                 padding: "0.85rem 1rem",
                 borderRadius: "var(--radius-md)",
                 backgroundColor: isStage4Complete ? "var(--color-success-subtle)" : isStage3Active ? "var(--color-primary-subtle)" : "var(--bg-muted)",
@@ -549,9 +542,13 @@ export function ProblemDetailPage({ id }) {
               </div>
             </div>
 
+            <Icon name="chevron-right" size={20} color="var(--text-muted)" />
+
             {/* Stage 4: Resolved */}
             <div
               style={{
+                flex: 1,
+                minWidth: "120px",
                 padding: "0.85rem 1rem",
                 borderRadius: "var(--radius-md)",
                 backgroundColor: isStage4Complete ? "var(--color-success-subtle)" : "var(--bg-muted)",

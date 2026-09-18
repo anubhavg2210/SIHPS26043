@@ -1,4 +1,4 @@
-import { StatusBadge, PriorityBadge } from "../common/Badges";
+import { StatusBadge } from "../common/Badges";
 import { Button } from "../common/Button";
 import { useRouter } from "../../context/useRouter.js";
 import { useAuth } from "../../context/useAuth.js";
@@ -80,7 +80,7 @@ export function ProblemCard({ problem, onSelect }) {
         >
           <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", flexWrap: "wrap" }}>
             <StatusBadge status={problem.status || "REPORTED"} />
-            {isAuthorityOrAdmin && <PriorityBadge priority={priority} />}
+            {/* Priority Score removed */}
           </div>
 
           <span
@@ -183,43 +183,7 @@ export function ProblemCard({ problem, onSelect }) {
           )}
         </div>
 
-        {/* Priority Graphical Indicator (Visible to AUTHORITY/ADMIN only) */}
-        {isAuthorityOrAdmin && (
-          <div style={{ marginBottom: "1rem" }}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                fontSize: "0.72rem",
-                fontWeight: 600,
-                color: "var(--text-muted)",
-                marginBottom: "0.25rem",
-              }}
-            >
-              <span>CIVIC PRIORITY</span>
-              <span style={{ color: priorityColor, fontWeight: 700 }}>
-                {priority} / 100
-              </span>
-            </div>
-            <div
-              style={{
-                height: "6px",
-                borderRadius: "var(--radius-full)",
-                backgroundColor: "var(--bg-muted)",
-                overflow: "hidden",
-              }}
-            >
-              <div
-                style={{
-                  height: "100%",
-                  width: `${Math.min(100, Math.max(0, priority))}%`,
-                  backgroundColor: priorityColor,
-                  transition: "width var(--transition-normal)",
-                }}
-              />
-            </div>
-          </div>
-        )}
+        {/* Priority Graphical Indicator removed */}
 
         {/* Required Expertise Chips (Visible to AUTHORITY, ADMIN and SOLVERS only) */}
         {(isAuthorityOrAdmin || isSolver) && skills.length > 0 && (

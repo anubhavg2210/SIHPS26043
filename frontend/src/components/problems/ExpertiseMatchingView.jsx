@@ -383,7 +383,7 @@ export function ExpertiseMatchingView({
       >
         <Icon name="award" size={15} color="#854d0e" />
         <span>
-          Match score reflects overlap between required and available expertise in the capability database. Records tagged [DEMO DATA] are synthetic.
+          Match score reflects overlap between required and available expertise in the capability database.
         </span>
       </div>
 

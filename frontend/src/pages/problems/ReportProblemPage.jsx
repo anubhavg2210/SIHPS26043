@@ -1258,18 +1258,7 @@ export function ReportProblemPage() {
                     </div>
                   </div>
 
-                  {/* Priority Score */}
-                  <div style={{ padding: "0.85rem", backgroundColor: "var(--bg-muted)", borderRadius: "var(--radius-md)" }}>
-                    <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 600 }}>
-                      {t("report.priorityScoreLabel")}
-                    </div>
-                    <div style={{ fontSize: "1.35rem", fontWeight: 800, color: "var(--color-primary)", marginTop: "0.2rem" }}>
-                      {createdProblem.priority_score ? Number(createdProblem.priority_score).toFixed(1) : "50.0"}
-                    </div>
-                    <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
-                      District: {createdProblem.district || form.district}
-                    </div>
-                  </div>
+                {/* Priority Score removed */}
 
                   {/* Related Problems */}
                   <div style={{ padding: "0.85rem", backgroundColor: "var(--bg-muted)", borderRadius: "var(--radius-md)" }}>

@@ -1,16 +1,37 @@
+import { useState, useEffect } from "react";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
+import { ThemeContext } from "../../context/ThemeContext";
 
 export function AppLayout({ children }) {
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('theme') || 'light';
+  });
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+  };
+
   return (
-    <div
-      style={{
-        display: "flex",
-        minHeight: "100vh",
-        backgroundColor: "var(--bg-page)",
-        width: "100%",
-      }}
-    >
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      <div
+        style={{
+          display: "flex",
+          minHeight: "100vh",
+          backgroundColor: "var(--bg-page)",
+          color: "var(--text-primary)",
+          width: "100%",
+        }}
+      >
       {/* Desktop-First Collapsible Sidebar */}
       <Sidebar />
 
@@ -39,5 +60,6 @@ export function AppLayout({ children }) {
         </main>
       </div>
     </div>
+    </ThemeContext.Provider>
   );
 }

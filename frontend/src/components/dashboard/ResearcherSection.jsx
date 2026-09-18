@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { problemApi, reputationApi } from "../../services/api";
 import { Card, StatCard } from "../common/Cards";
 import { Button } from "../common/Button";
-import { PriorityBadge } from "../common/Badges";
+import { StatusBadge } from "../common/Badges";
 import { Icon } from "../common/Icons";
 import { EmptyState, LoadingSkeleton } from "../common/Feedback";
 import { useRouter } from "../../context/useRouter";
@@ -191,7 +191,7 @@ export function ResearcherSection() {
                       >
                         {prob.category}
                       </span>
-                      <PriorityBadge priority={prio} />
+                      {/* PriorityBadge removed */}
                       <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
                         #{prob.id} &bull; 📍 {prob.district || "District"}
                       </span>

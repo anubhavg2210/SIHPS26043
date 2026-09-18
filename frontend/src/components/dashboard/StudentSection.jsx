@@ -295,6 +295,16 @@ export function StudentSection({ user }) {
                       <strong>{prob.match_tier}</strong> ({prob.match_score}%) &bull; {getContributionArea(prob.matched_skills || [])}
                     </p>
                   </div>
+
+                  {/* Step 4: Next Steps */}
+                  <div>
+                    <div style={{ fontSize: "0.7rem", fontWeight: 700, color: "var(--color-warning)", textTransform: "uppercase" }}>
+                      4. Next Steps
+                    </div>
+                    <p style={{ margin: "0.35rem 0 0", fontSize: "0.8rem", color: "var(--text-secondary)", lineHeight: 1.4 }}>
+                      Propose a solution to collaborate on this civic challenge.
+                    </p>
+                  </div>
                 </div>
 
                 {/* Explanation & Action Footer */}
