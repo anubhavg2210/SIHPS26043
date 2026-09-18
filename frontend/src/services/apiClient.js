@@ -65,6 +65,24 @@ export function clearStoredAuth() {
 }
 
 /**
+ * Returns a full URL for a static file (e.g., /uploads/...)
+ * Ensures we don't hardcode localhost.
+ */
+export function getFileUrl(path) {
+  if (!path) return "";
+  if (path.startsWith("http")) return path;
+  
+  // Base URL for uploads is the API_BASE_URL minus the /api part
+  let baseUrl = API_BASE_URL.endsWith("/") ? API_BASE_URL.slice(0, -1) : API_BASE_URL;
+  if (baseUrl.endsWith("/api")) {
+    baseUrl = baseUrl.slice(0, -4);
+  }
+  
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  return `${baseUrl}${cleanPath}`;
+}
+
+/**
  * Universal Request Handler
  */
 export async function apiRequest(endpoint, options = {}) {
@@ -77,8 +95,19 @@ export async function apiRequest(endpoint, options = {}) {
   } = options;
 
   let finalEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
-  let url = `${API_BASE_URL}${finalEndpoint}`;
-  if (url.includes("/api/api/")) {
+  
+  // Ensure endpoint is prefixed with /api
+  if (!finalEndpoint.startsWith("/api/")) {
+    finalEndpoint = `/api${finalEndpoint}`;
+  }
+
+  // Ensure API_BASE_URL doesn't end with slash
+  const baseUrl = API_BASE_URL.endsWith("/") ? API_BASE_URL.slice(0, -1) : API_BASE_URL;
+
+  let url = `${baseUrl}${finalEndpoint}`;
+  
+  // Clean up any double /api/api/ that might occur if baseUrl already includes /api
+  while (url.includes("/api/api/")) {
     url = url.replace("/api/api/", "/api/");
   }
 

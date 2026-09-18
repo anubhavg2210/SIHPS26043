@@ -151,7 +151,8 @@ export function AuthoritySection() {
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
             {priorityQueue.map((prob) => {
-              const prio = prob.priority_score ?? ((prob.severity || 0) * 5 + (prob.urgency || 0) * 5);
+              const _ps = Number(prob.priority_score);
+              const prio = (!isNaN(_ps) && prob.priority_score !== null) ? _ps : ((prob.severity || 0) * 5 + (prob.urgency || 0) * 5);
               return (
                 <div
                   key={prob.id}

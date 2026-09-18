@@ -14,6 +14,7 @@ import { AIAnalysisView } from "../../components/problems/AIAnalysisView";
 import { CommunityView } from "../../components/problems/CommunityView";
 import { TeamView } from "../../components/teams/TeamView";
 import { problemApi, matchingApi, challengeApi } from "../../services/api";
+import { getFileUrl } from "../../services/apiClient";
 import { useRouter } from "../../context/useRouter.js";
 import { useAuth } from "../../context/useAuth.js";
 import { useTranslation } from "../../context/useTranslation.js";
@@ -666,13 +667,13 @@ export function ProblemDetailPage({ id }) {
                     problem.evidence_url.endsWith(".webm") ||
                     problem.evidence_url.endsWith(".mov") ? (
                       <video
-                        src={problem.evidence_url.startsWith("http") ? problem.evidence_url : `http://localhost:5000${problem.evidence_url.startsWith("/") ? "" : "/"}${problem.evidence_url}`}
+                        src={getFileUrl(problem.evidence_url)}
                         controls
                         style={{ maxWidth: "100%", maxHeight: "360px" }}
                       />
                     ) : (
                       <img
-                        src={problem.evidence_url.startsWith("http") ? problem.evidence_url : `http://localhost:5000${problem.evidence_url.startsWith("/") ? "" : "/"}${problem.evidence_url}`}
+                        src={getFileUrl(problem.evidence_url)}
                         alt="Field Evidence"
                         style={{ maxWidth: "100%", maxHeight: "360px", objectFit: "contain" }}
                       />
