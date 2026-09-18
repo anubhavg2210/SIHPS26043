@@ -18,6 +18,7 @@
 "use strict";
 
 const pool = require("../config/db");
+const { explainMatch } = require("./ai/aiOrchestrator");
 
 /**
  * Parse and validate a numeric query-string parameter.
@@ -148,6 +149,23 @@ async function findStudentMatches(problemId, options = {}) {
             reason: buildReason(row.matched_count, totalRequired)
         };
     });
+
+    matches.sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return a.name.localeCompare(b.name);
+    });
+    
+    // Add AI Explanation for top 5 matches to avoid excessive latency
+    for (let i = 0; i < Math.min(matches.length, 5); i++) {
+        try {
+            const aiExplanation = await explainMatch(required_expertise, matches[i].matched_skills || [], matches[i].score);
+            if (aiExplanation) {
+                matches[i].reason += "\nAI Insights: " + aiExplanation;
+            }
+        } catch (e) {
+            console.warn(`[AI] Failed to explain match for student ${matches[i].student_id}:`, e.message);
+        }
+    }
 
     matches.sort((a, b) => {
         if (b.score !== a.score) return b.score - a.score;
@@ -361,6 +379,18 @@ async function findMatchingProblemsForStudent(userId, options = {}) {
             if (b.matched_count !== a.matched_count) return b.matched_count - a.matched_count;
             return new Date(b.created_at) - new Date(a.created_at);
         });
+    }
+
+    // Add AI Explanation for top 5 matches
+    for (let i = 0; i < Math.min(matches.length, 5); i++) {
+        try {
+            const aiExplanation = await explainMatch(matches[i].required_expertise, matches[i].matched_skills || [], matches[i].match_score);
+            if (aiExplanation) {
+                matches[i].match_reason += "\nAI Insights: " + aiExplanation;
+            }
+        } catch (e) {
+            console.warn(`[AI] Failed to explain match for problem ${matches[i].id}:`, e.message);
+        }
     }
 
     return {

@@ -2,7 +2,7 @@ import { Card } from "../common/Cards";
 import { Badge } from "../common/Badges";
 import { Icon } from "../common/Icons";
 
-export function AIAnalysisView({ analysis, priorityScore = null, duplicateCheck = null, clusterCheck = null }) {
+export function AIAnalysisView({ analysis, duplicateCheck = null, clusterCheck = null }) {
   if (!analysis) return null;
 
   const confidencePercent = analysis.confidence
@@ -117,7 +117,7 @@ export function AIAnalysisView({ analysis, priorityScore = null, duplicateCheck 
           </div>
         </div>
 
-        {/* Priority Score & Problem Type Row */}
+        {/* Problem Type Row */}
         <div
           style={{
             display: "flex",
@@ -140,27 +140,6 @@ export function AIAnalysisView({ analysis, priorityScore = null, duplicateCheck 
               {analysis.problem_type || "Societal Need"}
             </strong>
           </div>
-
-          {priorityScore !== null && (
-            <div style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
-              <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: 600, textTransform: "uppercase" }}>
-                Calculated Priority Score:
-              </span>
-              <span
-                style={{
-                  fontSize: "0.95rem",
-                  fontWeight: 800,
-                  color: priorityScore > 60 ? "var(--color-danger)" : "var(--color-primary)",
-                  backgroundColor: priorityScore > 60 ? "var(--color-danger-subtle)" : "var(--color-primary-subtle)",
-                  padding: "0.15rem 0.55rem",
-                  borderRadius: "var(--radius-sm)",
-                  border: `1px solid ${priorityScore > 60 ? "var(--color-danger-border)" : "var(--color-primary-border)"}`,
-                }}
-              >
-                {priorityScore}/100
-              </span>
-            </div>
-          )}
         </div>
 
         {/* Problem Summary */}

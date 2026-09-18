@@ -6,7 +6,7 @@ import { Card } from "../common/Cards";
 import { StatusBadge } from "../common/Badges";
 import { ProgressBar } from "../common/ProgressBar";
 import { Modal } from "../common/Modal";
-import { implementationApi } from "../../services/api";
+import { implementationApi, solutionApi, matchingApi, problemApi } from "../../services/api";
 import { useToast } from "../../context/useToast.js";
 
 export function ImplementationView({ problemId }) {
@@ -35,8 +35,8 @@ export function ImplementationView({ problemId }) {
   const [evidenceForm, setEvidenceForm] = useState({
     title: "",
     evidence_type: "PHOTO",
-    file_url: "",
   });
+  const [evidenceFile, setEvidenceFile] = useState(null);
   const [submittingEvidence, setSubmittingEvidence] = useState(false);
 
   // Verify Evidence Modal
@@ -44,6 +44,12 @@ export function ImplementationView({ problemId }) {
   const [verifyingEvidenceId, setVerifyingEvidenceId] = useState(null);
   const [verifyForm, setVerifyForm] = useState({ status: "VERIFIED", remarks: "" });
   const [submittingVerify, setSubmittingVerify] = useState(false);
+
+  // Assign Partner Modal
+  const [assignModalOpen, setAssignModalOpen] = useState(false);
+  const [assignData, setAssignData] = useState({ solutions: [], partners: [], loading: false });
+  const [assignForm, setAssignForm] = useState({ solutionId: "", partnerId: "", partnerName: "", title: "", expectedCompletionDate: "" });
+  const [submittingAssign, setSubmittingAssign] = useState(false);
 
   const refreshImplementations = async () => {
     if (!problemId) return;
@@ -148,19 +154,47 @@ export function ImplementationView({ problemId }) {
     }
   };
 
+  const handleEvidenceFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setEvidenceFile({
+        name: file.name,
+        type: file.type,
+        dataUrl: reader.result,
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handlePostEvidence = async (e) => {
     e.preventDefault();
     if (!selectedImpl) return;
+    if (!evidenceFile) {
+      toast.error("Please select a file to upload.");
+      return;
+    }
     setSubmittingEvidence(true);
     try {
+      // 1. Upload file first
+      const uploadRes = await problemApi.uploadEvidence({
+        fileName: evidenceFile.name,
+        fileType: evidenceFile.type,
+        fileData: evidenceFile.dataUrl,
+      });
+
+      // 2. Submit evidence
       await implementationApi.addEvidence(selectedImpl.id, {
         title: evidenceForm.title.trim(),
         evidence_type: evidenceForm.evidence_type,
-        file_url: evidenceForm.file_url.trim() || undefined,
+        file_url: uploadRes.file_url || undefined,
       });
       toast.success("Evidence submitted successfully (Pending Verification)");
       setEvidenceModalOpen(false);
-      setEvidenceForm({ title: "", evidence_type: "PHOTO", file_url: "" });
+      setEvidenceForm({ title: "", evidence_type: "PHOTO" });
+      setEvidenceFile(null);
       
       const evRes = await implementationApi.getEvidence(selectedImpl.id);
       setEvidence(evRes.evidence || []);
@@ -194,6 +228,57 @@ export function ImplementationView({ problemId }) {
     }
   };
 
+  const handleOpenAssignModal = async () => {
+    setAssignModalOpen(true);
+    setAssignData({ solutions: [], partners: [], loading: true });
+    try {
+      const [solRes, matchRes] = await Promise.all([
+        solutionApi.getRankedSolutions(problemId),
+        matchingApi.getMsmeMatches(problemId)
+      ]);
+      setAssignData({
+        solutions: solRes.solutions || [],
+        partners: matchRes.matches || [],
+        loading: false
+      });
+      setAssignForm({
+        solutionId: solRes.solutions?.[0]?.id || "",
+        partnerId: matchRes.matches?.[0]?.user_id || "",
+        partnerName: matchRes.matches?.[0]?.name || "",
+        title: "Implementation Phase 1",
+        expectedCompletionDate: ""
+      });
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load assignment data.");
+      setAssignData({ solutions: [], partners: [], loading: false });
+    }
+  };
+
+  const handleAssignSubmit = async (e) => {
+    e.preventDefault();
+    if (!assignForm.solutionId || !assignForm.partnerName) {
+      toast.error("Please select a solution and provide a partner name.");
+      return;
+    }
+    setSubmittingAssign(true);
+    try {
+      await implementationApi.createImplementationForSolution(assignForm.solutionId, {
+        title: assignForm.title,
+        partner_id: assignForm.partnerId || null,
+        partner_name: assignForm.partnerName,
+        expected_completion_date: assignForm.expectedCompletionDate || null
+      });
+      toast.success("Implementation assigned successfully!");
+      setAssignModalOpen(false);
+      refreshImplementations();
+    } catch (err) {
+      toast.error(err.message || "Failed to assign implementation.");
+    } finally {
+      setSubmittingAssign(false);
+    }
+  };
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
       {/* Header */}
@@ -221,8 +306,7 @@ export function ImplementationView({ problemId }) {
                 color: "var(--text-muted)",
                 border: "1px solid var(--border-color)",
               }}
-            >
-              [DEMO DATA]
+            >              
             </span>
           </div>
           <p style={{ margin: "0.25rem 0 0", fontSize: "0.85rem", color: "var(--text-muted)" }}>
@@ -232,11 +316,12 @@ export function ImplementationView({ problemId }) {
 
         {selectedImpl && (
           <div style={{ display: "flex", gap: "0.5rem" }}>
-            <Button
+              <Button
               variant="outline"
               icon="camera"
               onClick={() => {
-                setEvidenceForm({ title: "", evidence_type: "PHOTO", file_url: "" });
+                setEvidenceForm({ title: "", evidence_type: "PHOTO" });
+                setEvidenceFile(null);
                 setEvidenceModalOpen(true);
               }}
             >
@@ -299,9 +384,14 @@ export function ImplementationView({ problemId }) {
           <h4 style={{ margin: "0 0 0.35rem", fontSize: "1.1rem" }}>
             No Implementation Has Started for This Problem Yet
           </h4>
-          <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--text-muted)", maxWidth: "440px" }}>
+          <p style={{ margin: "0 auto 1.5rem", fontSize: "0.875rem", color: "var(--text-muted)", maxWidth: "440px" }}>
             Once an approved solution is selected and municipal funding is allocated, pilot milestones, field updates, and live progress will be tracked here.
           </p>
+          {role === "AUTHORITY" && (
+            <Button variant="primary" icon="plus" onClick={handleOpenAssignModal}>
+              Assign Implementation Partner
+            </Button>
+          )}
         </Card>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
@@ -578,18 +668,19 @@ export function ImplementationView({ problemId }) {
           </div>
 
           <div className="cs-form-group">
-            <label className="cs-label">File URL / Link</label>
+            <label className="cs-label">File Upload <span className="required">*</span></label>
             <input
-              type="text"
+              type="file"
+              accept={evidenceForm.evidence_type === "VIDEO" ? "video/*" : "image/*,application/pdf"}
               className="cs-input"
-              placeholder="https://..."
-              value={evidenceForm.file_url}
-              onChange={(e) => setEvidenceForm({ ...evidenceForm, file_url: e.target.value })}
+              onChange={handleEvidenceFileChange}
+              required
             />
+            {evidenceFile && <div style={{ marginTop: "0.5rem", fontSize: "0.85rem", color: "var(--color-success)" }}>File selected: {evidenceFile.name}</div>}
           </div>
 
           <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem", marginTop: "1rem" }}>
-            <Button type="button" variant="outline" onClick={() => setEvidenceModalOpen(false)} disabled={submittingEvidence}>
+            <Button type="button" variant="outline" onClick={() => { setEvidenceModalOpen(false); setEvidenceFile(null); }} disabled={submittingEvidence}>
               Cancel
             </Button>
             <Button type="submit" variant="primary" loading={submittingEvidence}>
@@ -638,6 +729,101 @@ export function ImplementationView({ problemId }) {
             </Button>
           </div>
         </form>
+      </Modal>
+
+      {/* Assign Partner Modal */}
+      <Modal
+        isOpen={assignModalOpen}
+        onClose={() => setAssignModalOpen(false)}
+        title="Assign Implementation Partner"
+      >
+        {assignData.loading ? (
+          <div style={{ textAlign: "center", padding: "2rem" }}>
+            <Icon name="spinner" size={24} color="var(--color-primary)" />
+            <p>Loading solutions and recommendations...</p>
+          </div>
+        ) : (
+          <form onSubmit={handleAssignSubmit}>
+            <div className="cs-form-group">
+              <label className="cs-label">Select Solution <span className="required">*</span></label>
+              <select
+                className="cs-input"
+                value={assignForm.solutionId}
+                onChange={(e) => setAssignForm({ ...assignForm, solutionId: e.target.value })}
+                required
+              >
+                <option value="">-- Choose a Solution --</option>
+                {assignData.solutions.map((s) => (
+                  <option key={s.id} value={s.id}>{s.title}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="cs-form-group">
+              <label className="cs-label">Recommended Partner (MSME/Startup)</label>
+              <select
+                className="cs-input"
+                value={assignForm.partnerId}
+                onChange={(e) => {
+                  const partner = assignData.partners.find(p => String(p.user_id) === String(e.target.value));
+                  setAssignForm({
+                    ...assignForm,
+                    partnerId: e.target.value,
+                    partnerName: partner ? partner.name : assignForm.partnerName
+                  });
+                }}
+              >
+                <option value="">-- Select or enter manually below --</option>
+                {assignData.partners.map((p) => (
+                  <option key={p.user_id} value={p.user_id}>{p.name} (Match: {Math.round(p.match_score * 100)}%)</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="cs-form-group">
+              <label className="cs-label">Partner Name <span className="required">*</span></label>
+              <input
+                type="text"
+                className="cs-input"
+                placeholder="Partner Name"
+                value={assignForm.partnerName}
+                onChange={(e) => setAssignForm({ ...assignForm, partnerName: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className="cs-form-group">
+              <label className="cs-label">Implementation Title</label>
+              <input
+                type="text"
+                className="cs-input"
+                placeholder="Phase 1 Execution"
+                value={assignForm.title}
+                onChange={(e) => setAssignForm({ ...assignForm, title: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className="cs-form-group">
+              <label className="cs-label">Expected Completion Date</label>
+              <input
+                type="date"
+                className="cs-input"
+                value={assignForm.expectedCompletionDate}
+                onChange={(e) => setAssignForm({ ...assignForm, expectedCompletionDate: e.target.value })}
+              />
+            </div>
+
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem", marginTop: "1rem" }}>
+              <Button type="button" variant="outline" onClick={() => setAssignModalOpen(false)} disabled={submittingAssign}>
+                Cancel
+              </Button>
+              <Button type="submit" variant="primary" loading={submittingAssign}>
+                Assign Partner
+              </Button>
+            </div>
+          </form>
+        )}
       </Modal>
     </div>
   );

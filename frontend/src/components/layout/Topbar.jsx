@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
 import { Icon } from "../common/Icons";
 import { useAuth } from "../../context/useAuth.js";
 import { useNotification } from "../../context/useNotification.js";
@@ -7,12 +7,14 @@ import { useRouter } from "../../context/useRouter.js";
 import { StatusBadge } from "../common/Badges";
 import { useTranslation } from "../../context/useTranslation.js";
 import { problemApi } from "../../services/api.js";
+import { ThemeContext } from "../../context/ThemeContext";
 
 export function Topbar() {
   const { user, role, logout } = useAuth();
   const { unreadCount } = useNotification();
   const { navigate } = useRouter();
   const { t, language, setLanguage } = useTranslation();
+  const { theme, toggleTheme } = useContext(ThemeContext);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -300,6 +302,29 @@ export function Topbar() {
 
       {/* Right Action Zone: Language Selector, Notifications, User Profile */}
       <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+        {/* Dark Mode Toggle */}
+        <button
+          type="button"
+          onClick={toggleTheme}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "#ffffff",
+            color: "var(--text-primary)",
+            borderRadius: "var(--radius-full)",
+            padding: "0.6rem",
+            border: "1px solid var(--border-color)",
+            boxShadow: "var(--shadow-xs)",
+            cursor: "pointer",
+            transition: "all var(--transition-fast)",
+          }}
+          title={theme === 'dark' ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          aria-label="Toggle Dark Mode"
+        >
+          <Icon name={theme === 'dark' ? "sun" : "moon"} size={20} />
+        </button>
+
         {/* Language Selector (EN | हिन्दी) */}
         <div
           style={{

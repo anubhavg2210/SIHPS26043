@@ -81,7 +81,46 @@
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
+[data-theme='dark'] {
+  --bg-page: #0f172a;
+  --bg-card: #1e293b;
+  --bg-card-hover: #334155;
+  --bg-muted: #1e293b;
+  --bg-sidebar: #0f172a;
+  --bg-sidebar-hover: #1e293b;
+  --bg-sidebar-active: #1e3a8a;
+  
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-light: #64748b;
+  --text-white: #ffffff;
+  
+  --border-color: #334155;
+  --border-light: #1e293b;
+  
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 4px 12px 0 rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 24px -2px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 32px -4px rgba(0, 0, 0, 0.6);
+  --shadow-xl: 0 20px 40px -5px rgba(0, 0, 0, 0.7);
+
+  --color-primary-subtle: rgba(59, 130, 246, 0.15);
+  --color-primary-border: rgba(59, 130, 246, 0.3);
+  --color-secondary-subtle: rgba(5, 150, 105, 0.15);
+  --color-secondary-border: rgba(5, 150, 105, 0.3);
+  --color-success-subtle: rgba(16, 185, 129, 0.15);
+  --color-success-border: rgba(16, 185, 129, 0.3);
+  --color-warning-subtle: rgba(245, 158, 11, 0.15);
+  --color-warning-border: rgba(245, 158, 11, 0.3);
+  --color-danger-subtle: rgba(239, 68, 68, 0.15);
+  --color-danger-border: rgba(239, 68, 68, 0.3);
+  --color-info-subtle: rgba(2, 132, 199, 0.15);
+  --color-info-border: rgba(2, 132, 199, 0.3);
+}
+
 /* ==========================================================================
+
    Base Resets
    ========================================================================== */
 *, *::before, *::after {
