@@ -76,7 +76,11 @@ export async function apiRequest(endpoint, options = {}) {
     requireAuth = true,
   } = options;
 
-  let url = `${API_BASE_URL}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}`;
+  let finalEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  let url = `${API_BASE_URL}${finalEndpoint}`;
+  if (url.includes("/api/api/")) {
+    url = url.replace("/api/api/", "/api/");
+  }
 
   if (params && typeof params === "object") {
     const searchParams = new URLSearchParams();
