@@ -695,10 +695,8 @@ export function ProblemDetailPage({ id }) {
               </div>
             </Card>
 
-            {/* AI Analysis View is restricted to Solvers, Authorities, and Admins, but hidden for students to simplify */}
-            {!isCitizen && !isStudent && (
-              <AIAnalysisView aiAnalysis={aiAnalysisObj} priorityScore={problem.priority_score} />
-            )}
+            {/* AI Analysis View - AI Intelligence & Capability Breakdown */}
+            <AIAnalysisView aiAnalysis={aiAnalysisObj} priorityScore={problem.priority_score} />
           </div>
         )}
 

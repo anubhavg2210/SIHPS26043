@@ -459,6 +459,11 @@ def generate_challenge_dossier(challenge: ChallengeInput) -> ChallengeAnalysis:
     )
 
     # Build Raw Dossier Object
+    desc_clean = challenge.description.strip() if challenge.description else ""
+    desc_snippet = (desc_clean[:197] + "...") if len(desc_clean) > 200 else desc_clean
+    title_clean = challenge.title.strip() if challenge.title else "Civic Challenge"
+    synthesized_summary = f"[{domain} - {subdomain}] {title_clean}: {desc_snippet}" if desc_snippet else f"Actionable societal challenge regarding {subdomain.lower()} in {challenge.district or 'the reported area'}."
+
     dossier = ChallengeDossier(
         report=ReportModel(
             raw_text=raw_text,
@@ -470,7 +475,7 @@ def generate_challenge_dossier(challenge: ChallengeInput) -> ChallengeAnalysis:
         ),
         problem=ProblemModel(
             title=challenge.title or "Societal Challenge",
-            summary=f"Actionable societal challenge regarding {subdomain.lower()} in {challenge.district or 'the reported area'}.",
+            summary=synthesized_summary,
             domain=domain,
             subdomain=subdomain,
             problem_type=problem_type,
