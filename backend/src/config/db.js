@@ -286,7 +286,8 @@ const dbWrapper = {
     query: (text, params) => executeQuery(text, params),
     on: (event, handler) => {
         pgPool.on(event, handler);
-    }
+    },
+    end: () => pgPool.end()
 };
 
 module.exports = dbWrapper;

@@ -35,6 +35,7 @@
 "use strict";
 
 const pool = require("../config/db");
+const { explainMatch } = require("./ai/aiOrchestrator");
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -249,6 +250,18 @@ async function findFacultyMatches(problemId, options = {}) {
         }
         return a.faculty_name.localeCompare(b.faculty_name);
     });
+
+    // Add AI Explanation for top 5 matches
+    for (let i = 0; i < Math.min(matches.length, 5); i++) {
+        try {
+            const aiExplanation = await explainMatch(requiredNames, matches[i].matched_expertise || [], matches[i].score);
+            if (aiExplanation) {
+                matches[i].reason += "\nAI Insights: " + aiExplanation;
+            }
+        } catch (e) {
+            console.warn(`[AI] Failed to explain match for faculty ${matches[i].faculty_id}:`, e.message);
+        }
+    }
 
     return { required_expertise: requiredNames, matches };
 }
