@@ -518,13 +518,13 @@ export function ProblemDetailPage({ id }) {
                     problem.evidence_url.endsWith(".webm") ||
                     problem.evidence_url.endsWith(".mov") ? (
                       <video
-                        src={problem.evidence_url.startsWith("http") ? problem.evidence_url : `http://localhost:5000${problem.evidence_url.startsWith("/") ? "" : "/"}${problem.evidence_url}`}
+                        src={getFileUrl(problem.evidence_url)}
                         controls
                         style={{ maxWidth: "100%", maxHeight: "360px" }}
                       />
                     ) : (
                       <img
-                        src={problem.evidence_url.startsWith("http") ? problem.evidence_url : `http://localhost:5000${problem.evidence_url.startsWith("/") ? "" : "/"}${problem.evidence_url}`}
+                        src={getFileUrl(problem.evidence_url)}
                         alt="Field Evidence"
                         style={{ maxWidth: "100%", maxHeight: "360px", objectFit: "contain" }}
                       />
