@@ -105,8 +105,10 @@ async function analyzeChallenge(challenge) {
         }
     }
 
-    // This should never really happen if NLP is running, but if NLP is down too:
-    throw new Error("All AI providers and NLP fallback failed. Last error: " + (lastError ? lastError.message : "None"));
+    // Zero-downtime safety guarantee: If all providers fail, use local semantic classifier
+    console.warn("All AI providers and remote NLP failed. Activating local semantic classifier.");
+    const { localSemanticAnalysis } = require("./providers/nlpFallbackProvider");
+    return localSemanticAnalysis(challenge);
 }
 
 async function explainMatch(problemReqs, profileSkills, matchScore) {

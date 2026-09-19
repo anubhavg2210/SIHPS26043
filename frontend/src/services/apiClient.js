@@ -14,7 +14,11 @@ export const USER_KEY = "civicsync_user";
 
 export function getStoredToken() {
   try {
-    return localStorage.getItem(TOKEN_KEY);
+    const t = localStorage.getItem(TOKEN_KEY);
+    if (!t || t === "null" || t === "undefined" || t.trim() === "") {
+      return null;
+    }
+    return t;
   } catch (e) {
     console.error("Storage access error:", e);
     return null;
@@ -23,7 +27,7 @@ export function getStoredToken() {
 
 export function setStoredToken(token) {
   try {
-    if (token) {
+    if (token && token !== "null" && token !== "undefined") {
       localStorage.setItem(TOKEN_KEY, token);
     } else {
       localStorage.removeItem(TOKEN_KEY);
@@ -36,7 +40,10 @@ export function setStoredToken(token) {
 export function getStoredUser() {
   try {
     const raw = localStorage.getItem(USER_KEY);
-    return raw ? JSON.parse(raw) : null;
+    if (!raw || raw === "null" || raw === "undefined") {
+      return null;
+    }
+    return JSON.parse(raw);
   } catch (e) {
     console.error("User storage parse error:", e);
     return null;
@@ -65,6 +72,24 @@ export function clearStoredAuth() {
 }
 
 /**
+ * Returns a full URL for a static file (e.g., /uploads/...)
+ * Ensures we don't hardcode localhost.
+ */
+export function getFileUrl(path) {
+  if (!path) return "";
+  if (path.startsWith("http")) return path;
+  
+  // Base URL for uploads is the API_BASE_URL minus the /api part
+  let baseUrl = API_BASE_URL.endsWith("/") ? API_BASE_URL.slice(0, -1) : API_BASE_URL;
+  if (baseUrl.endsWith("/api")) {
+    baseUrl = baseUrl.slice(0, -4);
+  }
+  
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  return `${baseUrl}${cleanPath}`;
+}
+
+/**
  * Universal Request Handler
  */
 export async function apiRequest(endpoint, options = {}) {
@@ -76,7 +101,22 @@ export async function apiRequest(endpoint, options = {}) {
     requireAuth = true,
   } = options;
 
-  let url = `${API_BASE_URL}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}`;
+  let finalEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  
+  // Ensure endpoint is prefixed with /api
+  if (!finalEndpoint.startsWith("/api/")) {
+    finalEndpoint = `/api${finalEndpoint}`;
+  }
+
+  // Ensure API_BASE_URL doesn't end with slash
+  const baseUrl = API_BASE_URL.endsWith("/") ? API_BASE_URL.slice(0, -1) : API_BASE_URL;
+
+  let url = `${baseUrl}${finalEndpoint}`;
+  
+  // Clean up any double /api/api/ that might occur if baseUrl already includes /api
+  while (url.includes("/api/api/")) {
+    url = url.replace("/api/api/", "/api/");
+  }
 
   if (params && typeof params === "object") {
     const searchParams = new URLSearchParams();
