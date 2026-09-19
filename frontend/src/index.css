@@ -1,127 +1,157 @@
 /* ==========================================================================
-   CivicSync Design System — Professional Civic-Tech Innovation Platform
+   CivicSync Design System — Claude.ai Inspired Editorial Design System
+   Warm paper canvas, elegant serif typography, clean floating cards, and
+   minimalist charcoal & terracotta interactions.
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 :root {
-  /* Color Palette — Primary Civic Navy & Blue */
-  --color-primary: #3b82f6; /* Modern bright blue */
-  --color-primary-dark: #1e3a8a; /* Deep navy */
-  --color-primary-hover: #2563eb;
-  --color-primary-subtle: #eff6ff; /* Lavender/blue subtle */
-  --color-primary-border: #dbeafe;
+  /* Claude Warm Canvas & Surface System */
+  --canvas: #FAF9F5;
+  --surface: #FFFFFF;
+  --surface-hover: #F6F4ED;
+  --bg-page: var(--canvas);
+  --bg-surface: var(--surface);
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #FBF9F5;
+  --bg-muted: #F3F1EB;
+  --bg-muted-hover: #EBE8E0;
+  --bg-sidebar: #F5F3EC;
+  --bg-sidebar-hover: #ECEAE1;
+  --bg-sidebar-active: #E4E1D7;
 
-  /* Secondary Accent — Modern Emerald / Teal */
-  --color-secondary: #059669;
-  --color-secondary-hover: #047857;
-  --color-secondary-subtle: #ecfdf5;
-  --color-secondary-border: #a7f3d0;
+  /* Editorial Ink & Typography Colors */
+  --ink-900: #181816;
+  --ink-700: #383632;
+  --ink-500: #6B6860;
+  --ink-400: #949086;
+  --text-primary: var(--ink-900);
+  --text-secondary: var(--ink-500);
+  --text-muted: var(--ink-400);
+  --text-light: #B8B5AA;
+  --text-white: #FFFFFF;
 
-  /* Semantic Alerts / Status */
-  --color-success: #10b981;
-  --color-success-subtle: #ecfdf5;
-  --color-success-border: #a7f3d0;
+  /* Claude Brand Accents */
+  --color-accent: #D97757; /* Claude signature warm terracotta */
+  --color-accent-subtle: #FDF3EF;
+  --color-accent-border: #F7D6CA;
 
-  --color-warning: #f59e0b;
-  --color-warning-subtle: #fffbeb;
-  --color-warning-border: #fde68a;
+  /* Primary Button Charcoal / Black */
+  --color-primary: #191919;
+  --color-primary-hover: #32312E;
+  --color-primary-subtle: #F0EEE6;
+  --color-primary-border: #E0DDD4;
 
-  --color-danger: #ef4444;
-  --color-danger-subtle: #fef2f2;
-  --color-danger-border: #fecaca;
+  /* Semantic State Colors */
+  --success: #28734A;
+  --color-success: var(--success);
+  --color-success-subtle: #EDF7F1;
+  --color-success-border: #C6E8D4;
 
-  --color-info: #0284c7;
-  --color-info-subtle: #f0f9ff;
-  --color-info-border: #bae6fd;
+  --warning: #B45309;
+  --color-warning: var(--warning);
+  --color-warning-subtle: #FEF7EE;
+  --color-warning-border: #FADBB5;
 
-  /* Surfaces & Backgrounds */
-  --bg-page: #f4f6fb; /* Soft pastel/lavender background */
-  --bg-card: #ffffff;
-  --bg-card-hover: #f9fafb;
-  --bg-muted: #f1f5f9;
-  --bg-sidebar: #f8fafc; /* Light sidebar */
-  --bg-sidebar-hover: #f1f5f9;
-  --bg-sidebar-active: #eff6ff;
+  --danger: #C0392B;
+  --color-danger: var(--danger);
+  --color-danger-subtle: #FDF1F0;
+  --color-danger-border: #F7C8C5;
 
-  /* Text Colors */
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #64748b;
-  --text-light: #94a3b8;
-  --text-white: #ffffff;
+  --blue-600: #2563EB;
+  --blue-400: #4D82F3;
+  --blue-100: #EBF2FE;
 
-  /* Hairline Borders */
-  --border-color: #e2e8f0;
-  --border-light: #f1f5f9;
-  --border-focus: #3b82f6;
+  /* Soft Warm Hairline Borders */
+  --border-color: #E8E5DE;
+  --border-subtle: #F0EDE6;
+  --border-focus: #191919;
 
-  /* Elevation Shadows - Soft and subtle */
-  --shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.03);
-  --shadow-sm: 0 4px 12px 0 rgba(15, 23, 42, 0.04);
-  --shadow-md: 0 8px 24px -2px rgba(15, 23, 42, 0.06);
-  --shadow-lg: 0 12px 32px -4px rgba(15, 23, 42, 0.08);
-  --shadow-xl: 0 20px 40px -5px rgba(15, 23, 42, 0.1);
+  /* Organic Warm Elevation Shadows */
+  --shadow-xs: 0 1px 2px rgba(24, 24, 22, 0.03);
+  --shadow-sm: 0 4px 16px -2px rgba(24, 24, 22, 0.04), 0 2px 4px -1px rgba(24, 24, 22, 0.02);
+  --shadow-md: 0 8px 24px -4px rgba(24, 24, 22, 0.06), 0 4px 8px -2px rgba(24, 24, 22, 0.03);
+  --shadow-lg: 0 16px 36px -6px rgba(24, 24, 22, 0.08), 0 6px 12px -3px rgba(24, 24, 22, 0.04);
+  --shadow-xl: 0 24px 48px -12px rgba(24, 24, 22, 0.12);
 
-  /* Radii - Large and rounded */
+  /* Rounded Radii */
   --radius-xs: 6px;
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
-  --radius-xl: 24px;
-  --radius-2xl: 32px;
+  --radius-card: 22px;
   --radius-full: 9999px;
+
+  /* Fonts */
+  --font-serif: 'Newsreader', 'Lora', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: var(--font-serif);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   /* Transitions */
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1);
-
-  /* Typography */
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-}
-
-[data-theme='dark'] {
-  --bg-page: #0f172a;
-  --bg-card: #1e293b;
-  --bg-card-hover: #334155;
-  --bg-muted: #1e293b;
-  --bg-sidebar: #0f172a;
-  --bg-sidebar-hover: #1e293b;
-  --bg-sidebar-active: #1e3a8a;
-  
-  --text-primary: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
-  --text-light: #64748b;
-  --text-white: #ffffff;
-  
-  --border-color: #334155;
-  --border-light: #1e293b;
-  
-  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-sm: 0 4px 12px 0 rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 8px 24px -2px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 12px 32px -4px rgba(0, 0, 0, 0.6);
-  --shadow-xl: 0 20px 40px -5px rgba(0, 0, 0, 0.7);
-
-  --color-primary-subtle: rgba(59, 130, 246, 0.15);
-  --color-primary-border: rgba(59, 130, 246, 0.3);
-  --color-secondary-subtle: rgba(5, 150, 105, 0.15);
-  --color-secondary-border: rgba(5, 150, 105, 0.3);
-  --color-success-subtle: rgba(16, 185, 129, 0.15);
-  --color-success-border: rgba(16, 185, 129, 0.3);
-  --color-warning-subtle: rgba(245, 158, 11, 0.15);
-  --color-warning-border: rgba(245, 158, 11, 0.3);
-  --color-danger-subtle: rgba(239, 68, 68, 0.15);
-  --color-danger-border: rgba(239, 68, 68, 0.3);
-  --color-info-subtle: rgba(2, 132, 199, 0.15);
-  --color-info-border: rgba(2, 132, 199, 0.3);
 }
 
 /* ==========================================================================
+   Dark Mode System (Warm Espresso / Charcoal)
+   ========================================================================== */
+[data-theme='dark'] {
+  --canvas: #1E1E1C;
+  --surface: #272624;
+  --surface-hover: #302F2C;
+  --bg-page: var(--canvas);
+  --bg-surface: var(--surface);
+  --bg-card: #272624;
+  --bg-card-hover: #302F2C;
+  --bg-muted: #33322E;
+  --bg-muted-hover: #3D3C37;
+  --bg-sidebar: #22211F;
+  --bg-sidebar-hover: #2E2D2A;
+  --bg-sidebar-active: #383733;
 
-   Base Resets
+  --ink-900: #F5F4F0;
+  --ink-700: #D8D6CF;
+  --ink-500: #A6A39B;
+  --ink-400: #78756E;
+  --text-primary: var(--ink-900);
+  --text-secondary: var(--ink-500);
+  --text-muted: var(--ink-400);
+
+  --color-primary: #F5F4F0;
+  --color-primary-hover: #E2E0D8;
+  --color-primary-subtle: #383733;
+  --color-primary-border: #4A4843;
+
+  --border-color: #383632;
+  --border-subtle: #2F2D29;
+  --border-focus: #F5F4F0;
+
+  --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 4px 16px -2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 24px -4px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 16px 36px -6px rgba(0, 0, 0, 0.6);
+
+  --color-accent: #E58B6E;
+  --color-accent-subtle: rgba(229, 139, 110, 0.15);
+  --color-accent-border: rgba(229, 139, 110, 0.3);
+
+  --color-success: #4ADE80;
+  --color-success-subtle: rgba(74, 222, 128, 0.12);
+  --color-success-border: rgba(74, 222, 128, 0.25);
+
+  --color-warning: #FBBF24;
+  --color-warning-subtle: rgba(251, 191, 36, 0.12);
+  --color-warning-border: rgba(251, 191, 36, 0.25);
+
+  --color-danger: #F87171;
+  --color-danger-subtle: rgba(248, 113, 113, 0.12);
+  --color-danger-border: rgba(248, 113, 113, 0.25);
+}
+
+/* ==========================================================================
+   Base Resets & Editorial Typography
    ========================================================================== */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -130,12 +160,14 @@
 html, body {
   margin: 0;
   padding: 0;
-  font-family: var(--font-family);
+  font-family: var(--font-sans);
   background-color: var(--bg-page);
   color: var(--text-primary);
-  line-height: 1.5;
+  line-height: 1.55;
+  font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 200ms ease, color 200ms ease;
 }
 
 #root {
@@ -146,55 +178,224 @@ html, body {
 }
 
 a {
-  color: var(--color-primary);
+  color: inherit;
   text-decoration: none;
   transition: color var(--transition-fast);
 }
 
-a:hover {
-  color: var(--color-primary-hover);
-}
-
+/* Serif Headlines in the Claude Style */
 h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
   color: var(--text-primary);
   margin-top: 0;
-  font-weight: 700;
-  line-height: 1.25;
+  font-weight: 500;
+  line-height: 1.22;
+  letter-spacing: -0.025em;
 }
 
-h1 { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.03em; }
-h2 { font-size: 1.85rem; font-weight: 700; letter-spacing: -0.02em; }
-h3 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.01em; }
-h4 { font-size: 1.15rem; font-weight: 600; }
+h1 { font-size: clamp(32px, 4.5vw, 48px); font-weight: 500; }
+h2 { font-size: clamp(24px, 3vw, 32px); font-weight: 500; }
+h3 { font-size: clamp(19px, 2vw, 23px); font-weight: 600; }
+h4 { font-size: 16px; font-weight: 600; font-family: var(--font-sans); }
 
 p {
   margin-top: 0;
   color: var(--text-secondary);
-  line-height: 1.6;
+  line-height: 1.65;
+  font-size: 0.95rem;
+}
+
+.cs-label {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.cs-kpi-number {
+  font-family: var(--font-serif);
+  font-size: clamp(38px, 4.5vw, 50px);
+  font-weight: 500;
+  line-height: 1.05;
+  color: var(--text-primary);
+  letter-spacing: -0.03em;
 }
 
 /* ==========================================================================
-   Standard Component Utilities
+   Claude-Style Floating Cards
    ========================================================================== */
 .cs-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 1.5rem;
+  background-color: var(--bg-card);
+  border-radius: var(--radius-card);
+  padding: 24px;
   box-shadow: var(--shadow-sm);
-  transition: box-shadow var(--transition-normal), border-color var(--transition-normal);
+  border: 1px solid var(--border-color);
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
 }
 
-.cs-card:hover {
-  border-color: #cbd5e1;
+.cs-card-interactive {
+  cursor: pointer;
 }
 
-.cs-card-hover:hover {
+.cs-card-interactive:hover {
+  transform: translateY(-2px);
   box-shadow: var(--shadow-md);
-  border-color: #cbd5e1;
+  border-color: #D8D4CA;
 }
 
-/* Badges & Tags */
+/* ==========================================================================
+   Buttons (Claude Style: Solid Black, Clean Cream, and Gentle Outlines)
+   ========================================================================== */
+.cs-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.4rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  border-radius: 12px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+  line-height: 1.25;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.cs-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Primary Button: Deep Black in light mode, Clean White in dark mode */
+.cs-btn-primary {
+  background-color: var(--color-primary);
+  color: #FFFFFF;
+  box-shadow: var(--shadow-xs);
+}
+
+[data-theme='dark'] .cs-btn-primary {
+  background-color: #F5F4F0;
+  color: #181816;
+}
+
+.cs-btn-primary:hover:not(:disabled) {
+  opacity: 0.92;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Secondary Button: Soft warm cream with subtle border */
+.cs-btn-secondary {
+  background-color: var(--bg-muted);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.cs-btn-secondary:hover:not(:disabled) {
+  background-color: var(--bg-muted-hover);
+}
+
+/* Outline Button */
+.cs-btn-outline {
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.cs-btn-outline:hover:not(:disabled) {
+  background-color: var(--bg-muted);
+  border-color: var(--ink-700);
+}
+
+.cs-btn-ghost {
+  background-color: transparent;
+  color: var(--text-secondary);
+  border-color: transparent;
+}
+
+.cs-btn-ghost:hover:not(:disabled) {
+  background-color: var(--bg-muted);
+  color: var(--text-primary);
+}
+
+.cs-btn-sm {
+  padding: 0.45rem 0.9rem;
+  font-size: 0.8125rem;
+  border-radius: 10px;
+}
+
+.cs-btn-lg {
+  padding: 0.9rem 2rem;
+  font-size: 1rem;
+  border-radius: 14px;
+}
+
+/* Claude Sunburst / Asterisk Icon Helper */
+.claude-spark {
+  color: var(--color-accent);
+}
+
+/* Input Fields (Clean, warm, rounded, full-width) */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="search"],
+input[type="tel"],
+textarea,
+select,
+.cs-input,
+.cs-textarea,
+.cs-select {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--font-sans);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 0.85rem 1.15rem;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+  outline: none;
+}
+
+/* Extra-large prominent input & textarea helpers */
+.cs-input-large {
+  width: 100% !important;
+  min-height: 56px !important;
+  font-size: 1.15rem !important;
+  font-weight: 500 !important;
+  padding: 1rem 1.25rem !important;
+  border-radius: 14px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03) !important;
+}
+
+.cs-textarea-large {
+  width: 100% !important;
+  min-height: 200px !important;
+  font-size: 1.05rem !important;
+  line-height: 1.65 !important;
+  padding: 1.1rem 1.25rem !important;
+  border-radius: 14px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03) !important;
+  resize: vertical !important;
+}
+
+input:focus, textarea:focus, select:focus,
+.cs-input:focus, .cs-textarea:focus, .cs-select:focus {
+  border-color: var(--ink-900);
+  box-shadow: 0 0 0 3px rgba(24, 24, 22, 0.08);
+}
+
+/* Badges */
 .cs-badge {
   display: inline-flex;
   align-items: center;
@@ -204,195 +405,112 @@ p {
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.02em;
-  text-transform: uppercase;
   white-space: nowrap;
 }
 
-.cs-badge-demo {
-  background-color: #fef3c7;
-  color: #92400e;
-  border: 1px dashed #f59e0b;
-  font-size: 0.7rem;
-  padding: 0.15rem 0.5rem;
-}
-
-/* Buttons */
-.cs-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1.25rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  border-radius: var(--radius-md);
-  border: 1px solid transparent;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  text-align: center;
-  line-height: 1.25;
-  white-space: nowrap;
-}
-
-.cs-btn:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-  transform: none !important;
-}
-
-.cs-btn-primary {
-  background-color: var(--color-primary);
-  color: #ffffff;
-}
-.cs-btn-primary:hover:not(:disabled) {
-  background-color: var(--color-primary-hover);
-  box-shadow: 0 2px 4px rgba(29, 78, 216, 0.25);
-}
-
-.cs-btn-secondary {
-  background-color: var(--color-secondary);
-  color: #ffffff;
-}
-.cs-btn-secondary:hover:not(:disabled) {
-  background-color: var(--color-secondary-hover);
-}
-
-.cs-btn-outline {
-  background-color: #ffffff;
-  color: var(--text-primary);
-  border-color: var(--border-color);
-}
-.cs-btn-outline:hover:not(:disabled) {
-  background-color: var(--bg-muted);
-  border-color: #cbd5e1;
-}
-
-.cs-btn-ghost {
-  background-color: transparent;
-  color: var(--text-secondary);
-}
-.cs-btn-ghost:hover:not(:disabled) {
+.cs-badge-primary {
   background-color: var(--bg-muted);
   color: var(--text-primary);
-}
-
-.cs-btn-danger {
-  background-color: var(--color-danger);
-  color: #ffffff;
-}
-.cs-btn-danger:hover:not(:disabled) {
-  background-color: #dc2626;
-}
-
-.cs-btn-sm {
-  padding: 0.375rem 0.75rem;
-  font-size: 0.75rem;
-  border-radius: var(--radius-sm);
-}
-
-.cs-btn-lg {
-  padding: 0.85rem 1.75rem;
-  font-size: 1rem;
-}
-
-/* Form Controls */
-.cs-form-group {
-  margin-bottom: 1.25rem;
-}
-
-.cs-label {
-  display: block;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-primary);
-  margin-bottom: 0.375rem;
-}
-
-.cs-label .required {
-  color: var(--color-danger);
-  margin-left: 0.25rem;
-}
-
-.cs-input, .cs-textarea, .cs-select {
-  width: 100%;
-  padding: 0.625rem 0.875rem;
-  font-family: inherit;
-  font-size: 0.875rem;
-  color: var(--text-primary);
-  background-color: #ffffff;
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  outline: none;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
-.cs-input:focus, .cs-textarea:focus, .cs-select:focus {
-  border-color: var(--border-focus);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+.cs-badge-success {
+  background-color: var(--color-success-subtle);
+  color: var(--color-success);
+  border: 1px solid var(--color-success-border);
 }
 
-.cs-input:disabled, .cs-textarea:disabled, .cs-select:disabled {
-  background-color: var(--bg-muted);
-  cursor: not-allowed;
-  opacity: 0.7;
+.cs-badge-warning {
+  background-color: var(--color-warning-subtle);
+  color: var(--color-warning);
+  border: 1px solid var(--color-warning-border);
 }
 
-.cs-form-hint {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  margin-top: 0.35rem;
-}
-
-.cs-form-error {
-  font-size: 0.75rem;
+.cs-badge-danger {
+  background-color: var(--color-danger-subtle);
   color: var(--color-danger);
-  margin-top: 0.35rem;
-  font-weight: 500;
+  border: 1px solid var(--color-danger-border);
 }
 
-/* Grid System */
-.cs-grid-2 {
+/* Layout Grids */
+.cs-grid-12 {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.25rem;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
 }
 
-.cs-grid-3 {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.25rem;
+@media (min-width: 768px) {
+  .cs-grid-12 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .cs-grid-12 {
+    grid-template-columns: repeat(12, 1fr);
+  }
 }
 
 .cs-grid-4 {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: 1fr;
   gap: 1.25rem;
 }
 
-@media (max-width: 1024px) {
-  .cs-grid-4 { grid-template-columns: repeat(2, 1fr); }
-  .cs-grid-3 { grid-template-columns: repeat(2, 1fr); }
+@media (min-width: 640px) {
+  .cs-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-@media (max-width: 640px) {
-  .cs-grid-4, .cs-grid-3, .cs-grid-2 { grid-template-columns: 1fr; }
+@media (min-width: 1024px) {
+  .cs-grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
-/* Animations */
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.cs-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
 }
 
-.animate-spin {
-  animation: spin 1s linear infinite;
+@media (min-width: 768px) {
+  .cs-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+.cs-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
 }
 
-.animate-pulse {
-  animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+@media (min-width: 768px) {
+  .cs-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Accessible focus ring */
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--ink-900);
+  outline-offset: 2px;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
 }

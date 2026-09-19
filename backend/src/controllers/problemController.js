@@ -490,10 +490,12 @@ async function getProblemStatusHistory(req, res) {
     }
 }
 
-async function getDuplicates(req, res) {
-    const problemId = parseInt(req.params.id, 10);
+const { parseProblemId } = require("../utils/validation");
 
-    if (isNaN(problemId)) {
+async function getDuplicates(req, res) {
+    const problemId = parseProblemId(req.params.id);
+
+    if (!problemId) {
         return res.status(400).json({
             message: "Invalid problem id"
         });

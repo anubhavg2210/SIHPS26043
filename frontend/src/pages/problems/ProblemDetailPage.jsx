@@ -4,84 +4,17 @@ import { Button } from "../../components/common/Button";
 import { Card } from "../../components/common/Cards";
 import { StatusBadge } from "../../components/common/Badges";
 import { LifecycleTimeline } from "../../components/problems/LifecycleTimeline";
-import { RootCauseView } from "../../components/problems/RootCauseView";
-import { DependencyGraphView } from "../../components/problems/DependencyGraphView";
+import { ProblemJourney } from "../../components/problems/ProblemJourney";
 import { SolutionsView } from "../../components/problems/SolutionsView";
 import { ImplementationView } from "../../components/problems/ImplementationView";
 import { ImpactView } from "../../components/problems/ImpactView";
-import { ExpertiseMatchingView } from "../../components/problems/ExpertiseMatchingView";
 import { AIAnalysisView } from "../../components/problems/AIAnalysisView";
-import { CommunityView } from "../../components/problems/CommunityView";
 import { TeamView } from "../../components/teams/TeamView";
-import { problemApi, matchingApi, challengeApi } from "../../services/api";
-import { getFileUrl } from "../../services/apiClient";
+import { problemApi } from "../../services/api";
 import { useRouter } from "../../context/useRouter.js";
 import { useAuth } from "../../context/useAuth.js";
+import { useToast } from "../../context/useToast.js";
 import { useTranslation } from "../../context/useTranslation.js";
-
-function ProblemMatchingTab({ problem, requiredExpertise }) {
-  const [loading, setLoading] = useState(true);
-  const [institutions, setInstitutions] = useState([]);
-  const [faculty, setFaculty] = useState([]);
-  const [students, setStudents] = useState([]);
-  const [researchers, setResearchers] = useState([]);
-  const [startups, setStartups] = useState([]);
-  const [msmes, setMsmes] = useState([]);
-
-  useEffect(() => {
-    let ignore = false;
-    async function fetchMatches() {
-      if (!problem?.id) return;
-      try {
-        const [facRes, stuRes, resRes, staRes, msmRes, chalRes] = await Promise.allSettled([
-          matchingApi.getFacultyMatches(problem.id),
-          matchingApi.getStudentMatches(problem.id),
-          matchingApi.getResearcherMatches(problem.id),
-          matchingApi.getStartupMatches(problem.id),
-          matchingApi.getMsmeMatches(problem.id),
-          challengeApi.createChallenge({
-            title: problem.title,
-            description: problem.description,
-            district: problem.district,
-            affected_people: problem.affected_people,
-          }),
-        ]);
-
-        if (!ignore) {
-          if (facRes.status === "fulfilled" && facRes.value?.matches) setFaculty(facRes.value.matches);
-          if (stuRes.status === "fulfilled" && stuRes.value?.matches) setStudents(stuRes.value.matches);
-          if (resRes.status === "fulfilled" && resRes.value?.matches) setResearchers(resRes.value.matches);
-          if (staRes.status === "fulfilled" && staRes.value?.matches) setStartups(staRes.value.matches);
-          if (msmRes.status === "fulfilled" && msmRes.value?.matches) setMsmes(msmRes.value.matches);
-          if (chalRes.status === "fulfilled" && chalRes.value?.recommended_institutions) {
-            setInstitutions(chalRes.value.recommended_institutions);
-          }
-          setLoading(false);
-        }
-      } catch {
-        if (!ignore) setLoading(false);
-      }
-    }
-    fetchMatches();
-    return () => {
-      ignore = true;
-    };
-  }, [problem]);
-
-  return (
-    <ExpertiseMatchingView
-      institutions={institutions}
-      faculty={faculty}
-      students={students}
-      researchers={researchers}
-      startups={startups}
-      msmes={msmes}
-      loading={loading}
-      requiredExpertise={requiredExpertise}
-      problem={problem}
-    />
-  );
-}
 
 export function ProblemDetailPage({ id }) {
   const { navigate, query } = useRouter();
@@ -93,10 +26,12 @@ export function ProblemDetailPage({ id }) {
   const isSolver = ["FACULTY", "RESEARCHER", "STARTUP", "MSME"].includes(role);
   const isStudent = role === "STUDENT";
 
+  const toast = useToast();
   const [problem, setProblem] = useState(null);
   const [statusHistory, setStatusHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [verifyingProblem, setVerifyingProblem] = useState(false);
 
   // Default tab or query param tab
   const [activeTab, setActiveTab] = useState(query?.tab || "overview");
@@ -115,6 +50,23 @@ export function ProblemDetailPage({ id }) {
       setError(err.message || "Failed to load problem details");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAuthorityVerifyProblem = async () => {
+    if (!problem?.id) return;
+    setVerifyingProblem(true);
+    try {
+      await problemApi.updateProblemStatus(problem.id, {
+        status: "VERIFIED",
+        note: "Problem verified by Municipal Authority. Confirmed jurisdiction and opened for student solution ideation.",
+      });
+      toast.success("Problem successfully verified by Municipal Authority! Opened for student solutions.");
+      await refreshProblem();
+    } catch (err) {
+      toast.error(err.message || "Failed to verify problem");
+    } finally {
+      setVerifyingProblem(false);
     }
   };
 
@@ -197,41 +149,35 @@ export function ProblemDetailPage({ id }) {
   };
 
   // --------------------------------------------------------------------------
-  // Role-Specific Tab Definition
+  // Role-Specific Tab Definition (Cleaned: Root Cause, Matching, Dependencies, Community removed)
   // --------------------------------------------------------------------------
   let availableTabs = [];
 
   if (isCitizen) {
-    // Citizen sees ONLY: Problem Details & Community discussion/support
+    // Citizen sees: Problem Details & Solutions decision
     availableTabs = [
       { key: "overview", label: "Problem Details", icon: "file-text" },
-      { key: "community", label: "Community & Discussion", icon: "message-circle" },
+      { key: "solutions", label: "Solutions & Decision", icon: "check-circle" },
     ];
   } else if (isAuthorityOrAdmin) {
-    // Authority / Admin sees all full statutory modules
+    // Authority / Admin sees: Overview, Solutions, Impact, Collaboration, History
     availableTabs = [
       { key: "overview", label: "Overview & Intelligence", icon: "cpu" },
-      { key: "matching", label: "Expertise Matching", icon: "users" },
-      { key: "root-causes", label: "Root Cause (RCA)", icon: "layers" },
-      { key: "dependencies", label: "Dependencies", icon: "link" },
       { key: "solutions", label: "Solutions & Evaluation", icon: "check-circle" },
-      { key: "implementation", label: "Implementation & Pilot", icon: "activity" },
       { key: "impact", label: "Impact & Verification", icon: "star" },
-      { key: "community", label: "Community", icon: "message-circle" },
       { key: "collaboration", label: "Collaboration", icon: "users" },
       { key: "history", label: "Status History", icon: "clock" },
     ];
   } else if (isStudent) {
-    // Student sees simplified workflow
+    // Student sees simplified workflow: Overview & Solutions tracking
     availableTabs = [
       { key: "overview", label: "Overview", icon: "cpu" },
       { key: "solutions", label: "Solutions & Tracking", icon: "check-circle" },
     ];
   } else if (role === "UNIVERSITY") {
-    // University sees matched problems but skips deep dive modules
+    // University sees: Overview, Solutions, Collaboration
     availableTabs = [
       { key: "overview", label: "Overview", icon: "cpu" },
-      { key: "matching", label: "Expertise Matching", icon: "users" },
       { key: "solutions", label: "Solutions & Evaluation", icon: "check-circle" },
       { key: "collaboration", label: "Collaboration", icon: "users" },
     ];
@@ -239,37 +185,13 @@ export function ProblemDetailPage({ id }) {
     // Solvers (Faculty, Researchers, Startups, MSMEs)
     availableTabs = [
       { key: "overview", label: "Overview & Intelligence", icon: "cpu" },
-      { key: "matching", label: "Expertise Matching", icon: "users" },
-      { key: "root-causes", label: "Root Cause (RCA)", icon: "layers" },
-      { key: "dependencies", label: "Dependencies", icon: "link" },
       { key: "solutions", label: "Solutions & Evaluation", icon: "check-circle" },
-      { key: "implementation", label: "Implementation & Pilot", icon: "activity" },
-      { key: "community", label: "Community", icon: "message-circle" },
       { key: "collaboration", label: "Collaboration", icon: "users" },
     ];
   }
 
   // Fallback to overview if currently requested tab is not allowed for role
   const currentTab = availableTabs.some((t) => t.key === activeTab) ? activeTab : "overview";
-
-  // --------------------------------------------------------------------------
-  // Simple Citizen 4-Stage Lifecycle Calculation
-  // --------------------------------------------------------------------------
-  const normalizedStatus = (problem.status || "OPEN").toUpperCase();
-
-  const isStage1Complete = true; // Problem Reported
-  const isStage2Complete = ["UNDER_REVIEW", "VERIFIED", "ASSIGNED", "ROOT_CAUSE_ANALYSIS", "SOLUTION_SEARCH", "SOLUTION_EVALUATION", "APPROVED", "PILOT", "IMPLEMENTING", "IN_PROGRESS", "RESOLVED"].includes(normalizedStatus);
-  const isStage3Active = ["ASSIGNED", "ROOT_CAUSE_ANALYSIS", "SOLUTION_SEARCH", "SOLUTION_EVALUATION", "APPROVED", "PILOT", "IMPLEMENTING", "IN_PROGRESS"].includes(normalizedStatus);
-  const isStage4Complete = normalizedStatus === "RESOLVED";
-
-  let citizenStatusMessage = "Problem received and queued for administrative review.";
-  if (normalizedStatus === "UNDER_REVIEW") {
-    citizenStatusMessage = "Municipal authorities are actively reviewing the problem details and geographic jurisdiction.";
-  } else if (isStage3Active) {
-    citizenStatusMessage = "Expertise matched and active solution interventions are currently underway.";
-  } else if (isStage4Complete) {
-    citizenStatusMessage = "Verified resolution completed on the ground. Thank you for making a civic difference!";
-  }
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", paddingBottom: "3rem" }}>
@@ -377,14 +299,41 @@ export function ProblemDetailPage({ id }) {
 
           {/* Authority / Admin Actions */}
           {isAuthorityOrAdmin && (
-            <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+            <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", flexWrap: "wrap" }}>
+              {(problem.status === "REPORTED" || problem.status === "UNDER_REVIEW") ? (
+                <Button
+                  variant="primary"
+                  icon="check-circle"
+                  loading={verifyingProblem}
+                  onClick={handleAuthorityVerifyProblem}
+                  style={{ backgroundColor: "#15803d", borderColor: "#15803d", fontWeight: 700 }}
+                >
+                  ✓ Verify Problem
+                </Button>
+              ) : (
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.4rem",
+                    padding: "0.45rem 0.85rem",
+                    borderRadius: "var(--radius-full)",
+                    backgroundColor: "#dcfce7",
+                    color: "#15803d",
+                    fontSize: "0.8rem",
+                    fontWeight: 700,
+                    border: "1px solid #86efac",
+                  }}
+                >
+                  ✓ Verified by Authority
+                </span>
+              )}
               <Button
                 variant="outline"
                 onClick={() => navigate(`/problems/${id}/impact-passport`)}
               >
                 View Impact Passport
               </Button>
-
             </div>
           )}
         </div>
@@ -416,175 +365,77 @@ export function ProblemDetailPage({ id }) {
         </div>
       </div>
 
-      {/* -------------------------------------------------------------------- */}
-      {/* Lifecycle / Progress Tracker: Simple Stepper vs Timeline     */}
-      {/* -------------------------------------------------------------------- */}
-      {isCitizen || isStudent || role === "UNIVERSITY" ? (
-        <Card style={{ padding: "1.5rem" }}>
-          <div
+      {/* Authority Problem Verification Callout Banner */}
+      {isAuthorityOrAdmin && (problem.status === "REPORTED" || problem.status === "UNDER_REVIEW") && (
+        <div
+          style={{
+            backgroundColor: "#f0fdf4",
+            border: "1.5px solid #86efac",
+            borderRadius: "var(--radius-xl)",
+            padding: "1.25rem 1.5rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "1rem",
+            boxShadow: "0 2px 10px rgba(22, 101, 52, 0.08)",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem", flex: 1, minWidth: "280px" }}>
+            <div
+              style={{
+                width: "44px",
+                height: "44px",
+                borderRadius: "50%",
+                backgroundColor: "#dcfce7",
+                color: "#16a34a",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "1.3rem",
+                fontWeight: 800,
+                flexShrink: 0,
+              }}
+            >
+              ✓
+            </div>
+            <div>
+              <h4 style={{ margin: 0, fontSize: "1.05rem", fontWeight: 700, color: "#166534" }}>
+                Municipal Authority Problem Verification Required
+              </h4>
+              <p style={{ margin: "0.25rem 0 0", fontSize: "0.875rem", color: "#15803d", lineHeight: 1.4 }}>
+                Citizen submitted civic report #{problem.id}. Verify this problem to confirm statutory jurisdiction and open it for student solution ideation.
+              </p>
+            </div>
+          </div>
+          <Button
+            variant="primary"
+            size="md"
+            icon="check-circle"
+            loading={verifyingProblem}
+            onClick={handleAuthorityVerifyProblem}
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "1.25rem",
-              flexWrap: "wrap",
-              gap: "0.5rem",
+              backgroundColor: "#16a34a",
+              borderColor: "#16a34a",
+              fontWeight: 700,
+              fontSize: "0.95rem",
+              padding: "0.65rem 1.4rem",
+              boxShadow: "0 2px 8px rgba(22, 163, 74, 0.3)",
             }}
           >
-            <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 700, color: "var(--text-primary)" }}>
-              {language === "hi" ? "समाधान प्रगति एवं स्थिति" : "Problem Resolution Journey"}
-            </h3>
-            <span style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
-              {language === "hi" ? "वर्तमान स्थिति: " : "Current Status: "}
-              <strong style={{ color: "var(--color-primary)" }}>
-                {(problem.status || "OPEN").replace(/_/g, " ")}
-              </strong>
-            </span>
-          </div>
-
-          {/* Clean Stepper for Citizens and Students */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: "0.5rem",
-              flexWrap: "wrap",
-            }}
-          >
-            {/* Stage 1: Problem Reported */}
-            <div
-              style={{
-                flex: 1,
-                minWidth: "120px",
-                padding: "0.85rem 1rem",
-                borderRadius: "var(--radius-md)",
-                backgroundColor: "var(--color-success-subtle)",
-                border: "1px solid var(--color-success-border)",
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.3rem",
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", color: "var(--color-success)", fontWeight: 700, fontSize: "0.85rem" }}>
-                <span>✓</span>
-                <span>{language === "hi" ? "समस्या दर्ज" : (isStudent ? "Problem" : "Reported")}</span>
-              </div>
-              <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>
-                {new Date(problem.created_at).toLocaleDateString()}
-              </div>
-            </div>
-
-            <Icon name="chevron-right" size={20} color="var(--text-muted)" />
-
-            {/* Stage 2: Under Review */}
-            <div
-              style={{
-                flex: 1,
-                minWidth: "120px",
-                padding: "0.85rem 1rem",
-                borderRadius: "var(--radius-md)",
-                backgroundColor: isStage2Complete ? "var(--color-success-subtle)" : "var(--bg-muted)",
-                border: `1px solid ${isStage2Complete ? "var(--color-success-border)" : "var(--border-color)"}`,
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.3rem",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.4rem",
-                  color: isStage2Complete ? "var(--color-success)" : "var(--text-muted)",
-                  fontWeight: 700,
-                  fontSize: "0.85rem",
-                }}
-              >
-                <span>{isStage2Complete ? "✓" : "○"}</span>
-                <span>{language === "hi" ? "समीक्षाधीन" : (isStudent ? "Understand" : "Under Review")}</span>
-              </div>
-              <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>
-                {isStage2Complete ? "Verified" : "Pending"}
-              </div>
-            </div>
-
-            <Icon name="chevron-right" size={20} color="var(--text-muted)" />
-
-            {/* Stage 3: Being Worked On */}
-            <div
-              style={{
-                flex: 1,
-                minWidth: "120px",
-                padding: "0.85rem 1rem",
-                borderRadius: "var(--radius-md)",
-                backgroundColor: isStage4Complete ? "var(--color-success-subtle)" : isStage3Active ? "var(--color-primary-subtle)" : "var(--bg-muted)",
-                border: `1px solid ${isStage4Complete ? "var(--color-success-border)" : isStage3Active ? "var(--color-primary-border)" : "var(--border-color)"}`,
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.3rem",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.4rem",
-                  color: isStage4Complete ? "var(--color-success)" : isStage3Active ? "var(--color-primary)" : "var(--text-muted)",
-                  fontWeight: 700,
-                  fontSize: "0.85rem",
-                }}
-              >
-                <span>{isStage4Complete ? "✓" : isStage3Active ? "⚡" : "○"}</span>
-                <span>{language === "hi" ? "समाधान कार्य जारी" : (isStudent ? "Forward & Implement" : "Being Worked On")}</span>
-              </div>
-              <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>
-                {isStage4Complete ? "Completed" : isStage3Active ? "Active" : "Awaiting team"}
-              </div>
-            </div>
-
-            <Icon name="chevron-right" size={20} color="var(--text-muted)" />
-
-            {/* Stage 4: Resolved */}
-            <div
-              style={{
-                flex: 1,
-                minWidth: "120px",
-                padding: "0.85rem 1rem",
-                borderRadius: "var(--radius-md)",
-                backgroundColor: isStage4Complete ? "var(--color-success-subtle)" : "var(--bg-muted)",
-                border: `1px solid ${isStage4Complete ? "var(--color-success-border)" : "var(--border-color)"}`,
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.3rem",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.4rem",
-                  color: isStage4Complete ? "var(--color-success)" : "var(--text-muted)",
-                  fontWeight: 700,
-                  fontSize: "0.85rem",
-                }}
-              >
-                <span>{isStage4Complete ? "✓" : "○"}</span>
-                <span>{language === "hi" ? "समाधान संपन्न" : (isStudent ? "Track Outcome" : "Resolved")}</span>
-              </div>
-              <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>
-                {isStage4Complete ? "Community Verified" : "Final Stage"}
-              </div>
-            </div>
-          </div>
-
-          <div style={{ marginTop: "1rem", fontSize: "0.85rem", color: "var(--text-secondary)" }}>
-            ℹ️ {citizenStatusMessage}
-          </div>
-        </Card>
-      ) : (
-        <LifecycleTimeline problem={problem} onStatusUpdated={refreshProblem} />
+            Verify Problem as Authority
+          </Button>
+        </div>
       )}
+
+      {/* -------------------------------------------------------------------- */}
+      {/* Unified Problem-to-Implementation Resolution Journey                 */}
+      {/* -------------------------------------------------------------------- */}
+      <ProblemJourney
+        problem={problem}
+        onStatusUpdated={refreshProblem}
+        onSelectTab={(tabKey) => setActiveTab(tabKey)}
+      />
 
       {/* Primary Navigation Tabs */}
       <div
@@ -701,42 +552,21 @@ export function ProblemDetailPage({ id }) {
           </div>
         )}
 
-        {/* Tab 2: Expertise Matching (Solvers / Authority) */}
-        {!isCitizen && currentTab === "matching" && (
-          <ProblemMatchingTab problem={problem} requiredExpertise={skills} />
+        {/* Solutions & Evaluation (Available to Citizen, Student, Solvers, Authority) */}
+        {currentTab === "solutions" && (
+          <SolutionsView
+            problemId={problem.id}
+            problem={problem}
+            onProblemUpdated={refreshProblem}
+          />
         )}
 
-        {/* Tab 3: Root Cause Analysis (Solvers / Authority) */}
-        {!isCitizen && currentTab === "root-causes" && (
-          <RootCauseView problemId={problem.id} currentProblem={problem} />
-        )}
-
-        {/* Tab 4: Dependencies (Solvers / Authority) */}
-        {!isCitizen && currentTab === "dependencies" && (
-          <DependencyGraphView problemId={problem.id} currentProblem={problem} />
-        )}
-
-        {/* Tab 5: Solutions & Evaluation (Solvers / Authority) */}
-        {!isCitizen && currentTab === "solutions" && (
-          <SolutionsView problemId={problem.id} />
-        )}
-
-        {/* Tab 6: Implementation & Pilot (Solvers / Authority) */}
-        {!isCitizen && currentTab === "implementation" && (
-          <ImplementationView problemId={problem.id} />
-        )}
-
-        {/* Tab 7: Impact & Verification (Authority / Admin) */}
+        {/* Impact & Verification (Authority / Admin) */}
         {isAuthorityOrAdmin && currentTab === "impact" && (
           <ImpactView problemId={problem.id} />
         )}
 
-        {/* Tab 8: Community (Citizens, Solvers, Authority) */}
-        {currentTab === "community" && (
-          <CommunityView problemId={problem.id} />
-        )}
-
-        {/* Tab 9: Collaboration Teams (Solvers / Authority) */}
+        {/* Collaboration Teams */}
         {!isCitizen && currentTab === "collaboration" && (
           <TeamView problem={problem} />
         )}
